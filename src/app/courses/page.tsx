@@ -1,6 +1,5 @@
+import CourseCard from "@/app/courses/_components/course-card";
 import Filters from "@/app/courses/_components/filters";
-import CourseCard from "@/components/course-card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function CoursesPage() {
@@ -9,6 +8,7 @@ export default function CoursesPage() {
       <h1 className="py-2 text-center text-3xl font-bold">Courses</h1>
 
       <div className="flex flex-1">
+        {/* Filters column */}
         <div className="flex flex-col px-4">
           <span className="mb-2">Filters</span>
           <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
@@ -16,10 +16,11 @@ export default function CoursesPage() {
           </ScrollArea>
         </div>
 
+        {/* Cards column */}
         <div className="flex flex-1 flex-col px-4">
           <span className="mb-2">191 courses</span>
           <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 40 }).map((x, i) => (
                 <CourseCard key={i} />
               ))}
