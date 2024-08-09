@@ -1,0 +1,468 @@
+import { PrismaClient } from "@prisma/client";
+import fs from "fs";
+import path from "path";
+import type {
+  Career,
+  Content,
+  Corporate,
+  Course,
+  Lesson,
+  Module,
+  Prisma,
+  Skill,
+  Subtitle,
+  Track,
+  TrackActivities,
+} from "@prisma/client";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const prisma = new PrismaClient();
+
+// Get the __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Directory where JSON files are stored
+const tracksDirPath = path.join(__dirname, "../../dio-data-scraper/data"); // Adjust the path as needed
+const coursesDirPath = path.join(tracksDirPath, "courses");
+
+function toDate(timestamp: number, inSeconds: boolean = true): Date {
+  return new Date(inSeconds ? timestamp * 1000 : timestamp);
+}
+
+async function updateCorporates(corporates: Corporate[]) {
+  for (const corporate of corporates) {
+    const corporateExists = await prisma.corporate.findUnique({
+      where: { id: corporate.id },
+    });
+
+    if (corporateExists) {
+      console.log(`Existing corporate ${corporate.name}`);
+      continue;
+    }
+
+    await prisma.corporate.create({
+      data: corporate,
+    });
+
+    console.log(`Added corporate ${corporate.name}`);
+  }
+}
+
+async function updateSkills(skills: Skill[]) {
+  for (const skill of skills) {
+    const skillExists = await prisma.skill.findUnique({
+      where: { id: skill.id },
+    });
+
+    if (skillExists) {
+      console.log(`Existing skill ${skill.name}`);
+      continue;
+    }
+
+    await prisma.skill.create({
+      data: skill,
+    });
+
+    console.log(`Added skill ${skill.name}`);
+  }
+}
+
+async function updateCareers(careers: Career[]) {
+  for (const career of careers) {
+    const careerExists = await prisma.career.findUnique({
+      where: { id: career.id },
+    });
+
+    if (careerExists) {
+      console.log(`Existing career ${career.name}`);
+      continue;
+    }
+
+    await prisma.career.create({
+      data: career,
+    });
+
+    console.log(`Added career ${career.name}`);
+  }
+}
+
+async function updateSubtitles(subtitles: Subtitle[]) {
+  for (const subtitle of subtitles) {
+    const subtitleExists = await prisma.subtitle.findUnique({
+      where: { id: subtitle.id },
+    });
+
+    if (subtitleExists) {
+      console.log(`Existing subtitle ${subtitle.name}`);
+      continue;
+    }
+
+    await prisma.subtitle.create({
+      data: {
+        id: subtitle.id,
+        file: subtitle.file,
+        name: subtitle.name,
+        contentId: subtitle.contentId,
+      },
+    });
+
+    console.log(`Added subtitle ${subtitle.name}`);
+  }
+}
+
+async function updateContents(contents: Content[]) {
+  for (const content of contents) {
+    const contentExists = await prisma.content.findUnique({
+      where: { id: content.id },
+    });
+
+    if (contentExists) {
+      console.log(`Existing content ${content.name}`);
+      continue;
+      prisma.content.update({
+        where: { id: content.id },
+        data: {
+          lessonId: content.lessonId,
+        },
+      });
+    }
+
+    const res = await prisma.content.create({
+      data: {
+        id: content.id,
+        slug: content.slug,
+        content: content.content as Prisma.InputJsonValue,
+        duration: content.duration,
+        name: content.name,
+        pdf_url: content.pdf_url,
+        type: content.type,
+        youtube_code: content.youtube_code,
+        lessonId: content.lessonId,
+        // subtitles: {
+        //   connect: content.subtitles.map((x: Subtitle) => ({
+        //     id: x.id,
+        //   })),
+        // },
+      },
+    });
+
+    console.log(res);
+    console.log(`Added content ${content.name}`);
+  }
+}
+
+async function updateLessons(lessons: any[]) {
+  for (const lesson of lessons) {
+    const lessonExists = await prisma.lesson.findUnique({
+      where: { id: lesson.id },
+    });
+
+    if (lessonExists) {
+      console.log(`Existing lesson ${lesson.name}`);
+      await prisma.lesson.update({
+        where: { id: lesson.id },
+        data: {
+          contents: {
+            connect: lesson.contents.map((x: Content) => ({ id: x.id })),
+          },
+        },
+      });
+      continue;
+    }
+
+    await prisma.lesson.create({
+      data: {
+        id: lesson.id,
+        course: lesson.course,
+        description: lesson.description,
+        experience: lesson.experience,
+        large_cover: lesson.large_cover,
+        large_cover_disabled: lesson.large_cover_disabled,
+        name: lesson.name,
+        next_content: lesson.next_content,
+        next_slug: lesson.next_slug,
+        order: lesson.order,
+        workload: lesson.workload,
+        contents: {
+          connect: lesson.contents.map((x: Content) => ({ id: x.id })),
+        },
+      },
+    });
+
+    console.log(`Added lesson ${lesson.name}`);
+  }
+}
+
+async function updateCourses(courses: any[]) {
+  for (const course of courses) {
+    const courseExists = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+
+    if (courseExists) {
+      console.log(`Existing course ${course.name}`);
+      continue;
+    }
+
+    await prisma.course.create({
+      data: {
+        id: course.id,
+        slug: course.slug,
+        badge: course.badge,
+        description: course.description,
+        extra_information: course.extra_information,
+        first_slug: course.first_slug,
+        first_uuid: course.first_uuid,
+        lessons: { connect: course.lessons.map((x: Lesson) => ({ id: x.id })) },
+        level: course.level,
+        name: course.name,
+        total: course.total,
+        type: course.type,
+        workload: course.workload,
+      },
+    });
+
+    console.log(`Added course ${course.name}`);
+  }
+}
+
+async function updatetrackActivities(_trackActivities: any[]) {
+  for (const trackActivities of _trackActivities) {
+    const trackActivitiesExists = await prisma.trackActivities.findUnique({
+      where: { trackId: trackActivities.trackId },
+    });
+
+    if (trackActivitiesExists) {
+      console.log(`Existing trackActivities`);
+      continue;
+    }
+
+    await prisma.trackActivities.create({
+      data: {
+        code: trackActivities.code,
+        courses: trackActivities.courses,
+        lives: trackActivities.lives,
+        project: trackActivities.project,
+        trackId: trackActivities.trackId,
+      },
+    });
+
+    console.log(`Added trackActivities`);
+  }
+}
+
+async function updateTracks(tracks: any[]) {
+  for (const track of tracks) {
+    const trackExists = await prisma.track.findUnique({
+      where: { id: track.id },
+    });
+
+    if (trackExists) {
+      console.log(`Existing track ${track.name}`);
+      continue;
+    }
+
+    await prisma.track.create({
+      data: {
+        id: track.id,
+        slug: track.slug,
+        badge: track.badge,
+        careers: {
+          connect: track.careers.map((x: Career) => ({ id: x.id })),
+        },
+        color: track.color,
+        corporate: {
+          connect: {
+            id: track.corporate.id,
+          },
+        },
+        created: toDate(track.created),
+        description: track.description,
+        level: track.level,
+        level_name: track.level_name,
+        modules: { connect: track.modules.map((x: Module) => ({ id: x.id })) },
+        name: track.name,
+        name_ascii: track.name_ascii,
+        preview: track.preview,
+        public_route: track.public_route,
+        relevance: track.relevance,
+        scheduled: track.scheduled,
+        section_type: track.section_type,
+        skills: { connect: track.skills.map((x: Skill) => ({ id: x.id })) },
+        subscription_type: track.subscription_type,
+        total_activities: track.total_activities,
+        track_activities: {
+          connect: { trackId: track.id },
+        },
+        web_route: track.web_route,
+        workload: track.workload,
+      },
+    });
+
+    console.log(`Added track ${track.name}`);
+  }
+}
+
+async function updateModules(modules: any[]) {
+  for (const _module of modules) {
+    const moduleExists = await prisma.module.findUnique({
+      where: { id: _module.id },
+    });
+
+    if (moduleExists) {
+      console.log(`Existing module ${_module.name}`);
+      await prisma.module.update({
+        where: { id: _module.id },
+        data: {
+          courses: {
+            connect: _module.courses.map((x: Course) => ({ id: x })),
+          },
+        },
+      });
+      continue;
+    }
+
+    await prisma.module.create({
+      data: {
+        id: _module.id,
+        name: _module.name,
+        total_activities: _module.total_activities,
+        courses: {
+          connect: _module.courses.map((x: Course) => ({ id: x })),
+        },
+        // trackId: _module.trackId,
+      },
+    });
+
+    console.log(`Added module ${_module.name}`);
+  }
+}
+
+async function getCourses() {
+  const allItems = fs.readdirSync(coursesDirPath);
+
+  // Filter files that end with '.json'
+  const courseFiles = allItems
+    .map((item: string) => path.join(coursesDirPath, item)) // Get full path
+    .filter((itemPath: string) => fs.statSync(itemPath).isFile()) // Only keep files
+    .filter((filePath: string) => filePath.endsWith(".json"));
+
+  const courses: Course[] = [];
+  const subtitles: Subtitle[] = [];
+  const contents: Content[] = [];
+  const lessons: Lesson[] = [];
+
+  for (const filePath of courseFiles) {
+    // Read and parse the JSON file
+    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const course = JSON.parse(fileContent);
+
+    if (!courses.some((x) => x.id === course.id)) {
+      courses.push(course);
+    }
+
+    for (const lesson of course.lessons) {
+      if (!lessons.some((x) => x.id === lesson.id)) {
+        lessons.push(lesson);
+      }
+
+      for (const content of lesson.contents) {
+        content.lessonId = lesson.id;
+        if (!contents.some((x) => x.id === content.id)) {
+          contents.push(content);
+        }
+
+        for (const subtitle of content.subtitles) {
+          subtitle.contentId = content.id;
+          if (!subtitles.some((x) => x.id === subtitle.id)) {
+            subtitles.push(subtitle);
+          }
+        }
+      }
+    }
+  }
+
+  // await updateLessons(lessons);
+  // await updateCourses(courses);
+  // await updateContents(contents);
+  await updateSubtitles(subtitles);
+}
+
+async function getTracks() {
+  const allItems = fs.readdirSync(tracksDirPath);
+
+  // Filter files that end with '.json'
+  const trackFiles = allItems
+    .map((item: string) => path.join(tracksDirPath, item)) // Get full path
+    .filter((itemPath: string) => fs.statSync(itemPath).isFile()) // Only keep files
+    .filter((filePath: string) => filePath.endsWith(".json"));
+
+  const trackActivities: TrackActivities[] = [];
+  const modules: Module[] = [];
+  const tracks: Track[] = [];
+  const careers: Career[] = [];
+  const corporates: Corporate[] = [];
+  const skills: Skill[] = [];
+
+  for (const filePath of trackFiles) {
+    // Read and parse the JSON file
+    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const track = JSON.parse(fileContent);
+
+    track.track_activities.trackId = track.id;
+
+    if (!trackActivities.some((x) => x.trackId === track.id)) {
+      trackActivities.push(track.track_activities);
+    }
+
+    if (!tracks.some((x) => x.id === track.id)) {
+      tracks.push(track);
+    }
+
+    for (const _module of track.modules) {
+      _module.trackId = track.id;
+      if (!modules.some((x) => x.id === _module.id)) {
+        modules.push(_module);
+      }
+    }
+
+    for (const career of track.careers) {
+      if (!careers.some((x) => x.id === career.id)) {
+        careers.push(career);
+      }
+    }
+
+    if (!corporates.some((x) => x.id === track.corporate.id)) {
+      corporates.push(track.corporate);
+    }
+
+    for (const skill of track.skills) {
+      if (!skills.some((x) => x.id === skill.id)) {
+        skills.push(skill);
+      }
+    }
+  }
+
+  // await updatetrackActivities(trackActivities);
+  await updateModules(modules);
+  // await updateTracks(tracks);
+  // updateCorporates(corporates);
+  // updateSkills(skills);
+  // updateCareers(careers);
+}
+
+async function main() {
+  // await getTracks();
+  await getCourses();
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
