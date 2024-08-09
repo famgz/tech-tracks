@@ -7,7 +7,7 @@
     --primary: 81 95% 54%;
     --primary-foreground: 0 0% 6%;
 
-    --background: 0 0% 100%;
+    --background: 0 0% 99%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -68,7 +68,7 @@
 }
 
 ._container {
-  @apply mx-auto w-full max-w-[1280px] px-4;
+  @apply mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-10;
 }
 
 .flex-center {

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/header";
 import Link from "next/link";
+import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +29,10 @@ export default function RootLayout({
         >
           <div className="flex h-screen flex-col">
             <Header />
-            <main className="mx-auto flex w-full flex-auto">{children}</main>
+            <main className="mx-auto flex w-full flex-auto pb-6">
+              {children}
+            </main>
+            <Footer />
           </div>
         </ThemeProvider>
       </body>
