@@ -6,17 +6,42 @@ import { db } from "@/lib/prisma";
 import { SearchIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
-export default async function TracksPage() {
+interface Props {
+  searchParams: {
+    skill: string;
+    level: string;
+    corporate: string;
+    career: string;
+  };
+}
+
+export default async function TracksPage({ searchParams }: Props) {
   const session = await auth();
 
   if (!session) {
     redirect("/");
   }
 
-  const tracks = await db.track.findMany({
-    take: 100,
-    include: { skills: true },
-  });
+  const [skill, career, corporate, tracks] = await Promise.all([
+    db.skill.findMany({ orderBy: { name: "asc" } }),
+    db.career.findMany({ orderBy: { name: "asc" } }),
+    db.corporate.findMany({ orderBy: { name: "asc" } }),
+    db.track.findMany({
+      take: 100,
+      include: { skills: true, corporate: true },
+    }),
+  ]);
+
+  const filters = {
+    level: [
+      { id: "1", name: "Iniciante" },
+      { id: "2", name: "Intermediário" },
+      { id: "3", name: "Avançado" },
+    ],
+    career,
+    corporate,
+    skill,
+  };
 
   return (
     <div className="_container flex flex-col py-2">
@@ -24,16 +49,7 @@ export default async function TracksPage() {
 
       <div className="flex flex-1 gap-4">
         {/* Filters column */}
-        <div className="flex max-w-fit flex-col">
-          <span className="mb-2">Filters</span>
-          <div className="flex-center mb-4 gap-2 rounded-lg border px-2 py-1">
-            <SearchIcon className="size-4 text-muted-foreground" />
-            <input className="flex-1 bg-transparent outline-none" size={1} />
-          </div>
-          <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
-            <Filters />
-          </ScrollArea>
-        </div>
+        <Filters filters={filters} />
 
         {/* Cards column */}
         <div className="flex flex-1 flex-col">
