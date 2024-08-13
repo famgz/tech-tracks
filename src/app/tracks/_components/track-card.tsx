@@ -32,7 +32,7 @@ export default function TrackCard({ track }: Props) {
             fill
             alt=""
             className="object-cover"
-            sizes="(max-width: 768px) 60vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 235px"
+            sizes="(max-width: 640px) 80vw, (max-width: 768px) 40vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 235px"
           />
         </Link>
       </HoverCardTrigger>

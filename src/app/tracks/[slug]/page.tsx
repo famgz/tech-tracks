@@ -108,7 +108,7 @@ export default async function TrackPage({ params }: Props) {
           >
             <Image
               src={track.corporate.image_url}
-              width={128}
+              width={96}
               height={0}
               className="h-auto"
               alt={track.corporate.name}
@@ -118,17 +118,17 @@ export default async function TrackPage({ params }: Props) {
       </div>
 
       {/* buttons */}
-      <div className="xs:flex-row flex flex-col items-center gap-4 max-sm:justify-center">
+      <div className="flex flex-col items-center gap-4 max-sm:justify-center xs:flex-row">
         <Button
           variant={"outline"}
-          className="max-xs:w-full gap-2 px-6 text-xl"
+          className="gap-2 px-6 text-xl max-xs:w-full"
           size={"lg"}
         >
           <BookmarkIcon size={20} /> Bookmark
         </Button>
         <Button
           variant={"default"}
-          className="max-xs:w-full gap-2 text-xl font-semibold"
+          className="gap-2 text-xl font-semibold max-xs:w-full"
           size={"lg"}
         >
           Start now
@@ -153,9 +153,12 @@ export default async function TrackPage({ params }: Props) {
       </div>
 
       {/* description */}
-      <p className="max-w-[700px] font-light text-muted-foreground">
-        {track.description}
-      </p>
+      <div
+        className="max-w-[700px] font-light text-muted-foreground"
+        dangerouslySetInnerHTML={{
+          __html: track.description,
+        }}
+      />
     </div>
   );
 }

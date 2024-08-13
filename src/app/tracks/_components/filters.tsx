@@ -2,6 +2,7 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import { Career, Corporate, Skill } from "@prisma/client";
 import { SearchIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -15,9 +16,10 @@ interface Props {
     corporate: Corporate[];
     skill: Skill[];
   };
+  className?: string;
 }
 
-export default function Filters({ filters }: Props) {
+export default function Filters({ filters, className }: Props) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -58,7 +60,7 @@ export default function Filters({ filters }: Props) {
   }
 
   return (
-    <div className="flex max-w-fit flex-col">
+    <div className={cn("flex max-w-[20%] flex-col", className)}>
       <span className="mb-2">Filters</span>
       <div className="flex-center mb-4 gap-2 rounded-lg border px-2 py-1">
         <SearchIcon className="size-4 text-muted-foreground" />
@@ -78,6 +80,7 @@ export default function Filters({ filters }: Props) {
                   <div
                     key={x.id as string}
                     className="ml-2 flex items-center gap-2 rounded py-0.5 hover:bg-muted"
+                    title={x.name}
                   >
                     <Checkbox
                       id={x.name}

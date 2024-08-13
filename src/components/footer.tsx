@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer>
       <Card className="rounded-b-none">
-        <CardContent className="_container flex items-center justify-between gap-6 py-3 text-xs text-muted-foreground">
+        <CardContent className="_container flex items-center gap-6 py-3 text-xs text-muted-foreground">
           <p className="">
             © 2024 <span className="font-bold">Tech Tracks</span>
           </p>

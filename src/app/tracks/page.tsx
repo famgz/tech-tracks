@@ -49,13 +49,13 @@ export default async function TracksPage({ searchParams }: Props) {
 
       <div className="flex flex-1 gap-4">
         {/* Filters column */}
-        <Filters filters={filters} />
+        <Filters filters={filters} className="max-sm:hidden" />
 
         {/* Cards column */}
         <div className="flex flex-1 flex-col">
           <span className="mb-2">191 tracks</span>
           <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {tracks.map((t) => (
                 <TrackCard track={t} key={t.id} />
               ))}
