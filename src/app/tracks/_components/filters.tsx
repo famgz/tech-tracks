@@ -1,6 +1,7 @@
 "use client";
 
 import { IFilters } from "@/app/tracks/page";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -16,13 +17,13 @@ interface Props {
 
 type FilterKeys = keyof Props["filters"];
 
-type InitialSearchParams = {
+type ParsedSearchParams = {
   [K in FilterKeys]: string[];
 };
 
 export default function Filters({ filters, className }: Props) {
   const searchParams = useSearchParams();
-  const initialSearchParams: InitialSearchParams = {
+  const parsedSearchParams: ParsedSearchParams = {
     level: searchParams.getAll("level"),
     career: searchParams.getAll("career"),
     corporate: searchParams.getAll("corporate"),
@@ -47,7 +48,7 @@ export default function Filters({ filters, className }: Props) {
       }
       updateUrl();
     },
-    500,
+    300,
   );
 
   function handleCheckboxChange(
@@ -74,22 +75,32 @@ export default function Filters({ filters, className }: Props) {
     updateUrl();
   }
 
-  function handleResetInput() {
+  function handleResetSearchInput() {
     params.delete("search");
     updateUrl();
   }
 
+  function handleResetAllCheckboxs() {
+    params.delete("level");
+    params.delete("career");
+    params.delete("corporate");
+    params.delete("skill");
+    updateUrl();
+  }
+
   return (
-    <div className={cn("flex max-w-[min(20vw,250px)] flex-col", className)}>
-      <span className="mb-2">Filters</span>
-      <form className="flex-center mb-4 gap-2 rounded-lg border px-2 py-1">
+    <div
+      className={cn("flex max-w-[min(20vw,250px)] flex-col gap-3", className)}
+    >
+      <span className="">Filters</span>
+      <form className="flex-center gap-2 rounded-lg border px-2 py-1">
         <SearchIcon className="size-4 text-muted-foreground" />
         <input
           className="flex-1 bg-transparent text-sm outline-none"
           size={1}
           onChange={handleInputChange}
         />
-        <button type="reset" onClick={handleResetInput}>
+        <button type="reset" onClick={handleResetSearchInput}>
           <XIcon size={12} className="text-muted-foreground" />
         </button>
       </form>
@@ -111,7 +122,7 @@ export default function Filters({ filters, className }: Props) {
                       <Checkbox
                         id={x.name}
                         name={x.name}
-                        defaultChecked={initialSearchParams[key].includes(x.id)}
+                        checked={parsedSearchParams[key].includes(x.id)}
                         onCheckedChange={(checked) =>
                           handleCheckboxChange(key, x.id, !!checked)
                         }
@@ -133,6 +144,12 @@ export default function Filters({ filters, className }: Props) {
           })}
         </div>
       </ScrollArea>
+
+      {Object.values(parsedSearchParams).some((x) => x.length) && (
+        <Button variant={"outline"} onClick={handleResetAllCheckboxs}>
+          Clear all
+        </Button>
+      )}
     </div>
   );
 }

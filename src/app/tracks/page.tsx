@@ -38,7 +38,6 @@ export default async function TracksPage({ searchParams }: Props) {
       include: { _count: true },
     }),
     db.track.findMany({
-      // take: 100,
       include: { skills: true, corporate: true, careers: true },
     }),
   ]);

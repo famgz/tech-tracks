@@ -101,7 +101,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* Corporate logo */}
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm">Powered by</p>
+          <p className="text-sm">Sponsored by</p>
           <Link
             href={track.corporate.site || "#"}
             target={track.corporate.site ? "_blank" : "_self"}
