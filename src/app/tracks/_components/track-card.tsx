@@ -21,7 +21,7 @@ interface Props {
 
 export default function TrackCard({ track }: Props) {
   return (
-    <HoverCard openDelay={1000} closeDelay={0}>
+    <HoverCard openDelay={500} closeDelay={0}>
       <HoverCardTrigger asChild>
         <Link
           href={`/tracks/${track.slug}`}
@@ -32,7 +32,7 @@ export default function TrackCard({ track }: Props) {
             fill
             alt=""
             className="object-cover"
-            sizes="(max-width: 640px) 80vw, (max-width: 768px) 40vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 235px"
+            sizes="(max-width: 640px) 80vw, (max-width: 768px) 40vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 400px"
           />
         </Link>
       </HoverCardTrigger>

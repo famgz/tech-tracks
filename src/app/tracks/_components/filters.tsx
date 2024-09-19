@@ -131,7 +131,7 @@ export default function Filters({ filters, className }: Props) {
                         htmlFor={x.name}
                         className="flex flex-1 cursor-pointer items-center gap-1 truncate whitespace-nowrap text-xs"
                       >
-                        <span className="inline-block max-w-[min(10vw,134px)] truncate">
+                        <span className="inline-block max-w-[min(10vw,134px)] truncate sm:max-w-[min(10vw,200px)]">
                           {x.name}
                         </span>
                         <span>({x._count?.tracks ?? 0})</span>
