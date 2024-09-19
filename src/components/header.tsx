@@ -1,4 +1,5 @@
 import { ModeToggle } from "@/components/buttons/mode-toggle";
+import Logo from "@/components/icons/logo";
 import Menu from "@/components/menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,10 +15,8 @@ export default async function Header() {
       <Card className="rounded-t-none">
         <CardContent className="_container flex items-center justify-between py-3">
           <div className="flex items-center gap-4">
-            <Button asChild variant={"ghost"}>
-              <Link href={"/"} className="font-semibold">
-                Home
-              </Link>
+            <Button variant={"ghost"}>
+              <Logo />
             </Button>
 
             {user && (
