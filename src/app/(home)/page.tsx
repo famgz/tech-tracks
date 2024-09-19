@@ -1,5 +1,5 @@
-import LoginButton from "@/components/buttons/login";
-import { buttonVariants } from "@/components/ui/button";
+import LoginDialog from "@/components/login-dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { auth } from "../../auth";
@@ -28,7 +28,15 @@ export default async function Home() {
             </Link>
           </div>
         ) : (
-          <LoginButton />
+          <LoginDialog>
+            <Button
+              variant={"default"}
+              size={"lg"}
+              className="gap-1 text-xl font-bold"
+            >
+              Login to Access
+            </Button>
+          </LoginDialog>
         )}
       </div>
     </div>

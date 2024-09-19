@@ -10,10 +10,10 @@ export default function LogoutButton() {
       <Button
         variant={"ghost"}
         size={"icon"}
-        className="w-full justify-start gap-3 px-3"
+        className="w-full justify-between gap-3 px-3"
         type="submit"
       >
-        Sair
+        Logout
         <LogOutIcon size={18} />
       </Button>
     </form>
