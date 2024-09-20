@@ -23,17 +23,19 @@ export default async function CoursePage({ params }: Props) {
 
   return (
     <div className="mx-auto flex size-full max-w-[1920px] flex-col">
-      <h1 className="px-5 py-3 text-xl">{course.name}</h1>
-
       <div className="grid h-full grid-cols-[3fr_1fr]">
-        <div className="flex-center border-r">
+        <div className="flex-center flex-col border-r">
+          <h1 className="w-full px-5 py-3 text-left text-xl">
+            {course.name} - {course.lessons[0].contents[0].name}
+          </h1>
           <YoutubeIcon
-            className="size-44 text-muted-foreground"
+            className="size-44 flex-1 text-muted-foreground"
             strokeWidth={1}
           />
         </div>
 
         <div className="">
+          <h1 className="px-5 py-3 text-xl text-muted-foreground">Lições</h1>
           <LessonsAccordion lessons={course.lessons} />
         </div>
       </div>
