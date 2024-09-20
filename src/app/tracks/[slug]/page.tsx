@@ -189,8 +189,8 @@ export default async function TrackPage({ params }: Props) {
               <AccordionContent className="space-y-5 p-4">
                 {module.courses.map((course) => (
                   <Card key={course.id} className="bg-muted">
-                    <CardHeader className="flex-row gap-2">
-                      <div className="flex-1 space-y-4">
+                    <CardHeader className="flex-row gap-3">
+                      <div className="flex-1 space-y-4 overflow-hidden">
                         {/* course type and title */}
                         <div className="space-y-1">
                           <p className="capitalize text-muted-foreground">
