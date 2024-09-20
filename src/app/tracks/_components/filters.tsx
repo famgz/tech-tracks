@@ -4,6 +4,7 @@ import { IFilters } from "@/app/tracks/page";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { translate } from "@/lib/translate";
 import { cn } from "@/lib/utils";
 import { SearchIcon, XIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -92,7 +93,7 @@ export default function Filters({ filters, className }: Props) {
     <div
       className={cn("flex max-w-[min(20vw,250px)] flex-col gap-3", className)}
     >
-      <span className="">Filters</span>
+      <span className="">Filtros</span>
       <form className="flex-center gap-2 rounded-lg border px-2 py-1">
         <SearchIcon className="size-4 text-muted-foreground" />
         <input
@@ -111,7 +112,9 @@ export default function Filters({ filters, className }: Props) {
 
             return (
               <div key={key}>
-                <h3 className="mb-1 text-sm font-bold capitalize">{k}</h3>
+                <h3 className="mb-1 text-sm font-bold capitalize">
+                  {translate(k)}
+                </h3>
                 <div className="">
                   {v.map((x: any) => (
                     <div

@@ -93,7 +93,7 @@ export default async function TracksPage({ searchParams }: Props) {
 
   return (
     <div className="_container flex flex-1 flex-col py-2">
-      <h1 className="py-2 text-center text-3xl font-bold">Tracks</h1>
+      <h1 className="py-2 text-center text-3xl font-bold">Cursos</h1>
 
       <div className="flex flex-1 gap-6 sm:gap-16">
         {/* Filters column */}
@@ -101,7 +101,10 @@ export default async function TracksPage({ searchParams }: Props) {
 
         {/* Cards column */}
         <div className="flex flex-1 flex-col">
-          <span className="mb-2">{filteredTracks.length} tracks</span>
+          <span className="mb-2">
+            {filteredTracks.length} curso{filteredTracks.length > 1 ? "s" : ""}{" "}
+            encontrado{filteredTracks.length > 1 ? "s" : ""}
+          </span>
           {filteredTracks.length > 0 ? (
             <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -112,7 +115,7 @@ export default async function TracksPage({ searchParams }: Props) {
             </ScrollArea>
           ) : (
             <div className="flex-center h-full w-full text-xl text-muted-foreground">
-              No results
+              Nenhum curso encontrado
             </div>
           )}
         </div>

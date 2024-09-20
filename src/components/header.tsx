@@ -22,7 +22,7 @@ export default async function Header() {
             {user && (
               <Button asChild variant={"ghost"}>
                 <Link href={"/tracks"} className="font-semibold">
-                  Tracks
+                  Cursos
                 </Link>
               </Button>
             )}

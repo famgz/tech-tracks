@@ -8,10 +8,10 @@ export default function Footer() {
       <Card className="rounded-b-none">
         <CardContent className="_container flex-center gap-6 py-3 text-xs text-muted-foreground">
           <p className="">
-            © 2024 <span className="font-bold">Tech Tracks</span>
+            ©2024 <span className="font-bold">Tech Tracks</span>
           </p>
           <div className="flex items-center gap-1.5">
-            powered by
+            fornecido por
             <Link href="https://dio.me" target="_blank">
               <DioIcon className="size-9 fill-slate-400" />
             </Link>

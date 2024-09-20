@@ -10,7 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogInIcon, MenuIcon } from "lucide-react";
+import {
+  BookCheckIcon,
+  BookMarkedIcon,
+  CodeIcon,
+  HomeIcon,
+  LogInIcon,
+  MenuIcon,
+  UserIcon,
+} from "lucide-react";
+import Link from "next/link";
 import { auth } from "../auth";
 
 export default async function Menu() {
@@ -26,6 +35,8 @@ export default async function Menu() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="min-w-48 p-2 text-sm" align={"end"}>
+        <DropdownMenuLabel>Menu</DropdownMenuLabel>
+
         {user ? (
           <>
             <DropdownMenuLabel className="flex items-center gap-4 p-3">
@@ -44,28 +55,54 @@ export default async function Menu() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Ongoing tracks</DropdownMenuItem>
-            <DropdownMenuItem>Completed tracks</DropdownMenuItem>
-            <DropdownMenuItem>Completed courses</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href={"/"} className="flex w-full items-center gap-2">
+                <HomeIcon className="size-4" /> Home
+              </Link>
+            </DropdownMenuItem>
 
+            <DropdownMenuItem>
+              <Link href={"/"} className="flex w-full items-center gap-2">
+                <CodeIcon className="size-4" /> Cursos
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem>
+              <Link href={"/user"} className="flex w-full items-center gap-2">
+                <UserIcon className="size-4" />
+                Perfil
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem>
+              <Link href={"/user"} className="flex w-full items-center gap-2">
+                <BookMarkedIcon className="size-4" />
+                Cursos em andamento
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem>
+              <Link href={"/user"} className="flex w-full items-center gap-2">
+                <BookCheckIcon className="size-4" />
+                Cursos finalizados
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator className="mt-6" />
-
             <div>
               <LogoutButton />
             </div>
           </>
         ) : (
-          <LoginDialog>
-            <Button
-              variant={"ghost"}
-              className="w-full justify-between gap-3 px-3"
-              type="submit"
-            >
-              Login
-              <LogInIcon size={18} />
-            </Button>
-          </LoginDialog>
+          <div className="flex w-full items-center justify-between gap-3 p-3">
+            <span>Olá, faça seu login</span>
+            <LoginDialog>
+              <Button variant={"default"} size="icon" className="size-8">
+                <LogInIcon size={18} />
+              </Button>
+            </LoginDialog>
+          </div>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

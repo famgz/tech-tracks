@@ -2,6 +2,7 @@ import ChartFilledIcon from "@/components/icons/chart-filed";
 import { Button } from "@/components/ui/button";
 import { baseAssetsUrl } from "@/constants/api";
 import { db } from "@/lib/prisma";
+import { translate } from "@/lib/translate";
 import { BookmarkIcon, ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -62,7 +63,7 @@ export default async function TrackPage({ params }: Props) {
                 <div className="flex items-end gap-2">
                   <ChartFilledIcon fontSize={16} className="fill-primary" />
                   <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
-                    Level {track.level}
+                    Nível {track.level}
                   </span>
                 </div>
 
@@ -101,7 +102,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* Corporate logo */}
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm">Sponsored by</p>
+          <p className="text-sm">Patrocinador</p>
           <Link
             href={track.corporate.site || "#"}
             target={track.corporate.site ? "_blank" : "_self"}
@@ -124,14 +125,14 @@ export default async function TrackPage({ params }: Props) {
           className="gap-2 px-6 text-xl max-xs:w-full"
           size={"lg"}
         >
-          <BookmarkIcon size={20} /> Bookmark
+          <BookmarkIcon size={20} /> Salvar
         </Button>
         <Button
           variant={"default"}
           className="gap-2 text-xl font-semibold max-xs:w-full"
           size={"lg"}
         >
-          Start now
+          Matricular-se
         </Button>
       </div>
 
@@ -142,7 +143,7 @@ export default async function TrackPage({ params }: Props) {
           return (
             <Fragment key={k}>
               <p>
-                {v} {k}
+                {v} {translate(k)}
               </p>
               {i < a.length - 2 && (
                 <DotIcon className="text-muted-foreground" />

@@ -14,7 +14,8 @@ export default async function Home() {
         {session?.user ? (
           <div className="space-y-8">
             <p className="text-center text-xl">
-              Hello, <span className="font-bold">{session.user.name}</span>
+              Olá,{" "}
+              <span className="font-bold capitalize">{session.user.name}</span>
             </p>
 
             <Link
@@ -24,7 +25,7 @@ export default async function Home() {
                 "mx-auto text-xl font-bold",
               )}
             >
-              Go to Tracks
+              Ir para os Cursos
             </Link>
           </div>
         ) : (
@@ -34,7 +35,7 @@ export default async function Home() {
               size={"lg"}
               className="gap-1 text-xl font-bold"
             >
-              Login to Access
+              Faça login para acessar
             </Button>
           </LoginDialog>
         )}

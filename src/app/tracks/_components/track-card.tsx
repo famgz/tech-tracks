@@ -21,7 +21,7 @@ interface Props {
 
 export default function TrackCard({ track }: Props) {
   return (
-    <HoverCard openDelay={500} closeDelay={0}>
+    <HoverCard openDelay={700} closeDelay={0}>
       <HoverCardTrigger asChild>
         <Link
           href={`/tracks/${track.slug}`}
@@ -56,7 +56,7 @@ export default function TrackCard({ track }: Props) {
               <div className="flex items-end gap-1">
                 <ChartIcon fontSize={14} />
                 <span className="whitespace-nowrap text-[10px] leading-none">
-                  Level {track.level}
+                  Nível {track.level}
                 </span>
               </div>
 

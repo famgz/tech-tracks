@@ -13,7 +13,7 @@ export default function LogoutButton() {
         className="w-full justify-between gap-3 px-3"
         type="submit"
       >
-        Logout
+        Sair
         <LogOutIcon size={18} />
       </Button>
     </form>
