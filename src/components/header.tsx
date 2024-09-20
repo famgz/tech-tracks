@@ -15,8 +15,10 @@ export default async function Header() {
       <Card className="rounded-t-none">
         <CardContent className="_container flex items-center justify-between py-3">
           <div className="flex items-center gap-4">
-            <Button variant={"ghost"}>
-              <Logo />
+            <Button variant={"ghost"} asChild>
+              <Link href={"/"}>
+                <Logo />
+              </Link>
             </Button>
 
             {user && (
