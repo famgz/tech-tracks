@@ -143,23 +143,6 @@ export default async function TrackPage({ params }: Props) {
         </Button>
       </div>
 
-      {/* track data */}
-      <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
-        {Object.entries(track.track_activities).map(([k, v], i, a) => {
-          if (i === a.length - 1) return;
-          return (
-            <Fragment key={k}>
-              <p>
-                {v} {translate(k)}
-              </p>
-              {i < a.length - 2 && (
-                <DotIcon className="text-muted-foreground" />
-              )}
-            </Fragment>
-          );
-        })}
-      </div>
-
       {/* description */}
       <div
         className="max-w-[700px] font-light text-muted-foreground"
@@ -168,76 +151,95 @@ export default async function TrackPage({ params }: Props) {
         }}
       />
 
-      {/* course content */}
-      <Accordion
-        type="multiple"
-        className="max-w-[700px] overflow-hidden rounded-xl border border-muted-foreground/20"
-      >
-        {track.modules.map((module) => (
-          <AccordionItem
-            key={module.id}
-            value={module.id}
-            className="border-muted-foreground/20"
-          >
-            <AccordionTrigger className="gap-4 bg-muted p-6">
-              <span className="flex-1 text-left text-muted-foreground">
-                {module.name}
-              </span>
-              <span>{module.total_activities} atividades</span>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-5 p-4">
-              {module.courses.map((course) => (
-                <Card key={course.id} className="bg-muted">
-                  <CardHeader className="flex-row gap-2">
-                    <div className="flex-1 space-y-4">
-                      {/* course type and title */}
-                      <div className="space-y-1">
-                        <p className="capitalize text-muted-foreground">
-                          {translate(course.type)}
-                        </p>
-                        <p
-                          className="truncate font-semibold"
-                          title={course.name}
-                        >
-                          {course.name}
-                        </p>
-                      </div>
+      {/* courses content */}
+      <div className="space-y-3">
+        {/* track data */}
+        <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
+          {Object.entries(track.track_activities).map(([k, v], i, a) => {
+            if (i === a.length - 1) return;
+            return (
+              <Fragment key={k}>
+                <p>
+                  {v} {translate(k)}
+                </p>
+                {i < a.length - 2 && (
+                  <DotIcon className="text-muted-foreground" />
+                )}
+              </Fragment>
+            );
+          })}
+        </div>
 
-                      {/* course stats */}
-                      <div className="flex items-center gap-3">
-                        {/* level */}
-                        <div className="flex items-end gap-1">
-                          <ChartFilledIcon
-                            fontSize={16}
-                            className="fill-primary"
-                          />
-                          <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
-                            {course.level}
-                          </span>
+        <Accordion
+          type="multiple"
+          className="max-w-[700px] overflow-hidden rounded-xl border border-muted-foreground/20"
+        >
+          {track.modules.map((module) => (
+            <AccordionItem
+              key={module.id}
+              value={module.id}
+              className="border-muted-foreground/20"
+            >
+              <AccordionTrigger className="gap-4 bg-muted p-6">
+                <span className="flex-1 text-left text-muted-foreground">
+                  {module.name}
+                </span>
+                <span>{module.total_activities} atividades</span>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-5 p-4">
+                {module.courses.map((course) => (
+                  <Card key={course.id} className="bg-muted">
+                    <CardHeader className="flex-row gap-2">
+                      <div className="flex-1 space-y-4">
+                        {/* course type and title */}
+                        <div className="space-y-1">
+                          <p className="capitalize text-muted-foreground">
+                            {translate(course.type)}
+                          </p>
+                          <p
+                            className="truncate font-semibold"
+                            title={course.name}
+                          >
+                            {course.name}
+                          </p>
                         </div>
 
-                        {/* workload */}
-                        <div className="flex items-end gap-1">
-                          <ClockIcon size={16} />
-                          <span className="text-xs leading-none text-muted-foreground">
-                            {course.workload}h
-                          </span>
+                        {/* course stats */}
+                        <div className="flex items-center gap-3">
+                          {/* level */}
+                          <div className="flex items-end gap-1">
+                            <ChartFilledIcon
+                              fontSize={16}
+                              className="fill-primary"
+                            />
+                            <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
+                              {course.level}
+                            </span>
+                          </div>
+
+                          {/* workload */}
+                          <div className="flex items-end gap-1">
+                            <ClockIcon size={16} />
+                            <span className="text-xs leading-none text-muted-foreground">
+                              {course.workload}h
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex-center">
-                      <Button asChild>
-                        <Link href={`/course/`}>Iniciar</Link>
-                      </Button>
-                    </div>
-                  </CardHeader>
-                </Card>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+                      <div className="flex-center">
+                        <Button asChild>
+                          <Link href={`/course/`}>Iniciar</Link>
+                        </Button>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
     </div>
   );
 }
