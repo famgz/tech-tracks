@@ -98,7 +98,7 @@ export default async function Menu() {
           <div className="flex w-full items-center justify-between gap-3 p-3">
             <span>Olá, faça seu login</span>
             <LoginDialog>
-              <Button variant={"default"} size="icon" className="size-8">
+              <Button variant={"default"} className="h-8 px-3">
                 <LogInIcon size={18} />
               </Button>
             </LoginDialog>

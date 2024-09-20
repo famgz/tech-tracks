@@ -40,36 +40,15 @@ export default async function Home() {
             </p>
           </div>
 
-          {session?.user ? (
-            <div className="space-y-3">
-              <p className="text-left text-xl">
-                Olá,{" "}
-                <span className="font-bold capitalize">
-                  {session.user.name}
-                </span>
-              </p>
-
-              <Link
-                href="/tracks"
-                className={cn(
-                  buttonVariants({ variant: "default", size: "lg" }),
-                  "w-full max-w-[400px] text-xl font-bold",
-                )}
-              >
-                Ir para os Cursos
-              </Link>
-            </div>
-          ) : (
-            <LoginDialog>
-              <Button
-                variant={"default"}
-                size={"lg"}
-                className="mx-auto w-full max-w-[700px] gap-1 text-xl font-bold"
-              >
-                Faça login para acessar
-              </Button>
-            </LoginDialog>
-          )}
+          <Link
+            href="/tracks"
+            className={cn(
+              buttonVariants({ variant: "default", size: "lg" }),
+              "w-full max-w-[600px] text-xl font-bold",
+            )}
+          >
+            Confira os Cursos
+          </Link>
         </div>
 
         {/* hero image */}

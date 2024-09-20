@@ -1,11 +1,9 @@
 import Filters from "@/app/tracks/_components/filters";
 import TrackCard from "@/app/tracks/_components/track-card";
-import { auth } from "@/auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { db } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { SearchXIcon } from "lucide-react";
-import { redirect } from "next/navigation";
 
 interface Props {
   searchParams: {
@@ -25,12 +23,6 @@ export interface IFilters {
 }
 
 export default async function TracksPage({ searchParams }: Props) {
-  const session = await auth();
-
-  if (!session) {
-    redirect("/");
-  }
-
   const [skill, career, corporate, tracks] = await Promise.all([
     db.skill.findMany({ orderBy: { name: "asc" }, include: { _count: true } }),
     db.career.findMany({ orderBy: { name: "asc" }, include: { _count: true } }),

@@ -4,12 +4,8 @@ import Menu from "@/components/menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { auth } from "../auth";
 
 export default async function Header() {
-  const session = await auth();
-  const user = session?.user;
-
   return (
     <header>
       <Card className="rounded-t-none">
@@ -21,13 +17,11 @@ export default async function Header() {
               </Link>
             </Button>
 
-            {user && (
-              <Button asChild variant={"ghost"}>
-                <Link href={"/tracks"} className="font-semibold">
-                  Cursos
-                </Link>
-              </Button>
-            )}
+            <Button asChild variant={"ghost"}>
+              <Link href={"/tracks"} className="font-semibold">
+                Cursos
+              </Link>
+            </Button>
           </div>
 
           <div className="flex-center gap-2">
