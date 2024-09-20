@@ -229,7 +229,7 @@ export default async function TrackPage({ params }: Props) {
 
                       <div className="flex-center">
                         <Button asChild>
-                          <Link href={`/course/`}>Iniciar</Link>
+                          <Link href={`/course/${course.id}`}>Iniciar</Link>
                         </Button>
                       </div>
                     </CardHeader>
