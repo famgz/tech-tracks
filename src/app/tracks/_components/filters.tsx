@@ -100,6 +100,7 @@ export default function Filters({ filters, className }: Props) {
           className="flex-1 bg-transparent text-sm outline-none"
           size={1}
           onChange={handleInputChange}
+          placeholder="Pesquise"
         />
         <button type="reset" onClick={handleResetSearchInput}>
           <XIcon size={12} className="text-muted-foreground" />
