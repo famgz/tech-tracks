@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { db } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { SearchXIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
 interface Props {
@@ -102,8 +103,15 @@ export default async function TracksPage({ searchParams }: Props) {
         {/* Cards column */}
         <div className="flex flex-1 flex-col">
           <span className="mb-2">
-            {filteredTracks.length} curso{filteredTracks.length > 1 ? "s" : ""}{" "}
-            encontrado{filteredTracks.length > 1 ? "s" : ""}
+            {filteredTracks.length ? (
+              <>
+                {filteredTracks.length} curso
+                {filteredTracks.length > 1 ? "s" : ""} encontrado
+                {filteredTracks.length > 1 ? "s" : ""}
+              </>
+            ) : (
+              "Sem resultados"
+            )}
           </span>
           {filteredTracks.length > 0 ? (
             <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
@@ -114,8 +122,9 @@ export default async function TracksPage({ searchParams }: Props) {
               </div>
             </ScrollArea>
           ) : (
-            <div className="flex-center h-full w-full text-xl text-muted-foreground">
-              Nenhum curso encontrado
+            <div className="flex-center h-full w-full flex-col gap-6 text-2xl text-muted-foreground">
+              <SearchXIcon className="size-16" />
+              <p>Nenhum curso encontrado</p>
             </div>
           )}
         </div>
