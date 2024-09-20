@@ -29,8 +29,8 @@ export default async function Home() {
             </p>
             <p>
               Oferecemos cursos para todos os níveis, desde iniciantes até
-              avançados, com foco nas tecnologias mais demandadas pelo mercado e
-              muita prática.
+              avançados, com muita prática e foco nas tecnologias mais
+              demandadas pelo mercado.
             </p>
 
             <p>
