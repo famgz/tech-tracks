@@ -92,7 +92,7 @@ export default async function TrackPage({ params }: Props) {
               </div>
 
               {/* skills */}
-              <div className="flex flex-wrap items-center max-sm:justify-center">
+              <div className="flex max-w-[500px] flex-wrap items-center max-sm:justify-center">
                 {track.skills.map((s, i, a) => (
                   <Fragment key={s.id}>
                     <span className="text-xs font-semibold">{s.name}</span>
