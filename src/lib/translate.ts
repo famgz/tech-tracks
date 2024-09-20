@@ -10,10 +10,16 @@ const translations: Translations = {
   skill: "tecnologia",
 
   // track activities
-  code: "desafios de códigos",
+  code: "desafio de códigos",
   courses: "cursos",
   lives: "lives",
-  project: "desafios de projeto",
+  project: "desafio de projeto",
+
+  // course types
+  challenge: "desafio de projeto",
+  course: "curso",
+  live: "live",
+  // project: 'desafio de projeto',
 };
 
 export const translate = (word: string): string => {

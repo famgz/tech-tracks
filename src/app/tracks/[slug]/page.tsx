@@ -1,8 +1,15 @@
 import ChartFilledIcon from "@/components/icons/chart-filed";
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { baseAssetsUrl } from "@/constants/api";
 import { db } from "@/lib/prisma";
 import { translate } from "@/lib/translate";
+import { Accordion } from "@radix-ui/react-accordion";
 import { BookmarkIcon, ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,7 +32,7 @@ export default async function TrackPage({ params }: Props) {
     include: {
       careers: true,
       corporate: true,
-      modules: true,
+      modules: { include: { courses: true } },
       skills: true,
       track_activities: true,
     },
@@ -60,7 +67,7 @@ export default async function TrackPage({ params }: Props) {
             <div className="space-y-2">
               <div className="flex items-center gap-6 max-sm:justify-center">
                 {/* level */}
-                <div className="flex items-end gap-2">
+                <div className="flex items-end gap-1">
                   <ChartFilledIcon fontSize={16} className="fill-primary" />
                   <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
                     Nível {track.level}
@@ -68,7 +75,7 @@ export default async function TrackPage({ params }: Props) {
                 </div>
 
                 {/* workload */}
-                <div className="flex items-end gap-2">
+                <div className="flex items-end gap-1">
                   <ClockIcon size={16} />
                   <span className="text-xs leading-none text-muted-foreground">
                     {track.workload}h
@@ -122,7 +129,7 @@ export default async function TrackPage({ params }: Props) {
       <div className="flex flex-col items-center gap-4 max-sm:justify-center xs:flex-row">
         <Button
           variant={"outline"}
-          className="gap-2 px-6 text-xl max-xs:w-full"
+          className="gap-2 border-primary px-6 text-xl max-xs:w-full"
           size={"lg"}
         >
           <BookmarkIcon size={20} /> Salvar
@@ -160,6 +167,77 @@ export default async function TrackPage({ params }: Props) {
           __html: track.description,
         }}
       />
+
+      {/* course content */}
+      <Accordion
+        type="multiple"
+        className="max-w-[700px] overflow-hidden rounded-xl border border-muted-foreground/20"
+      >
+        {track.modules.map((module) => (
+          <AccordionItem
+            key={module.id}
+            value={module.id}
+            className="border-muted-foreground/20"
+          >
+            <AccordionTrigger className="gap-4 bg-muted p-6">
+              <span className="flex-1 text-left text-muted-foreground">
+                {module.name}
+              </span>
+              <span>{module.total_activities} atividades</span>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-5 p-4">
+              {module.courses.map((course) => (
+                <Card key={course.id} className="bg-muted">
+                  <CardHeader className="flex-row gap-2">
+                    <div className="flex-1 space-y-4">
+                      {/* course type and title */}
+                      <div className="space-y-1">
+                        <p className="capitalize text-muted-foreground">
+                          {translate(course.type)}
+                        </p>
+                        <p
+                          className="truncate font-semibold"
+                          title={course.name}
+                        >
+                          {course.name}
+                        </p>
+                      </div>
+
+                      {/* course stats */}
+                      <div className="flex items-center gap-3">
+                        {/* level */}
+                        <div className="flex items-end gap-1">
+                          <ChartFilledIcon
+                            fontSize={16}
+                            className="fill-primary"
+                          />
+                          <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
+                            {course.level}
+                          </span>
+                        </div>
+
+                        {/* workload */}
+                        <div className="flex items-end gap-1">
+                          <ClockIcon size={16} />
+                          <span className="text-xs leading-none text-muted-foreground">
+                            {course.workload}h
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex-center">
+                      <Button asChild>
+                        <Link href={`/course/`}>Iniciar</Link>
+                      </Button>
+                    </div>
+                  </CardHeader>
+                </Card>
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 }
