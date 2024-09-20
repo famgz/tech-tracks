@@ -55,35 +55,35 @@ export default async function Menu() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href={"/"} className="flex w-full items-center gap-2">
                 <HomeIcon className="size-4" /> Home
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
-              <Link href={"/"} className="flex w-full items-center gap-2">
+            <DropdownMenuItem asChild>
+              <Link href={"/tracks"} className="flex w-full items-center gap-2">
                 <CodeIcon className="size-4" /> Cursos
               </Link>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href={"/user"} className="flex w-full items-center gap-2">
                 <UserIcon className="size-4" />
                 Perfil
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href={"/user"} className="flex w-full items-center gap-2">
                 <BookMarkedIcon className="size-4" />
                 Cursos em andamento
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href={"/user"} className="flex w-full items-center gap-2">
                 <BookCheckIcon className="size-4" />
                 Cursos finalizados
