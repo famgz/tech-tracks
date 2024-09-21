@@ -26,8 +26,8 @@ export default async function CoursePage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto flex size-full max-w-[1920px] flex-col">
-      <div className="grid h-full grid-cols-[2fr_1fr]">
-        <div className="flex-center flex-col border-r">
+      <div className="flex h-full flex-col lg:grid lg:grid-cols-[2fr_1fr]">
+        <div className="flex-center flex-1 flex-col border-r">
           <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
             <BackButton backUrl={searchParams.back} />
             <h1 className="text-xl">{course.name}</h1>
@@ -38,8 +38,10 @@ export default async function CoursePage({ params, searchParams }: Props) {
           />
         </div>
 
-        <div className="flex h-full flex-col">
-          <h1 className="px-5 py-3 text-xl text-muted-foreground">Lições</h1>
+        <div className="flex min-h-[200px] flex-col lg:h-full">
+          <h1 className="px-5 py-3 text-xl text-muted-foreground max-lg:border-t">
+            Lições
+          </h1>
           <ScrollArea className="h-[100px] flex-auto">
             <LessonsAccordion lessons={course.lessons} />
           </ScrollArea>

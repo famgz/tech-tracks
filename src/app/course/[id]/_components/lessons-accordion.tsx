@@ -21,7 +21,7 @@ export default function LessonsAccordion({ lessons }: Props) {
             value={lesson.id}
             className="border-muted-foreground/20"
           >
-            <AccordionTrigger className="text-left">
+            <AccordionTrigger className="text-left text-sm">
               {lesson.name}
             </AccordionTrigger>
             <AccordionContent className="bg-muted p-0">
