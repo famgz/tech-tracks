@@ -1,15 +1,9 @@
+import ModulesAccordion from "@/app/track/[slug]/_components/modules-accordion";
 import ChartFilledIcon from "@/components/icons/chart-filed";
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { baseAssetsUrl } from "@/constants/api";
 import { db } from "@/lib/prisma";
 import { translate } from "@/lib/translate";
-import { Accordion } from "@radix-ui/react-accordion";
 import { BookmarkIcon, ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -151,12 +145,13 @@ export default async function TrackPage({ params }: Props) {
         }}
       />
 
-      {/* courses content */}
+      {/* track content */}
       <div className="space-y-3">
         {/* track data */}
         <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
           {Object.entries(track.track_activities).map(([k, v], i, a) => {
             if (i === a.length - 1) return;
+            if (!v) return;
             return (
               <Fragment key={k}>
                 <p>
@@ -170,75 +165,8 @@ export default async function TrackPage({ params }: Props) {
           })}
         </div>
 
-        <Accordion
-          type="multiple"
-          className="max-w-[700px] overflow-hidden rounded-xl border border-muted-foreground/20"
-        >
-          {track.modules.map((module) => (
-            <AccordionItem
-              key={module.id}
-              value={module.id}
-              className="border-muted-foreground/20"
-            >
-              <AccordionTrigger className="gap-4 bg-muted p-6">
-                <span className="flex-1 text-left text-muted-foreground">
-                  {module.name}
-                </span>
-                <span>{module.total_activities} atividades</span>
-              </AccordionTrigger>
-              <AccordionContent className="space-y-5 p-4">
-                {module.courses.map((course) => (
-                  <Card key={course.id} className="bg-muted">
-                    <CardHeader className="flex-row gap-3">
-                      <div className="flex-1 space-y-4 overflow-hidden">
-                        {/* course type and title */}
-                        <div className="space-y-1">
-                          <p className="capitalize text-muted-foreground">
-                            {translate(course.type)}
-                          </p>
-                          <p
-                            className="truncate font-semibold"
-                            title={course.name}
-                          >
-                            {course.name}
-                          </p>
-                        </div>
-
-                        {/* course stats */}
-                        <div className="flex items-center gap-3">
-                          {/* level */}
-                          <div className="flex items-end gap-1">
-                            <ChartFilledIcon
-                              fontSize={16}
-                              className="fill-primary"
-                            />
-                            <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
-                              {course.level}
-                            </span>
-                          </div>
-
-                          {/* workload */}
-                          <div className="flex items-end gap-1">
-                            <ClockIcon size={16} />
-                            <span className="text-xs leading-none text-muted-foreground">
-                              {course.workload}h
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex-center">
-                        <Button asChild>
-                          <Link href={`/course/${course.id}`}>Iniciar</Link>
-                        </Button>
-                      </div>
-                    </CardHeader>
-                  </Card>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        {/* modules */}
+        <ModulesAccordion modules={track.modules} />
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ export default function TrackCard({ track }: Props) {
     <HoverCard openDelay={700} closeDelay={0}>
       <HoverCardTrigger asChild>
         <Link
-          href={`/tracks/${track.slug}`}
+          href={`/track/${track.slug}`}
           className="relative aspect-[1200/564] min-w-[200px] cursor-pointer overflow-hidden rounded-lg"
         >
           <Image
@@ -82,7 +82,7 @@ export default function TrackCard({ track }: Props) {
                 buttonVariants({ variant: "ghost", size: "icon" }),
                 "size-7 rounded-full bg-foreground",
               )}
-              href={`/tracks/${track.slug}`}
+              href={`/track/${track.slug}`}
             >
               <PlayIcon
                 className="fill-background stroke-none hover:fill-foreground"
