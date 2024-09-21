@@ -1,13 +1,14 @@
+import PlayIcon from "@/components/icons/play";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { LessonWithContent } from "@/types/content";
+import { LessonWithContents } from "@/types/content";
 
 interface Props {
-  lessons: LessonWithContent[];
+  lessons: LessonWithContents[];
 }
 
 export default function LessonsAccordion({ lessons }: Props) {
@@ -20,15 +21,21 @@ export default function LessonsAccordion({ lessons }: Props) {
             value={lesson.id}
             className="border-muted-foreground/20"
           >
-            <AccordionTrigger>{lesson.name}</AccordionTrigger>
-            <AccordionContent className="space-y-3 bg-background p-3">
-              {lesson.contents.map((content) => (
-                <p
-                  className="bg-muted p-4 text-muted-foreground"
+            <AccordionTrigger className="text-left">
+              {lesson.name}
+            </AccordionTrigger>
+            <AccordionContent className="bg-muted p-0">
+              {lesson.contents.map((content, i) => (
+                <div
                   key={content.id}
+                  className="flex cursor-pointer items-center gap-3 border-b bg-background p-4 text-xs font-light hover:bg-background/70"
                 >
-                  {content.name}
-                </p>
+                  <PlayIcon isFilled={i < 2} />
+
+                  <p className="flex-1 text-left">{content.name}</p>
+
+                  <span>{content.duration}</span>
+                </div>
               ))}
             </AccordionContent>
           </AccordionItem>
