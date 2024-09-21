@@ -31,9 +31,7 @@ export default function RootLayout({
           <div className="flex h-screen flex-col">
             <Header />
             <Suspense fallback={<Loading />}>
-              <main className="mx-auto flex w-full flex-auto pb-6">
-                {children}
-              </main>
+              <main className="mx-auto flex w-full flex-auto">{children}</main>
             </Suspense>
             <Footer />
           </div>

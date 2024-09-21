@@ -85,7 +85,7 @@ export default async function TracksPage({ searchParams }: Props) {
       );
 
   return (
-    <div className="_container flex flex-1 flex-col py-2">
+    <div className="_container flex flex-1 flex-col pb-6 pt-2">
       <h1 className="py-2 text-center text-3xl font-bold">Cursos</h1>
 
       <div className="flex flex-1 gap-6 sm:gap-16">
