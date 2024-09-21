@@ -10,6 +10,7 @@ import { useTrackStore } from "@/store/track";
 import useStore from "@/store/use-store";
 import { Course } from "@prisma/client";
 import { ClockIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -51,7 +52,16 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
           : undefined
       }
     >
-      <CardHeader className="flex-row gap-3">
+      <CardHeader className="flex-row items-center gap-3">
+        <Image
+          src={course.badge}
+          width={64}
+          height={64}
+          alt="course badge"
+          className="size-16"
+          style={{ width: "auto" }}
+        />
+
         <div className="flex-1 space-y-4 overflow-hidden">
           {/* course type and title */}
           <div className="space-y-1">

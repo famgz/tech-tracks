@@ -118,6 +118,7 @@ export default async function TrackPage({ params }: Props) {
               height={0}
               className="h-auto"
               alt={track.corporate.name}
+              style={{ height: "auto" }}
             />
           </Link>
         </div>
