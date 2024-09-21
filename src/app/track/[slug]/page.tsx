@@ -1,10 +1,12 @@
 import ModulesAccordion from "@/app/track/[slug]/_components/modules-accordion";
+import TrackBookmarkButton from "@/app/track/[slug]/_components/track-bookmark.button";
+import TrackStartButton from "@/app/track/[slug]/_components/track-start-button";
+import { auth } from "@/auth";
 import ChartFilledIcon from "@/components/icons/chart-filed";
-import { Button } from "@/components/ui/button";
 import { baseAssetsUrl } from "@/constants/api";
 import { db } from "@/lib/prisma";
 import { translate } from "@/lib/translate";
-import { BookmarkIcon, ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
+import { ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,6 +20,8 @@ interface Props {
 
 export default async function TrackPage({ params }: Props) {
   const { slug } = params;
+  const session = await auth();
+  const user = session?.user;
 
   const track = await db.track.findUnique({
     where: {
@@ -121,20 +125,8 @@ export default async function TrackPage({ params }: Props) {
 
       {/* buttons */}
       <div className="flex flex-col items-center gap-4 max-sm:justify-center xs:flex-row">
-        <Button
-          variant={"outline"}
-          className="gap-2 border-primary px-6 text-xl max-xs:w-full"
-          size={"lg"}
-        >
-          <BookmarkIcon size={20} /> Salvar
-        </Button>
-        <Button
-          variant={"default"}
-          className="gap-2 text-xl font-semibold max-xs:w-full"
-          size={"lg"}
-        >
-          Matricular-se
-        </Button>
+        <TrackBookmarkButton trackId={track.id} user={user} />
+        <TrackStartButton trackId={track.id} user={user} />
       </div>
 
       {/* description */}
