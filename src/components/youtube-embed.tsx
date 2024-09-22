@@ -2,11 +2,10 @@ import React from "react";
 
 export default function YouTubeEmbed({ videoId }: { videoId: string }) {
   return (
-    <div className="video-container">
+    <div className="relative flex w-full flex-1 items-center">
       <iframe
-        width="560"
-        height="315"
-        src={`https://www.youtube.com/embed/${videoId}`}
+        src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+        className="aspect-video w-full"
         title="YouTube video player"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

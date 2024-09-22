@@ -1,15 +1,19 @@
 import LessonsAccordion from "@/app/course/[id]/_components/lessons-accordion";
 import BackButton from "@/components/buttons/back";
+import Loading from "@/components/loading";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import YouTubeEmbed from "@/components/youtube-embed";
 import { db } from "@/lib/prisma";
+import { isContentVideo } from "@/lib/utils";
 import { YoutubeIcon } from "lucide-react";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 interface Props {
   params: {
     id: string;
   };
-  searchParams: { back: string };
+  searchParams: { back: string; content: string };
 }
 
 export default async function CoursePage({ params, searchParams }: Props) {
@@ -22,31 +26,56 @@ export default async function CoursePage({ params, searchParams }: Props) {
 
   if (!course) return notFound();
 
-  console.log(course);
+  function getVideoContent() {
+    for (const lesson of course!.lessons) {
+      for (const content of lesson.contents) {
+        if (content.id === searchParams.content) {
+          return content;
+        }
+      }
+    }
+  }
+
+  const currentVideoContent = getVideoContent();
+  const videoId = currentVideoContent?.youtube_code;
 
   return (
-    <div className="mx-auto flex size-full max-w-[1920px] flex-col">
-      <div className="flex h-full flex-col lg:grid lg:grid-cols-[2fr_1fr]">
-        <div className="flex-center flex-1 flex-col border-r">
-          <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
-            <BackButton backUrl={searchParams.back} />
-            <h1 className="text-xl">{course.name}</h1>
+    <Suspense fallback={<Loading />}>
+      <div className="mx-auto flex size-full max-w-[1920px] flex-col">
+        <div className="flex h-full flex-col lg:grid lg:grid-cols-[2fr_1fr]">
+          {/* video frame */}
+          <div className="flex-center flex-1 flex-col border-r">
+            <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
+              <BackButton backUrl={searchParams.back} />
+              <h1 className="text-xl">{course.name}</h1>
+            </div>
+            {!!videoId ? (
+              <YouTubeEmbed videoId={videoId} />
+            ) : (
+              <div className="flex-center flex-1 flex-col gap-5 text-muted-foreground">
+                <YoutubeIcon
+                  className="size-44 text-muted-foreground/70"
+                  strokeWidth={0.7}
+                />
+                <p className="text-lg">
+                  Clique em um conteúdo das lições ao lado para carregar um
+                  vídeo
+                </p>
+              </div>
+            )}
           </div>
-          <YoutubeIcon
-            className="size-44 flex-1 text-muted-foreground"
-            strokeWidth={1}
-          />
-        </div>
 
-        <div className="flex min-h-[200px] flex-col lg:h-full">
-          <h1 className="px-5 py-3 text-xl text-muted-foreground max-lg:border-t">
-            Lições
-          </h1>
-          <ScrollArea className="h-[100px] flex-auto">
-            <LessonsAccordion lessons={course.lessons} />
-          </ScrollArea>
+          {/* lessons list */}
+          <div className="flex min-h-[200px] flex-col lg:h-full">
+            <h1 className="px-5 py-3 text-xl text-muted-foreground max-lg:border-t">
+              Lições
+            </h1>
+            <ScrollArea className="h-[100px] flex-auto">
+              <LessonsAccordion lessons={course.lessons} />
+            </ScrollArea>
+          </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   );
 }

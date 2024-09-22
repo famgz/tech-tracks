@@ -1,4 +1,4 @@
-import PlayIcon from "@/components/icons/play";
+import ContentCard from "@/app/course/[id]/_components/content-card";
 import {
   Accordion,
   AccordionContent,
@@ -25,17 +25,8 @@ export default function LessonsAccordion({ lessons }: Props) {
               {lesson.name}
             </AccordionTrigger>
             <AccordionContent className="bg-muted p-0">
-              {lesson.contents.map((content, i) => (
-                <div
-                  key={content.id}
-                  className="flex cursor-pointer items-center gap-3 border-b bg-background p-4 text-xs font-light hover:bg-background/70"
-                >
-                  <PlayIcon isFilled={i < 2} />
-
-                  <p className="flex-1 text-left">{content.name}</p>
-
-                  <span>{content.duration}</span>
-                </div>
+              {lesson.contents.map((content) => (
+                <ContentCard content={content} key={content.id} />
               ))}
             </AccordionContent>
           </AccordionItem>
