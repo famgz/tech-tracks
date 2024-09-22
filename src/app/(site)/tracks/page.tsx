@@ -1,5 +1,5 @@
-import Filters from "@/app/tracks/_components/filters";
-import TrackCard from "@/app/tracks/_components/track-card";
+import Filters from "@/app/(site)/tracks/_components/filters";
+import TrackCard from "@/app/(site)/tracks/_components/track-card";
 import Loading from "@/components/loading";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { db } from "@/lib/prisma";

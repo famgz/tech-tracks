@@ -1,6 +1,6 @@
-import ModulesAccordion from "@/app/track/[slug]/_components/modules-accordion";
-import TrackBookmarkButton from "@/app/track/[slug]/_components/track-bookmark.button";
-import TrackStartButton from "@/app/track/[slug]/_components/track-start-button";
+import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
+import TrackBookmarkButton from "@/app/(site)/track/[slug]/_components/track-bookmark.button";
+import TrackStartButton from "@/app/(site)/track/[slug]/_components/track-start-button";
 import { auth } from "@/auth";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import Loading from "@/components/loading";

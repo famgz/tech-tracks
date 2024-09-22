@@ -1,4 +1,4 @@
-import LessonsAccordion from "@/app/course/[id]/_components/lessons-accordion";
+import LessonsAccordion from "@/app/(class)/course/[id]/_components/lessons-accordion";
 import BackButton from "@/components/buttons/back";
 import Loading from "@/components/loading";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -29,7 +29,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
   function getVideoContent() {
     for (const lesson of course!.lessons) {
       for (const content of lesson.contents) {
-        if (content.id === searchParams.content) {
+        if (content.id === searchParams.content && isContentVideo(content)) {
           return content;
         }
       }

@@ -1,4 +1,4 @@
-import CourseCard from "@/app/track/[slug]/_components/course-card";
+import CourseCard from "@/app/(site)/track/[slug]/_components/course-card";
 import { auth } from "@/auth";
 import {
   AccordionContent,

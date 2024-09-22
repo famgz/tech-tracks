@@ -1,7 +1,6 @@
 "use client";
 
 import ContentIcon from "@/components/icons/content";
-import PlayIcon from "@/components/icons/play";
 import { cn, isContentVideo } from "@/lib/utils";
 import { Content } from "@prisma/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

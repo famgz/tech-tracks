@@ -1,4 +1,4 @@
-import ContentCard from "@/app/course/[id]/_components/content-card";
+import ContentCard from "@/app/(class)/course/[id]/_components/content-card";
 import {
   Accordion,
   AccordionContent,

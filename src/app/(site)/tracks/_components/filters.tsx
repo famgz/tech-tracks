@@ -1,6 +1,6 @@
 "use client";
 
-import { IFilters } from "@/app/tracks/page";
+import { IFilters } from "@/app/(site)/tracks/page";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";

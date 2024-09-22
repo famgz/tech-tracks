@@ -1,13 +1,9 @@
-import LoginDialog from "@/components/login-dialog";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { auth } from "../../auth";
 import Image from "next/image";
+import Link from "next/link";
 
 export default async function Home() {
-  const session = await auth();
-
   return (
     <div className="_container flex flex-col items-center py-10">
       <div className="grid gap-6 py-8 md:grid-cols-2">
