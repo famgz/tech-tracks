@@ -48,7 +48,7 @@ export default function ContentCard({ content }: Props) {
 
       <p className="flex-1 text-left">{content.name}</p>
 
-      <span>{content.duration}</span>
+      <span>{isThisContentVideo && (content.duration || "?")}</span>
     </div>
   );
 }
