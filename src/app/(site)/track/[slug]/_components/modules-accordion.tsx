@@ -20,7 +20,7 @@ export default async function ModulesAccordion({ modules }: Props) {
   return (
     <Accordion
       type="multiple"
-      className="max-w-[700px] overflow-hidden rounded-xl border border-muted-foreground/20"
+      className="overflow-hidden rounded-xl border border-muted-foreground/20"
     >
       {modules.map((module) => (
         <AccordionItem

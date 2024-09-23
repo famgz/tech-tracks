@@ -134,7 +134,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* description */}
         <div
-          className="max-w-[700px] font-light text-muted-foreground"
+          className="max-w-[1000px] font-light text-muted-foreground"
           dangerouslySetInnerHTML={{
             __html: track.description,
           }}
@@ -161,7 +161,9 @@ export default async function TrackPage({ params }: Props) {
           </div>
 
           {/* modules */}
-          <ModulesAccordion modules={track.modules} />
+          <div className="max-w-[1000px]">
+            <ModulesAccordion modules={track.modules} />
+          </div>
         </div>
       </div>
     </Suspense>
