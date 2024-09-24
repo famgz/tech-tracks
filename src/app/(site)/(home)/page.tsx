@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default async function Home() {
   return (
-    <div className="_container flex flex-col items-center py-10">
+    <div className="_container flex-center flex-col py-10">
       <div className="grid gap-6 py-8 md:grid-cols-2">
         {/* gretings */}
         <div className="space-y-12">
