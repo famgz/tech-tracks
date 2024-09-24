@@ -47,7 +47,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
           <div className="flex-center flex-1 flex-col border-r">
             <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
               <BackButton backUrl={searchParams.back} />
-              <h1 className="text-xl">{course.name}</h1>
+              <h1 className="text-lg lg:text-xl">{course.name}</h1>
             </div>
             {!!videoId ? (
               <YouTubeEmbed videoId={videoId} />
@@ -57,16 +57,15 @@ export default async function CoursePage({ params, searchParams }: Props) {
                   className="size-44 text-muted-foreground/70"
                   strokeWidth={0.7}
                 />
-                <p className="text-lg">
-                  Clique em um conteúdo das lições ao lado para carregar um
-                  vídeo
+                <p className="px-3 text-center text-lg">
+                  Selecione um conteúdo ao lado para carregar um vídeo
                 </p>
               </div>
             )}
           </div>
 
           {/* lessons list */}
-          <div className="flex min-h-[200px] flex-col lg:h-full">
+          <div className="flex min-h-[300px] flex-col lg:h-full">
             <h1 className="px-5 py-3 text-xl text-muted-foreground max-lg:border-t">
               Lições
             </h1>
