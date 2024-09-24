@@ -28,12 +28,12 @@ export default async function ModulesAccordion({ modules }: Props) {
           value={module.id}
           className="border-muted-foreground/20"
         >
-          <AccordionTrigger className="gap-4 bg-muted p-6">
+          <AccordionTrigger className="gap-4 bg-muted p-4 max-lg:text-sm lg:p-6">
             <CircleIcon className="size-5 text-muted-foreground" />
-            <span className="flex-1 text-left text-muted-foreground">
-              {module.name}
-            </span>
-            <span>{module.total_activities} atividades</span>
+            <div className="flex flex-1 gap-y-1 text-left max-lg:flex-col lg:gap-3">
+              <p className="flex-1 text-muted-foreground">{module.name}</p>
+              <p>{module.total_activities} atividades</p>
+            </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-5 p-4">
             {module.courses.map((course) => (

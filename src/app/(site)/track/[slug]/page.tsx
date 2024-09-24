@@ -76,7 +76,7 @@ export default async function TrackPage({ params }: Props) {
 
                   {/* workload */}
                   <div className="flex items-end gap-1">
-                    <ClockIcon size={16} />
+                    <ClockIcon size={16} className="shrink-0" />
                     <span className="text-xs leading-none text-muted-foreground">
                       {track.workload}h
                     </span>
@@ -84,8 +84,8 @@ export default async function TrackPage({ params }: Props) {
 
                   {/* corporate */}
                   <div className="flex items-end gap-1">
-                    <LandmarkIcon size={16} />
-                    <span className="text-xs leading-none text-muted-foreground">
+                    <LandmarkIcon size={16} className="shrink-0" />
+                    <span className="line-clamp-1 text-xs leading-none text-muted-foreground">
                       {track.corporate.name}
                     </span>
                   </div>
@@ -134,7 +134,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* description */}
         <div
-          className="max-w-[1000px] font-light text-muted-foreground"
+          className="max-w-[1000px] font-light text-muted-foreground max-lg:text-sm"
           dangerouslySetInnerHTML={{
             __html: track.description,
           }}

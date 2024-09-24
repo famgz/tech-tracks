@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useTrackStore } from "@/store/track";
 import useStore from "@/store/use-store";
 import { Course } from "@prisma/client";
-import { ClockIcon } from "lucide-react";
+import { ArrowRightIcon, ClockIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -52,13 +52,13 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
           : undefined
       }
     >
-      <CardHeader className="flex-row items-center gap-3">
+      <CardHeader className="flex-row items-center gap-4 space-y-0 max-lg:p-4">
         <Image
           src={course.badge}
           width={64}
           height={64}
           alt="course badge"
-          className="size-16"
+          className="size-14 lg:size-16"
           style={{ width: "auto" }}
         />
 
@@ -98,8 +98,10 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
             <Button
               onClick={handleGoToCourse}
               disabled={course.type !== "course"}
+              className="gap-1 px-3"
             >
-              Iniciar
+              <span className="max-sm:hidden">Iniciar</span>
+              <ArrowRightIcon className="size-5" />
             </Button>
           </div>
         )}
