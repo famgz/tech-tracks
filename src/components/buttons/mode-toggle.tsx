@@ -11,10 +11,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoonIcon } from "lucide-react";
+import { CheckIcon, MoonIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
+
+  const themes = ["light", "dark", "system"];
 
   return (
     <DropdownMenu>
@@ -25,16 +28,19 @@ export function ModeToggle() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
-        </DropdownMenuItem>
+      <DropdownMenuContent align="end" className="w-fit min-w-28">
+        {themes.map((t) => (
+          <DropdownMenuItem
+            onClick={() => setTheme(t)}
+            key={t}
+            className="items-center gap-2 capitalize"
+          >
+            <span className={cn("flex-1", { "font-semibold": theme === t })}>
+              {t}
+            </span>
+            {theme === t && <CheckIcon className="size-3.5" strokeWidth={3} />}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

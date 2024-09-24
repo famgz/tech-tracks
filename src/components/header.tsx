@@ -24,7 +24,7 @@ export default async function Header() {
             </Button>
           </div>
 
-          <div className="flex-center gap-2">
+          <div className="flex-center gap-2.5">
             <ModeToggle />
 
             <Menu />
