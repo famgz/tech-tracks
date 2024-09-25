@@ -151,7 +151,7 @@ export default function Filters({ filters, className }: Props) {
 
       {Object.values(parsedSearchParams).some((x) => x.length) && (
         <Button variant={"outline"} onClick={handleResetAllCheckboxs}>
-          Clear all
+          Limpar todos
         </Button>
       )}
     </div>
