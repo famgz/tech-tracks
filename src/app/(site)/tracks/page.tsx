@@ -1,10 +1,12 @@
 import Filters from "@/app/(site)/tracks/_components/filters";
 import TrackCard from "@/app/(site)/tracks/_components/track-card";
 import Loading from "@/components/loading";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { db } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { SearchXIcon } from "lucide-react";
+import { FilterIcon, SearchXIcon } from "lucide-react";
 import { Suspense } from "react";
 
 interface Props {
@@ -88,12 +90,27 @@ export default async function TracksPage({ searchParams }: Props) {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className="_container flex flex-1 flex-col pb-6 pt-2">
+      <div className="_container relative flex flex-1 flex-col pb-6 pt-2">
         <h1 className="py-2 text-center text-3xl font-bold">Cursos</h1>
 
         <div className="flex flex-1 gap-6 sm:gap-16">
           {/* Filters column */}
-          <Filters filters={filters} className="max-sm:hidden" />
+          <Filters filters={filters} className="desktop-only" />
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant={"ghost"}
+                size={"icon"}
+                className="mobile-only absolute right-4 top-4"
+              >
+                <FilterIcon className="" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="mobile-only flex">
+              <Filters filters={filters} className="flex-1" />
+            </SheetContent>
+          </Sheet>
 
           {/* Cards column */}
           <div className="flex flex-1 flex-col">

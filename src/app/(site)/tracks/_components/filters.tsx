@@ -91,7 +91,10 @@ export default function Filters({ filters, className }: Props) {
 
   return (
     <div
-      className={cn("flex max-w-[min(20vw,250px)] flex-col gap-3", className)}
+      className={cn(
+        "flex flex-col gap-3 sm:max-w-[min(20vw,250px)]",
+        className,
+      )}
     >
       <span className="">Filtros</span>
       <form className="flex-center gap-2 rounded-lg border px-2 py-1">
@@ -135,7 +138,7 @@ export default function Filters({ filters, className }: Props) {
                         htmlFor={x.name}
                         className="flex flex-1 cursor-pointer items-center gap-1 truncate whitespace-nowrap text-xs"
                       >
-                        <span className="inline-block max-w-[min(10vw,134px)] truncate sm:max-w-[min(10vw,200px)]">
+                        <span className="inline-block truncate sm:max-w-[min(10vw,200px)]">
                           {x.name}
                         </span>
                         <span>({x._count?.tracks ?? 0})</span>
