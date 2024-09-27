@@ -71,7 +71,7 @@ export default function TrackCard({ track }: Props) {
               {/* corporate */}
               <div className="flex items-end gap-1">
                 <LandmarkIcon size={14} />
-                <span className="text-[10px] leading-none">
+                <span className="line-clamp-1 text-[10px] leading-none">
                   {track.corporate.name}
                 </span>
               </div>
