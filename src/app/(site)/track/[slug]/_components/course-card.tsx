@@ -41,18 +41,21 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
 
   return (
     <Card
-      className={cn(
-        "bg-muted hover:bg-muted-foreground/20",
-        isCourseType ? "cursor-pointer" : "cursor-not-allowed brightness-[.75]",
-      )}
+      className={cn("overflow-hidden bg-muted hover:bg-muted-foreground/20", {
+        "cursor-pointer": isCourseType,
+      })}
       onClick={isCourseType ? handleGoToCourse : () => {}}
-      title={
-        !isCourseType
-          ? "No momento apenas cursos com conteúdos de aulas são suportados na plataforma"
-          : undefined
-      }
     >
-      <CardHeader className="flex-row items-center gap-4 space-y-0 max-lg:p-4">
+      <CardHeader className="relative flex-row items-center gap-4 space-y-0 max-lg:p-4">
+        {!isCourseType && (
+          <div className="flex-center absolute inset-0 z-50 size-full cursor-not-allowed bg-background/90 p-10 opacity-0 transition-opacity duration-200 hover:opacity-100">
+            <span className="max-w-[300px] text-center">
+              No momento apenas cursos com conteúdos de aulas são suportados na
+              plataforma :(
+            </span>
+          </div>
+        )}
+
         <Image
           src={course.badge}
           width={64}
@@ -70,7 +73,7 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
             </p>
             <p
               className="truncate font-semibold"
-              title={(isCourseType && course.name) || undefined}
+              title={isCourseType ? course.name : undefined}
             >
               {course.name}
             </p>
