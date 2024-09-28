@@ -68,7 +68,10 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
             <p className="capitalize text-muted-foreground">
               {translate(course.type)}
             </p>
-            <p className="truncate font-semibold" title={course.name}>
+            <p
+              className="truncate font-semibold"
+              title={(isCourseType && course.name) || undefined}
+            >
               {course.name}
             </p>
           </div>
