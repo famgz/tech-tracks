@@ -36,6 +36,7 @@ export default async function TracksPage({ searchParams }: Props) {
     }),
     db.track.findMany({
       include: { skills: true, corporate: true, careers: true },
+      orderBy: { created: "desc" },
     }),
   ]);
 
