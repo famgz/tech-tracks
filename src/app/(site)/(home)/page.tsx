@@ -5,18 +5,18 @@ import Link from "next/link";
 
 export default async function Home() {
   return (
-    <div className="_container flex-center flex-col py-10">
-      <div className="grid gap-6 py-8 md:grid-cols-2">
+    <div className="_container flex-center flex-col py-6 md:py-10">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* gretings */}
         <div className="space-y-12">
-          <h1 className="text-6xl font-medium text-foreground/80">
+          <h1 className="text-3xl font-medium text-foreground/80 md:text-5xl">
             Aprenda a{" "}
             <span className="font-extrabold text-foreground">programar</span>,
             transforme o seu{" "}
             <span className="font-extrabold text-foreground">futuro</span>!
           </h1>
 
-          <div className="space-y-3 text-xl font-light text-muted-foreground">
+          <div className="space-y-3 font-light text-muted-foreground md:text-xl">
             <p>
               Seja bem-vindo(a) ao{" "}
               <span className="font-bold text-primary">Tech Tracks</span>, sua
@@ -40,7 +40,7 @@ export default async function Home() {
             href="/tracks"
             className={cn(
               buttonVariants({ variant: "default", size: "lg" }),
-              "w-full max-w-[600px] text-xl font-bold",
+              "w-full max-w-[600px] text-lg font-bold md:text-xl",
             )}
           >
             Confira os Cursos
@@ -53,6 +53,8 @@ export default async function Home() {
             src={"/hero.svg"}
             width={500}
             height={500}
+            priority
+            className="max-md:size-[300px]"
             alt="programmer studying"
           />
         </div>
