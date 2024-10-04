@@ -58,7 +58,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
                   strokeWidth={0.7}
                 />
                 <p className="px-3 text-center text-lg">
-                  Selecione um conteúdo ao lado para carregar um vídeo
+                  Selecione uma aula para carregar um vídeo
                 </p>
               </div>
             )}
