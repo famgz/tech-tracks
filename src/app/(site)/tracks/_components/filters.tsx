@@ -1,6 +1,12 @@
 "use client";
 
 import { IFilters } from "@/app/(site)/tracks/page";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -110,43 +116,47 @@ export default function Filters({ filters, className }: Props) {
         </button>
       </form>
       <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
-        <div className="space-y-3 overflow-x-hidden">
+        <div className="overflow-x-hidden">
           {Object.entries(filters).map(([k, v]) => {
             const key = k as FilterKeys;
 
             return (
-              <div key={key}>
-                <h3 className="mb-1 text-sm font-bold capitalize">
-                  {translate(k)}
-                </h3>
-                <div className="">
-                  {v.map((x: any) => (
-                    <div
-                      key={x.id as string}
-                      className="ml-2 flex items-center gap-2 rounded py-0.5 hover:bg-muted"
-                      title={x.name}
-                    >
-                      <Checkbox
-                        id={x.name}
-                        name={x.name}
-                        checked={parsedSearchParams[key].includes(x.id)}
-                        onCheckedChange={(checked) =>
-                          handleCheckboxChange(key, x.id, !!checked)
-                        }
-                      />
-                      <label
-                        htmlFor={x.name}
-                        className="flex flex-1 cursor-pointer items-center gap-1 truncate whitespace-nowrap text-xs"
+              <Accordion key={key} type="multiple" defaultValue={["skill"]}>
+                <AccordionItem value={key} className="min-w-[250px]">
+                  <AccordionTrigger className="py-2 pl-1 pr-2 hover:bg-muted/40">
+                    <h3 className="text-sm font-bold capitalize">
+                      {translate(k)}
+                    </h3>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    {v.map((x: any) => (
+                      <div
+                        key={x.id as string}
+                        className="ml-2 flex items-center gap-2 rounded py-0.5 hover:bg-muted"
+                        title={x.name}
                       >
-                        <span className="inline-block truncate sm:max-w-[min(10vw,200px)]">
-                          {x.name}
-                        </span>
-                        <span>({x._count?.tracks ?? 0})</span>
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                        <Checkbox
+                          id={x.name}
+                          name={x.name}
+                          checked={parsedSearchParams[key].includes(x.id)}
+                          onCheckedChange={(checked) =>
+                            handleCheckboxChange(key, x.id, !!checked)
+                          }
+                        />
+                        <label
+                          htmlFor={x.name}
+                          className="flex flex-1 cursor-pointer items-center gap-1 truncate whitespace-nowrap text-xs"
+                        >
+                          <span className="inline-block truncate sm:max-w-[min(10vw,200px)]">
+                            {x.name}
+                          </span>
+                          <span>({x._count?.tracks ?? 0})</span>
+                        </label>
+                      </div>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             );
           })}
         </div>
