@@ -41,8 +41,9 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
 
   return (
     <Card
-      className={cn("overflow-hidden bg-muted hover:bg-muted-foreground/20", {
-        "cursor-pointer": isCourseType,
+      className={cn("overflow-hidden bg-muted", {
+        "cursor-pointer hover:bg-muted-foreground/20": isCourseType,
+        "opacity-50": !isCourseType,
       })}
       onClick={isCourseType ? handleGoToCourse : () => {}}
     >
