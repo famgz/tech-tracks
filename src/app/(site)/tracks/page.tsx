@@ -94,10 +94,13 @@ export default async function TracksPage({ searchParams }: Props) {
       <div className="_container relative flex flex-1 flex-col pb-6 pt-2">
         <h1 className="py-2 text-center text-3xl font-bold">Cursos</h1>
 
-        <div className="flex flex-1 gap-6 sm:gap-12">
+        <div className="flex flex-1 gap-6 sm:gap-4 xl:gap-8">
           {/* Filters column */}
+
+          {/* desktop filters */}
           <Filters filters={filters} className="desktop-only" />
 
+          {/* mobile filters */}
           <Sheet>
             <SheetTrigger asChild>
               <Button
