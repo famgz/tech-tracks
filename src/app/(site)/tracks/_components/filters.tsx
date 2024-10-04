@@ -98,7 +98,7 @@ export default function Filters({ filters, className }: Props) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 sm:max-w-[min(20vw,250px)]",
+        "flex w-full flex-col gap-3 sm:max-w-[min(20vw,250px)]",
         className,
       )}
     >
@@ -122,13 +122,13 @@ export default function Filters({ filters, className }: Props) {
 
             return (
               <Accordion key={key} type="multiple" defaultValue={["skill"]}>
-                <AccordionItem value={key} className="min-w-[250px]">
+                <AccordionItem value={key} className="">
                   <AccordionTrigger className="py-2 pl-1 pr-2 hover:bg-muted/40">
                     <h3 className="text-sm font-bold capitalize">
                       {translate(k)}
                     </h3>
                   </AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="py-2">
                     {v.map((x: any) => (
                       <div
                         key={x.id as string}
@@ -145,9 +145,9 @@ export default function Filters({ filters, className }: Props) {
                         />
                         <label
                           htmlFor={x.name}
-                          className="flex flex-1 cursor-pointer items-center gap-1 truncate whitespace-nowrap text-xs"
+                          className="truncatee flex flex-1 cursor-pointer items-center gap-1 whitespace-nowrap text-xs"
                         >
-                          <span className="inline-block truncate sm:max-w-[min(10vw,200px)]">
+                          <span className="inline-block max-w-[45vw] truncate sm:max-w-[min(12vw,250px)]">
                             {x.name}
                           </span>
                           <span>({x._count?.tracks ?? 0})</span>
