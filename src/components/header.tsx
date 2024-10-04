@@ -10,7 +10,7 @@ export default async function Header() {
     <header>
       <Card className="rounded-t-none">
         <CardContent className="_container flex items-center justify-between py-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center sm:gap-4">
             <Button variant={"ghost"} asChild>
               <Link href={"/"}>
                 <Logo />
