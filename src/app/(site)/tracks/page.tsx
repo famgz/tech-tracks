@@ -47,8 +47,8 @@ export default async function TracksPage({ searchParams }: Props) {
       { id: "3", name: "Avançado" },
     ],
     career,
-    corporate,
     skill,
+    corporate,
   };
 
   const normalizeParams = (param: string | string[]) =>
