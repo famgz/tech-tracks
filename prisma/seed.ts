@@ -1,6 +1,3 @@
-import { PrismaClient } from "@prisma/client";
-import fs from "fs";
-import path from "path";
 import type {
   Career,
   Content,
@@ -14,8 +11,11 @@ import type {
   Track,
   TrackActivities,
 } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import chalk from "chalk";
+import fs from "fs";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 const prisma = new PrismaClient();
 
@@ -27,9 +27,29 @@ const __dirname = dirname(__filename);
 const tracksDirPath = path.join(__dirname, "../../dio-data-scraper/data"); // Adjust the path as needed
 const coursesDirPath = path.join(tracksDirPath, "courses");
 
+// -------------- Utility functions --------------
+
 function toDate(timestamp: number, inSeconds: boolean = true): Date {
   return new Date(inSeconds ? timestamp * 1000 : timestamp);
 }
+
+function getJSONFiles(folderPath: string) {
+  const allItems = fs.readdirSync(folderPath);
+
+  return allItems
+    .map((item: string) => path.join(folderPath, item)) // Get full path
+    .filter(
+      (filePath: string) =>
+        fs.statSync(filePath).isFile() && filePath.endsWith(".json"),
+    ); // filter json files
+}
+
+function readJSONFile(filePath: string) {
+  const fileContent = fs.readFileSync(filePath, "utf-8");
+  return JSON.parse(fileContent);
+}
+
+// -------------- DB actions --------------
 
 async function updateCorporates(corporates: Corporate[]) {
   for (const corporate of corporates) {
@@ -306,48 +326,69 @@ async function updateTracks(tracks: any[]) {
 }
 
 async function updateModules(modules: any[]) {
-  for (const _module of modules) {
+  let createdCount = 0;
+  let resolvedPromises = 0;
+  const amount = modules.length;
+
+  const updatePromises = modules.map(async (_module) => {
     const moduleExists = await prisma.module.findUnique({
       where: { id: _module.id },
     });
 
-    if (moduleExists) {
-      console.log(`Existing module ${_module.name}`);
-      await prisma.module.update({
-        where: { id: _module.id },
-        data: {
-          courses: {
-            connect: _module.courses.map((x: Course) => ({ id: x })),
-          },
+    await prisma.module.upsert({
+      where: { id: _module.id },
+      update: {
+        name: _module.name,
+        total_activities: _module.total_activities,
+        courses: {
+          upsert: _module.courses.map((courseId: string, index: number) => ({
+            where: {
+              moduleId_courseId: {
+                moduleId: _module.id,
+                courseId: courseId,
+              },
+            },
+            update: {
+              order: index + 1,
+            },
+            create: {
+              courseId: courseId,
+              order: index + 1,
+            },
+          })),
         },
-      });
-      continue;
-    }
-
-    await prisma.module.create({
-      data: {
+      },
+      create: {
         id: _module.id,
         name: _module.name,
         total_activities: _module.total_activities,
         courses: {
-          connect: _module.courses.map((x: Course) => ({ id: x })),
+          create: _module.courses.map((courseId: string, index: number) => ({
+            courseId: courseId,
+            order: index + 1,
+          })),
         },
-        // trackId: _module.trackId,
       },
     });
 
-    console.log(`Added module ${_module.name}`);
-  }
+    resolvedPromises++;
+
+    const prefix = `${resolvedPromises}/${amount}`;
+    if (!moduleExists) {
+      createdCount++;
+      console.log(chalk.green(`${prefix} Created module: ${_module.name}`));
+    } else {
+      console.log(chalk.gray(`${prefix} Module exists: ${_module.name}`));
+    }
+  });
+
+  await Promise.all(updatePromises);
+
+  console.log(`Total modules created: ${createdCount}`);
 }
 
-async function getCourses() {
-  const allItems = fs.readdirSync(coursesDirPath);
-
-  // Filter files that end with '.json'
-  const courseFiles = allItems
-    .map((item: string) => path.join(coursesDirPath, item)) // Get full path
-    .filter((itemPath: string) => fs.statSync(itemPath).isFile()) // Only keep files
-    .filter((filePath: string) => filePath.endsWith(".json"));
+async function readCourseJSONFiles() {
+  const courseFiles = getJSONFiles(coursesDirPath);
 
   const courses: Course[] = [];
   const subtitles: Subtitle[] = [];
@@ -356,8 +397,7 @@ async function getCourses() {
 
   for (const filePath of courseFiles) {
     // Read and parse the JSON file
-    const fileContent = fs.readFileSync(filePath, "utf-8");
-    const course = JSON.parse(fileContent);
+    const course = readJSONFile(filePath);
 
     if (!courses.some((x) => x.id === course.id)) {
       courses.push(course);
@@ -390,14 +430,8 @@ async function getCourses() {
   await updateSubtitles(subtitles);
 }
 
-async function getTracks() {
-  const allItems = fs.readdirSync(tracksDirPath);
-
-  // Filter files that end with '.json'
-  const trackFiles = allItems
-    .map((item: string) => path.join(tracksDirPath, item)) // Get full path
-    .filter((itemPath: string) => fs.statSync(itemPath).isFile()) // Only keep files
-    .filter((filePath: string) => filePath.endsWith(".json"));
+async function readTrackJSONFiles() {
+  const trackFiles = getJSONFiles(tracksDirPath);
 
   const trackActivities: TrackActivities[] = [];
   const modules: Module[] = [];
@@ -407,9 +441,7 @@ async function getTracks() {
   const skills: Skill[] = [];
 
   for (const filePath of trackFiles) {
-    // Read and parse the JSON file
-    const fileContent = fs.readFileSync(filePath, "utf-8");
-    const track = JSON.parse(fileContent);
+    const track = readJSONFile(filePath);
 
     track.track_activities.trackId = track.id;
 
@@ -445,6 +477,16 @@ async function getTracks() {
     }
   }
 
+  console.table({
+    trackFiles: trackFiles.length,
+    trackActivities: trackActivities.length,
+    modules: modules.length,
+    tracks: tracks.length,
+    careers: careers.length,
+    corporates: corporates.length,
+    skills: skills.length,
+  });
+
   // await updatetrackActivities(trackActivities);
   await updateModules(modules);
   // await updateTracks(tracks);
@@ -454,8 +496,8 @@ async function getTracks() {
 }
 
 async function main() {
-  // await getTracks();
-  await getCourses();
+  await readTrackJSONFiles();
+  // await readCourseJSONFiles();
 }
 
 main()

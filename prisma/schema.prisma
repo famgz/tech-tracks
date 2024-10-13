@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Auth
+// -------------- Auth --------------
 
 model User {
   id            String    @id @default(cuid())
@@ -15,11 +15,10 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Account {
@@ -34,11 +33,9 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
 }
@@ -47,10 +44,9 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -61,7 +57,142 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
-// Products
+// -------------- Content --------------
+
+model Track {
+  id                     String           @id @default(uuid())
+  slug                   String           @unique
+  badge                  String
+  color                  String
+  created                DateTime
+  description            String
+  level                  Int
+  level_name             LevelName
+  name                   String
+  name_ascii             String
+  preview                String
+  public_route           String
+  relevance              Int
+  scheduled              String
+  section_type           SectionType
+  subscription_type      SubscriptionType
+  total_activities       Int
+  web_route              String
+  workload               Int
+  corporateId            String
+  trackActivitiesTrackId String           @unique
+  modules                Module[]
+  corporate              Corporate        @relation(fields: [corporateId], references: [id])
+  track_activities       TrackActivities  @relation(fields: [trackActivitiesTrackId], references: [trackId])
+  careers                Career[]         @relation("CareerToTrack")
+  skills                 Skill[]          @relation("SkillToTrack")
+}
+
+model Career {
+  id     String  @id @default(uuid())
+  name   String
+  tracks Track[] @relation("CareerToTrack")
+}
+
+model Skill {
+  id     String  @id @default(uuid())
+  name   String
+  tracks Track[] @relation("SkillToTrack")
+}
+
+model Corporate {
+  id          String  @id @default(uuid())
+  description String
+  image_url   String
+  name        String
+  site        String?
+  tracks      Track[]
+}
+
+model TrackActivities {
+  code    Int
+  courses Int
+  lives   Int
+  project Int
+  trackId String @id
+  track   Track?
+}
+
+model Module {
+  id               String         @id @default(uuid())
+  name             String
+  total_activities Int
+  trackId          String?
+  Track            Track?         @relation(fields: [trackId], references: [id])
+  courses          ModuleCourse[]
+}
+
+model Course {
+  id                String         @id @default(uuid())
+  slug              String
+  badge             String
+  description       String
+  first_slug        String?
+  first_uuid        String?
+  level             String
+  name              String
+  total             Int
+  type              CourseType
+  workload          Int
+  extra_information Json?
+  lessons           Lesson[]
+  modules           ModuleCourse[]
+}
+
+model ModuleCourse {
+  moduleId String
+  courseId String
+  order    Int
+  Course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  Module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@id([moduleId, courseId])
+  @@unique([moduleId, courseId, order])
+}
+
+model Lesson {
+  id                   String    @id @default(uuid())
+  course               String
+  description          String
+  experience           Int
+  large_cover          String?
+  large_cover_disabled String?
+  name                 String
+  next_content         String?
+  next_slug            String?
+  order                Int
+  workload             Int
+  courseId             String?
+  contents             Content[]
+  Course               Course?   @relation(fields: [courseId], references: [id])
+}
+
+model Content {
+  id           String      @id @default(uuid())
+  slug         String
+  content      Json
+  duration     String?
+  name         String
+  pdf_url      String?
+  type         ContentType
+  youtube_code String?
+  lessonId     String?
+  Lesson       Lesson?     @relation(fields: [lessonId], references: [id])
+  subtitles    Subtitle[]
+}
+
+model Subtitle {
+  id        String   @id @default(uuid())
+  file      String
+  name      String
+  contentId String?
+  Content   Content? @relation(fields: [contentId], references: [id])
+}
 
 enum LevelName {
   beginner
@@ -91,138 +222,4 @@ enum ContentType {
   quiz
   text
   video
-}
-
-model Track {
-  id                String           @id @default(uuid())
-  slug              String           @unique
-  badge             String // square image
-  careers           Career[]
-  color             String
-  corporate         Corporate        @relation(fields: [corporateId], references: [id])
-  created           DateTime
-  description       String
-  level             Int
-  level_name        LevelName
-  modules           Module[]
-  name              String
-  name_ascii        String
-  preview           String // card horizontal image
-  public_route      String // endpoint to dio website
-  relevance         Int
-  scheduled         String
-  section_type      SectionType
-  skills            Skill[]
-  subscription_type SubscriptionType
-  total_activities  Int
-  track_activities  TrackActivities  @relation(fields: [trackActivitiesTrackId], references: [trackId])
-  web_route         String
-  workload          Int
-
-  corporateId            String
-  trackActivitiesTrackId String @unique
-}
-
-model Career {
-  id     String  @id @default(uuid())
-  name   String
-  tracks Track[]
-}
-
-model Skill {
-  id     String  @id @default(uuid())
-  name   String
-  tracks Track[]
-}
-
-model Corporate {
-  id          String  @id @default(uuid())
-  description String
-  image_url   String
-  name        String
-  site        String?
-  tracks      Track[]
-}
-
-model TrackActivities {
-  code    Int
-  courses Int
-  lives   Int
-  project Int
-
-  trackId String
-  track   Track?
-
-  @@id([trackId])
-}
-
-model Module {
-  id               String   @id @default(uuid())
-  name             String
-  total_activities Int
-  courses          Course[]
-
-  trackId String?
-  Track   Track?  @relation(fields: [trackId], references: [id])
-}
-
-model Course {
-  id                String     @id @default(uuid())
-  slug              String // found duplicates
-  badge             String // image badge
-  description       String
-  extra_information Json?
-  first_slug        String?
-  first_uuid        String?
-  lessons           Lesson[]
-  level             String
-  name              String
-  total             Int // total lessons
-  type              CourseType
-  workload          Int
-
-  modules Module[]
-}
-
-model Lesson {
-  id                   String    @id @default(uuid())
-  // author Author  // TODO:
-  contents             Content[]
-  course               String
-  description          String
-  experience           Int
-  large_cover          String?
-  large_cover_disabled String?
-  name                 String
-  next_content         String?
-  next_slug            String?
-  order                Int
-  // reference Reference  // TODO: a book reference
-  workload             Int
-
-  Course   Course? @relation(fields: [courseId], references: [id])
-  courseId String?
-}
-
-model Content {
-  id           String      @id @default(uuid())
-  slug         String // found duplicate slugs
-  content      Json
-  duration     String?
-  name         String
-  pdf_url      String?
-  subtitles    Subtitle[]
-  type         ContentType
-  youtube_code String?
-
-  Lesson   Lesson? @relation(fields: [lessonId], references: [id])
-  lessonId String?
-}
-
-model Subtitle {
-  id        String   @id @default(uuid())
-  file      String
-  name      String // language
-  Content   Content? @relation(fields: [contentId], references: [id])
-  contentId String?
 }

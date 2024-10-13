@@ -36,10 +36,10 @@ export default async function ModulesAccordion({ modules }: Props) {
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-5 p-4">
-            {module.courses.map((course) => (
+            {module.courses.map(({ Course }) => (
               <CourseCard
-                course={course}
-                key={course.id}
+                course={Course}
+                key={Course.id}
                 trackId={module.trackId}
                 isLoggedIn={!!user}
               />

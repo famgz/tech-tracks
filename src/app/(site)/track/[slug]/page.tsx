@@ -31,7 +31,16 @@ export default async function TrackPage({ params }: Props) {
     include: {
       careers: true,
       corporate: true,
-      modules: { include: { courses: true } },
+      modules: {
+        include: {
+          courses: {
+            include: {
+              Course: true,
+            },
+            orderBy: { order: "asc" },
+          },
+        },
+      },
       skills: true,
       track_activities: true,
     },
