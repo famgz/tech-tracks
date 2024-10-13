@@ -1,13 +1,10 @@
 import Filters from "@/app/(site)/tracks/_components/filters";
-import TrackCard from "@/app/(site)/tracks/_components/track-card";
-import Loading from "@/components/loading";
+import TrackCardsGrid from "@/app/(site)/tracks/_components/track-cards-grid";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { db } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { FilterIcon, SearchXIcon } from "lucide-react";
-import { Suspense } from "react";
+import { FilterIcon } from "lucide-react";
 
 interface Props {
   searchParams: {
@@ -90,62 +87,55 @@ export default async function TracksPage({ searchParams }: Props) {
       );
 
   return (
-    <Suspense fallback={<Loading />}>
-      <div className="_container relative flex flex-1 flex-col pb-6 pt-2">
-        <h1 className="py-2 text-center text-3xl font-bold">Cursos</h1>
+    <div className="_container relative flex flex-1 flex-col pb-6 pt-2">
+      <h1 className="py-2 text-center text-3xl font-bold">Cursos</h1>
 
-        <div className="flex flex-1 gap-6 sm:gap-4 xl:gap-8">
-          {/* Filters column */}
+      <div className="flex flex-1 gap-6 sm:gap-4 xl:gap-8">
+        {/* Filters column */}
 
-          {/* desktop filters */}
-          <Filters filters={filters} className="desktop-only" />
+        {/* desktop filters */}
+        <Filters
+          filters={filters}
+          searchString={parsedSearchParams.search}
+          className="desktop-only"
+        />
 
-          {/* mobile filters */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant={"ghost"}
-                size={"icon"}
-                className="mobile-only absolute right-4 top-4"
-              >
-                <FilterIcon className="" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="mobile-only flex">
-              <Filters filters={filters} className="flex-1" />
-            </SheetContent>
-          </Sheet>
+        {/* mobile filters */}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"icon"}
+              className="mobile-only absolute right-4 top-4"
+            >
+              <FilterIcon className="" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="mobile-only flex">
+            <Filters
+              filters={filters}
+              searchString={parsedSearchParams.search}
+              className="flex-1"
+            />
+          </SheetContent>
+        </Sheet>
 
-          {/* Cards column */}
-          <div className="flex flex-1 flex-col">
-            <span className="mb-2 ml-2">
-              {filteredTracks.length ? (
-                <>
-                  {filteredTracks.length} curso
-                  {filteredTracks.length > 1 ? "s" : ""} encontrado
-                  {filteredTracks.length > 1 ? "s" : ""}
-                </>
-              ) : (
-                "Sem resultados"
-              )}
-            </span>
-            {filteredTracks.length > 0 ? (
-              <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
-                <div className="grid gap-3 p-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredTracks.map((t) => (
-                    <TrackCard track={t} key={t.id} />
-                  ))}
-                </div>
-              </ScrollArea>
+        {/* Track cards column */}
+        <div className="flex flex-1 flex-col">
+          <span className="mb-2 ml-2">
+            {filteredTracks.length ? (
+              <>
+                {filteredTracks.length} curso
+                {filteredTracks.length > 1 ? "s" : ""} encontrado
+                {filteredTracks.length > 1 ? "s" : ""}
+              </>
             ) : (
-              <div className="flex-center h-full w-full flex-col gap-6 text-2xl text-muted-foreground">
-                <SearchXIcon className="size-16" />
-                <p>Nenhum curso encontrado</p>
-              </div>
+              "Sem resultados"
             )}
-          </div>
+          </span>
+          <TrackCardsGrid filteredTracks={filteredTracks} />
         </div>
       </div>
-    </Suspense>
+    </div>
   );
 }

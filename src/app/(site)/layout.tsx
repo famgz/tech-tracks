@@ -11,9 +11,9 @@ export default function RootLayout({
   return (
     <>
       <Header />
-      <Suspense fallback={<Loading />}>
-        <main className="_main">{children}</main>
-      </Suspense>
+      <main className="_main">
+        <Suspense fallback={<Loading />}>{children}</Suspense>
+      </main>
       <Footer />
     </>
   );

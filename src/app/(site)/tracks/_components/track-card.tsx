@@ -3,7 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { HoverCard, HoverCardContent } from "@/components/ui/hover-card";
 import { baseAssetsUrl } from "@/constants/api";
 import { cn } from "@/lib/utils";
-import { Prisma } from "@prisma/client";
+import { TrackWithExtraInfo } from "@/types/content";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { ClockIcon, DotIcon, LandmarkIcon, PlayIcon } from "lucide-react";
 import Image from "next/image";
@@ -11,12 +11,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 
 interface Props {
-  track: Prisma.TrackGetPayload<{
-    include: {
-      skills: true;
-      corporate: true;
-    };
-  }>;
+  track: TrackWithExtraInfo;
 }
 
 export default function TrackCard({ track }: Props) {
