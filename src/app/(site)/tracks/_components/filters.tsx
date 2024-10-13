@@ -14,10 +14,11 @@ import { translate } from "@/lib/translate";
 import { cn } from "@/lib/utils";
 import { SearchIcon, XIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 interface Props {
+  searchString?: string;
   filters: IFilters;
   className?: string;
 }
@@ -28,7 +29,7 @@ type ParsedSearchParams = {
   [K in FilterKeys]: string[];
 };
 
-export default function Filters({ filters, className }: Props) {
+export default function Filters({ searchString, filters, className }: Props) {
   const searchParams = useSearchParams();
   const parsedSearchParams: ParsedSearchParams = {
     level: searchParams.getAll("level"),
@@ -102,12 +103,15 @@ export default function Filters({ filters, className }: Props) {
         className,
       )}
     >
-      <span className="">Filtros</span>
+      <span className="" tabIndex={0}>
+        Filtros
+      </span>
       <form className="flex-center gap-2 rounded-lg border px-2 py-1">
         <SearchIcon className="size-4 text-muted-foreground" />
         <input
           className="flex-1 bg-transparent text-sm outline-none"
           size={1}
+          defaultValue={searchString}
           onChange={handleInputChange}
           placeholder="Pesquise"
         />
