@@ -136,7 +136,7 @@ export default function Filters({ searchString, filters, className }: Props) {
                     {v.map((x: any) => (
                       <div
                         key={x.id as string}
-                        className="ml-2 flex items-center gap-2 rounded py-0.5 hover:bg-muted"
+                        className="ml-2 flex items-center gap-2 rounded hover:bg-muted"
                         title={x.name}
                       >
                         <Checkbox
@@ -149,7 +149,7 @@ export default function Filters({ searchString, filters, className }: Props) {
                         />
                         <label
                           htmlFor={x.name}
-                          className="truncatee flex flex-1 cursor-pointer items-center gap-1 whitespace-nowrap text-xs"
+                          className="truncatee flex flex-1 cursor-pointer items-center gap-1 whitespace-nowrap py-1 text-xs"
                         >
                           <span className="inline-block max-w-[45vw] truncate sm:max-w-[min(12vw,180px)]">
                             {x.name}
