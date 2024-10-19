@@ -76,7 +76,7 @@ model Track {
   slug                   String           @unique
   badge                  String // square image
   color                  String
-  created                DateTime         @default(now()) // can be imported creation date
+  created                DateTime         @default(now()) // imported creation date
   description            String
   level                  Int
   level_name             LevelName
@@ -92,6 +92,8 @@ model Track {
   web_route              String
   workload               Int
   corporateId            String
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @default(now()) @updatedAt
   trackActivitiesTrackId String           @unique
   modules                Module[]
   corporate              Corporate        @relation(fields: [corporateId], references: [id])
@@ -108,7 +110,7 @@ model Module {
   trackId          String?
   Track            Track?         @relation(fields: [trackId], references: [id])
   createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  updatedAt        DateTime       @default(now()) @updatedAt
   courses          ModuleCourse[]
   UserModule       UserModule[]
 }
@@ -127,7 +129,7 @@ model Course {
   workload          Int
   extra_information Json?
   createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  updatedAt         DateTime       @default(now()) @updatedAt
   lessons           Lesson[]
   modules           ModuleCourse[]
   UserCourse        UserCourse[]
@@ -149,7 +151,7 @@ model Lesson {
   workload             Int
   courseId             String?
   createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
+  updatedAt            DateTime     @default(now()) @updatedAt
   contents             Content[]
   Course               Course?      @relation(fields: [courseId], references: [id])
   UserLesson           UserLesson[]
@@ -167,7 +169,7 @@ model Content {
   lessonId     String?
   Lesson       Lesson?       @relation(fields: [lessonId], references: [id])
   createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  updatedAt    DateTime      @default(now()) @updatedAt
   subtitles    Subtitle[]
   UserContent  UserContent[]
 }
@@ -269,9 +271,9 @@ model UserTrack {
   liked   Boolean @default(false)
   comment String? @db.VarChar(255)
 
-  createdAt DateTime @default(now()) // startedAt
-  totalCompleted Int @default(0) // nested courses completed
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now()) // startedAt
+  totalCompleted Int      @default(0) // nested courses completed
+  updatedAt      DateTime @updatedAt
 
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   Track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
@@ -283,9 +285,9 @@ model UserModule {
   userId   String
   moduleId String
 
-  isCompleted Boolean   @default(false)
-  totalCoursesCompleted Int @default(0)
-  completedAt DateTime?
+  isCompleted           Boolean   @default(false)
+  totalCoursesCompleted Int       @default(0)
+  completedAt           DateTime?
 
   User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   Module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
@@ -299,9 +301,9 @@ model UserCourse {
 
   isStarted Boolean @default(false)
 
-  isCompleted Boolean   @default(false)
-  totalLessonsCompleted Int @default(0)
-  completedAt DateTime?
+  isCompleted           Boolean   @default(false)
+  totalLessonsCompleted Int       @default(0)
+  completedAt           DateTime?
 
   rating  Int?
   liked   Boolean @default(false)
@@ -320,9 +322,9 @@ model UserLesson {
   userId   String
   lessonId String
 
-  isCompleted Boolean   @default(false)
-  totalContentsCompleted Int @default(0)
-  completedAt DateTime?
+  isCompleted            Boolean   @default(false)
+  totalContentsCompleted Int       @default(0)
+  completedAt            DateTime?
 
   User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
