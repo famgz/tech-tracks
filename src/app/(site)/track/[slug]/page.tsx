@@ -143,7 +143,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* description */}
         <div
-          className="max-w-[1000px] font-light text-muted-foreground max-lg:text-sm"
+          className="pointer-events-none max-w-[1000px] font-light text-muted-foreground max-lg:text-sm"
           dangerouslySetInnerHTML={{
             __html: track.description,
           }}
