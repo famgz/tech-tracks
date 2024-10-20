@@ -1,9 +1,15 @@
+import { cn } from "@/lib/utils";
 import Image from "next/image";
+import logoImage from "@/assets/images/logo.svg";
 
-export default function Logo() {
+interface Props {
+  className?: string;
+}
+
+export default function Logo({ className = "" }: Props) {
   return (
-    <div className="relative aspect-[2000/565] h-7">
-      <Image src={"/logo.svg"} fill className="object-contain" alt="Logo" />
+    <div className={cn("relative aspect-[2000/565] h-7", className)}>
+      <Image src={logoImage} fill className="object-contain" alt="Logo" />
     </div>
   );
 }

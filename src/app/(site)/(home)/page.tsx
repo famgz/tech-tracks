@@ -2,6 +2,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import heroImage from "@/assets/images/hero.svg";
 
 export default async function Home() {
   return (
@@ -50,7 +51,7 @@ export default async function Home() {
         {/* hero image */}
         <div className="flex-center max-md:order-first">
           <Image
-            src={"/hero.svg"}
+            src={heroImage}
             width={500}
             height={500}
             priority
