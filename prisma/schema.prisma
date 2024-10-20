@@ -14,7 +14,7 @@ model User {
   name          String?
   email         String        @unique
   emailVerified DateTime?
-  type          UserType      @default(student)
+  role          UserRole      @default(student)
   image         String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -63,7 +63,7 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
-enum UserType {
+enum UserRole {
   student
   creator
   admin
