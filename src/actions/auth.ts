@@ -2,10 +2,12 @@
 
 import { signIn, signOut } from "@/auth";
 
-export async function login() {
-  await signIn("google");
+export async function login(formData: FormData) {
+  const redirectTo = formData.get("redirect");
+  const opts = !!redirectTo ? { redirectTo: redirectTo as string } : {};
+  await signIn("google", opts);
 }
 
 export async function logout() {
-  await signOut({ redirectTo: "/" });
+  await signOut();
 }
