@@ -10,8 +10,8 @@ export default async function LoginPage({ searchParams }: Props) {
   const { redirect } = searchParams;
 
   return (
-    <div className="_container flex-center bg-muted/60">
-      <div className="w-full max-w-md rounded-lg bg-background">
+    <div className="flex-center flex-1 bg-muted">
+      <div className="max-w-md flex-1 rounded-lg bg-background">
         <div className="space-y-8 p-8 text-center shadow-lg">
           <div className="space-y-8">
             <h1 className="text-2xl font-semibold">Faça login na plataforma</h1>
