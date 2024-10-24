@@ -55,7 +55,7 @@ export default async function UserPage() {
                 {mockedTracks.slice(0, 2).map((t) => (
                   <TrackCard track={t} key={t.id} />
                 ))}
-                <div className="flex-center size-full cursor-pointer rounded-lg border border-dashed border-muted-foreground bg-muted/70 py-10 text-muted-foreground hover:bg-muted">
+                <div className="flex-center size-full cursor-pointer rounded-lg border border-dashed border-muted-foreground bg-muted/70 py-10 text-center text-muted-foreground hover:bg-muted">
                   Clique para inicar uma nova trilha
                 </div>
               </div>
