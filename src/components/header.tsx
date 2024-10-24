@@ -19,7 +19,7 @@ export default async function Header() {
 
             <Button asChild variant={"ghost"}>
               <Link href={"/tracks"} className="font-semibold">
-                Cursos
+                Trilhas
               </Link>
             </Button>
           </div>

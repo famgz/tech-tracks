@@ -26,14 +26,13 @@ export default async function Home() {
             </p>
             <p>
               Oferecemos cursos para todos os níveis, desde iniciantes até
-              avançados, com muita prática e foco nas tecnologias mais
-              demandadas pelo mercado.
+              avançados, com foco nas tecnologias mais demandadas pelo mercado.
             </p>
 
             <p>
-              Estude no seu ritmo, de onde estiver, e conte com suporte contínuo
-              para alcançar seus objetivos. Venha transformar seu futuro com a
-              gente!
+              Estude no seu ritmo, de onde estiver, e conte com nossas trilhas
+              de estudo para alcançar seus objetivos. Venha transformar seu
+              futuro com a gente!
             </p>
           </div>
 
@@ -44,7 +43,7 @@ export default async function Home() {
               "w-full max-w-[600px] text-lg font-bold md:text-xl",
             )}
           >
-            Confira os Cursos
+            Confira as Trilhas de Estudo
           </Link>
         </div>
 

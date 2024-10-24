@@ -68,7 +68,7 @@ export default function TrackCardsGrid({ filteredTracks }: Props) {
       ) : (
         <div className="flex-center h-full w-full flex-col gap-6 text-2xl text-muted-foreground">
           <SearchXIcon className="size-16" />
-          <p>Nenhum curso encontrado</p>
+          <p>Nenhum item encontrado</p>
         </div>
       )}
     </>

@@ -88,7 +88,7 @@ export default async function TracksPage({ searchParams }: Props) {
 
   return (
     <div className="_container relative flex flex-1 flex-col pb-6 pt-2">
-      <h1 className="py-2 text-center text-3xl font-bold">Cursos</h1>
+      <h1 className="py-2 text-center text-3xl font-bold">Trilhas de Estudo</h1>
 
       <div className="flex flex-1 gap-6 sm:gap-4 xl:gap-8">
         {/* Filters column */}
@@ -125,8 +125,8 @@ export default async function TracksPage({ searchParams }: Props) {
           <span className="mb-2 ml-2">
             {filteredTracks.length ? (
               <>
-                {filteredTracks.length} curso
-                {filteredTracks.length > 1 ? "s" : ""} encontrado
+                {filteredTracks.length} ite
+                {filteredTracks.length > 1 ? "ns" : "m"} encontrado
                 {filteredTracks.length > 1 ? "s" : ""}
               </>
             ) : (

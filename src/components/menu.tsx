@@ -63,7 +63,7 @@ export default async function Menu() {
 
             <DropdownMenuItem asChild>
               <Link href={"/tracks"} className="flex w-full items-center gap-2">
-                <CodeIcon className="size-4" /> Cursos
+                <CodeIcon className="size-4" /> Trilhas
               </Link>
             </DropdownMenuItem>
 
@@ -79,14 +79,14 @@ export default async function Menu() {
             <DropdownMenuItem asChild>
               <Link href={"/user"} className="flex w-full items-center gap-2">
                 <BookMarkedIcon className="size-4" />
-                Cursos em andamento
+                Trilhas em andamento
               </Link>
             </DropdownMenuItem>
 
             <DropdownMenuItem asChild>
               <Link href={"/user"} className="flex w-full items-center gap-2">
                 <BookCheckIcon className="size-4" />
-                Cursos finalizados
+                Trilhas finalizadas
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="mt-6" />
