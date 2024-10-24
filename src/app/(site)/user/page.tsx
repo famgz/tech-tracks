@@ -51,11 +51,11 @@ export default async function UserPage() {
           <div className="space-y-10">
             <div className="space-y-2">
               <h2 className="text-lg">Trilhas em andamento</h2>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="flex flex-col gap-2 sm:grid sm:grid-cols-3">
                 {mockedTracks.slice(0, 2).map((t) => (
                   <TrackCard track={t} key={t.id} />
                 ))}
-                <div className="flex-center size-full cursor-pointer rounded-lg border border-dashed border-muted-foreground bg-muted/70 text-muted-foreground hover:bg-muted">
+                <div className="flex-center size-full cursor-pointer rounded-lg border border-dashed border-muted-foreground bg-muted/70 py-10 text-muted-foreground hover:bg-muted">
                   Clique para inicar uma nova trilha
                 </div>
               </div>
@@ -63,7 +63,7 @@ export default async function UserPage() {
 
             <div className="space-y-2">
               <h2 className="text-lg">Trilhas finalizadas</h2>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="flex flex-col gap-2 sm:grid sm:grid-cols-3">
                 {mockedTracks.slice(3, 6).map((t) => (
                   <TrackCard track={t} key={t.id} />
                 ))}
@@ -72,7 +72,7 @@ export default async function UserPage() {
 
             <div className="space-y-2">
               <h2 className="text-lg">Trilhas desejadas</h2>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="flex flex-col gap-2 sm:grid sm:grid-cols-3">
                 {mockedTracks.slice(6).map((t) => (
                   <TrackCard track={t} key={t.id} />
                 ))}
