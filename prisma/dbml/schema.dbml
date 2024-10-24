@@ -1,0 +1,385 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  name String
+  email String [unique, not null]
+  emailVerified DateTime
+  role UserRole [not null, default: 'student']
+  image String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  accounts Account [not null]
+  sessions Session [not null]
+  UserTrack UserTrack [not null]
+  UserCourse UserCourse [not null]
+  UserContent UserContent [not null]
+  UserModule UserModule [not null]
+  UserLesson UserLesson [not null]
+}
+
+Table Account {
+  userId String [not null]
+  type String [not null]
+  provider String [not null]
+  providerAccountId String [not null]
+  refresh_token String
+  access_token String
+  expires_at Int
+  token_type String
+  scope String
+  id_token String
+  session_state String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  user User [not null]
+
+  indexes {
+    (provider, providerAccountId) [pk]
+  }
+}
+
+Table Session {
+  sessionToken String [unique, not null]
+  userId String [not null]
+  expires DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  user User [not null]
+}
+
+Table VerificationToken {
+  identifier String [not null]
+  token String [not null]
+  expires DateTime [not null]
+
+  indexes {
+    (identifier, token) [pk]
+  }
+}
+
+Table Track {
+  id String [pk]
+  slug String [unique, not null]
+  badge String [not null]
+  color String [not null]
+  created DateTime [default: `now()`, not null]
+  description String [not null]
+  level Int [not null]
+  level_name LevelName [not null]
+  name String [not null]
+  name_ascii String [not null]
+  preview String [not null]
+  public_route String [not null]
+  relevance Int [not null]
+  scheduled String [not null]
+  section_type SectionType [not null]
+  subscription_type SubscriptionType [not null]
+  total_activities Int [not null]
+  web_route String [not null]
+  workload Int [not null]
+  corporateId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  trackActivitiesTrackId String [unique, not null]
+  modules Module [not null]
+  corporate Corporate [not null]
+  track_activities TrackActivities [not null]
+  careers Career [not null]
+  skills Skill [not null]
+  UserTrack UserTrack [not null]
+}
+
+Table Module {
+  id String [pk]
+  name String [not null]
+  total_activities Int [not null]
+  trackId String
+  Track Track
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  courses ModuleCourse [not null]
+  UserModule UserModule [not null]
+}
+
+Table Course {
+  id String [pk]
+  slug String [not null]
+  badge String [not null]
+  description String [not null]
+  first_slug String
+  first_uuid String
+  level String [not null]
+  name String [not null]
+  total Int [not null]
+  type CourseType [not null]
+  workload Int [not null]
+  extra_information Json
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  lessons Lesson [not null]
+  modules ModuleCourse [not null]
+  UserCourse UserCourse [not null]
+}
+
+Table Lesson {
+  id String [pk]
+  course String [not null]
+  description String [not null]
+  experience Int [not null]
+  large_cover String
+  large_cover_disabled String
+  name String [not null]
+  next_content String
+  next_slug String
+  order Int [not null]
+  workload Int [not null]
+  courseId String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  contents Content [not null]
+  Course Course
+  UserLesson UserLesson [not null]
+}
+
+Table Content {
+  id String [pk]
+  slug String [not null]
+  content Json [not null]
+  duration String
+  name String [not null]
+  pdf_url String
+  type ContentType [not null]
+  youtube_code String
+  lessonId String
+  Lesson Lesson
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  subtitles Subtitle [not null]
+  UserContent UserContent [not null]
+}
+
+Table Career {
+  id String [pk]
+  name String [not null]
+  tracks Track [not null]
+}
+
+Table Skill {
+  id String [pk]
+  name String [not null]
+  tracks Track [not null]
+}
+
+Table Corporate {
+  id String [pk]
+  description String [not null]
+  image_url String [not null]
+  name String [not null]
+  site String
+  tracks Track [not null]
+}
+
+Table TrackActivities {
+  code Int [not null]
+  courses Int [not null]
+  lives Int [not null]
+  project Int [not null]
+  trackId String [pk]
+  track Track
+}
+
+Table Subtitle {
+  id String [pk]
+  file String [not null]
+  name String [not null]
+  contentId String
+  Content Content
+}
+
+Table ModuleCourse {
+  moduleId String [not null]
+  courseId String [not null]
+  order Int [not null]
+  Course Course [not null]
+  Module Module [not null]
+
+  indexes {
+    (moduleId, courseId) [pk]
+    (moduleId, courseId, order) [unique]
+  }
+}
+
+Table UserTrack {
+  userId String [not null]
+  trackId String [not null]
+  isStarted Boolean [not null, default: false]
+  isCompleted Boolean [not null, default: false]
+  totalCompleted Int [not null, default: 0]
+  completedAt DateTime
+  isBookmarked Boolean [not null, default: false]
+  bookmarkedAt DateTime
+  rating Int
+  liked Boolean [not null, default: false]
+  comment String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  User User [not null]
+  Track Track [not null]
+
+  indexes {
+    (userId, trackId) [pk]
+  }
+}
+
+Table UserModule {
+  userId String [not null]
+  moduleId String [not null]
+  isCompleted Boolean [not null, default: false]
+  totalCoursesCompleted Int [not null, default: 0]
+  completedAt DateTime
+  User User [not null]
+  Module Module [not null]
+
+  indexes {
+    (userId, moduleId) [pk]
+  }
+}
+
+Table UserCourse {
+  userId String [not null]
+  courseId String [not null]
+  isStarted Boolean [not null, default: false]
+  isCompleted Boolean [not null, default: false]
+  totalLessonsCompleted Int [not null, default: 0]
+  completedAt DateTime
+  rating Int
+  liked Boolean [not null, default: false]
+  comment String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  User User [not null]
+  Course Course [not null]
+
+  indexes {
+    (userId, courseId) [pk]
+  }
+}
+
+Table UserLesson {
+  userId String [not null]
+  lessonId String [not null]
+  isCompleted Boolean [not null, default: false]
+  totalContentsCompleted Int [not null, default: 0]
+  completedAt DateTime
+  User User [not null]
+  lesson Lesson [not null]
+
+  indexes {
+    (userId, lessonId) [pk]
+  }
+}
+
+Table UserContent {
+  userId String [not null]
+  contentId String [not null]
+  isCompleted Boolean [not null, default: false]
+  completedAt DateTime
+  liked Boolean [not null, default: false]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  User User [not null]
+  Content Content [not null]
+
+  indexes {
+    (userId, contentId) [pk]
+  }
+}
+
+Table CareerToTrack {
+  careersId String [ref: > Career.id]
+  tracksId String [ref: > Track.id]
+}
+
+Table SkillToTrack {
+  skillsId String [ref: > Skill.id]
+  tracksId String [ref: > Track.id]
+}
+
+Enum UserRole {
+  student
+  creator
+  admin
+}
+
+Enum LevelName {
+  beginner
+  intermediary
+  advanced
+}
+
+Enum SubscriptionType {
+  dev
+  free
+}
+
+Enum SectionType {
+  bootcamp
+  formation
+}
+
+Enum CourseType {
+  challenge
+  course
+  live
+  project
+}
+
+Enum ContentType {
+  audio
+  quiz
+  text
+  video
+}
+
+Ref: Account.userId > User.id [delete: Cascade]
+
+Ref: Session.userId > User.id [delete: Cascade]
+
+Ref: Track.corporateId > Corporate.id
+
+Ref: Track.trackActivitiesTrackId - TrackActivities.trackId
+
+Ref: Module.trackId > Track.id
+
+Ref: Lesson.courseId > Course.id
+
+Ref: Content.lessonId > Lesson.id
+
+Ref: Subtitle.contentId > Content.id
+
+Ref: ModuleCourse.courseId > Course.id [delete: Cascade]
+
+Ref: ModuleCourse.moduleId > Module.id [delete: Cascade]
+
+Ref: UserTrack.userId > User.id [delete: Cascade]
+
+Ref: UserTrack.trackId > Track.id [delete: Cascade]
+
+Ref: UserModule.userId > User.id [delete: Cascade]
+
+Ref: UserModule.moduleId > Module.id [delete: Cascade]
+
+Ref: UserCourse.userId > User.id [delete: Cascade]
+
+Ref: UserCourse.courseId > Course.id [delete: Cascade]
+
+Ref: UserLesson.userId > User.id [delete: Cascade]
+
+Ref: UserLesson.lessonId > Lesson.id [delete: Cascade]
+
+Ref: UserContent.userId > User.id [delete: Cascade]
+
+Ref: UserContent.contentId > Content.id [delete: Cascade]

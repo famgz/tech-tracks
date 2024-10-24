@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 // -------------- Auth --------------
 
 model User {
@@ -262,6 +270,7 @@ model UserTrack {
   isStarted Boolean @default(false)
 
   isCompleted Boolean   @default(false)
+  totalCompleted Int      @default(0) // nested courses completed
   completedAt DateTime?
 
   isBookmarked Boolean   @default(false)
@@ -272,7 +281,6 @@ model UserTrack {
   comment String? @db.VarChar(255)
 
   createdAt      DateTime @default(now()) // startedAt
-  totalCompleted Int      @default(0) // nested courses completed
   updatedAt      DateTime @updatedAt
 
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
