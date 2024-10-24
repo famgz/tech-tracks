@@ -20,6 +20,11 @@ const translations: Translations = {
   course: "curso",
   live: "live",
   // project: 'desafio de projeto',
+
+  // user role
+  student: "estudante",
+  creator: "criador de conteúdo",
+  admin: "administrador",
 };
 
 export const translate = (word: string): string => {

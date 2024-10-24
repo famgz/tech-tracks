@@ -20,7 +20,7 @@ export default function TrackCard({ track }: Props) {
       <HoverCardTrigger asChild>
         <Link
           href={`/track/${track.slug}`}
-          className="relative aspect-[1200/564] min-w-[200px] cursor-pointer overflow-hidden rounded-lg transition-transform duration-200 hover:scale-105"
+          className="relative aspect-[1200/564] min-w-[200px] cursor-pointer overflow-hidden rounded-lg transition-transform duration-200 hover:scale-[102%]"
         >
           <Image
             src={track.preview}
