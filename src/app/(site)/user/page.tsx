@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { db } from "@/lib/prisma";
 import { translate } from "@/lib/translate";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function UserPage() {
@@ -55,9 +56,13 @@ export default async function UserPage() {
                 {mockedTracks.slice(0, 2).map((t) => (
                   <TrackCard track={t} key={t.id} />
                 ))}
-                <div className="flex-center size-full cursor-pointer rounded-lg border border-dashed border-muted-foreground bg-muted/70 py-10 text-center text-muted-foreground hover:bg-muted">
+
+                <Link
+                  href={"/tracks"}
+                  className="flex-center aspect-[1200/564] size-full cursor-pointer rounded-lg border border-dashed border-muted-foreground bg-muted/70 py-10 text-center text-muted-foreground hover:bg-muted"
+                >
                   Clique para inicar uma nova trilha
-                </div>
+                </Link>
               </div>
             </div>
 
