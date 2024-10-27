@@ -1,4 +1,4 @@
-import LoginGoogleButton from "@/components/buttons/login-google";
+import LoginButton from "@/components/buttons/login";
 import {
   Dialog,
   DialogContent,
@@ -17,16 +17,19 @@ export default function LoginDialog({ children }: Props) {
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="gap-5">
+      <DialogContent className="gap-6">
         <DialogHeader>
           <DialogTitle>Faça login na plataforma</DialogTitle>
         </DialogHeader>
 
-        <DialogDescription>
-          Conecte-se usando sua conta do Google
+        <DialogDescription className="space-y-2">
+          <p>Bem-vindo ao Tech Tracks.</p>
+          <p>Conecte-se usando uma das forma de login abaixo</p>
         </DialogDescription>
 
-        <LoginGoogleButton />
+        <LoginButton loginProvider="google" />
+
+        <LoginButton loginProvider="github" />
       </DialogContent>
     </Dialog>
   );

@@ -1,4 +1,4 @@
-import LoginGoogleButton from "@/components/buttons/login-google";
+import LoginButton from "@/components/buttons/login";
 
 interface Props {
   searchParams: {
@@ -11,18 +11,19 @@ export default async function LoginPage({ searchParams }: Props) {
 
   return (
     <div className="flex-center flex-1 bg-muted">
-      <div className="max-w-md flex-1 rounded-lg bg-background">
+      <div className="max-w-xl flex-1 rounded-lg bg-background">
         <div className="space-y-8 p-8 text-center shadow-lg">
-          <div className="space-y-8">
+          <div className="space-y-4">
             <h1 className="text-2xl font-semibold">Faça login na plataforma</h1>
-            <p className="text-gray-500">Bem-vindo ao Tech Tracks</p>
+            <div className="space-y-2 text-gray-500">
+              <p>Bem-vindo ao Tech Tracks</p>
+              <p>Conecte-se usando uma das forma de login abaixo</p>
+            </div>
           </div>
 
-          <div className="mt-6 space-y-3">
-            <p className="text-gray-500">
-              Conecte-se usando sua conta do Google
-            </p>
-            <LoginGoogleButton redirect={redirect} />
+          <div className="space-y-6">
+            <LoginButton redirect={redirect} loginProvider="google" />
+            <LoginButton redirect={redirect} loginProvider="github" />
           </div>
         </div>
       </div>
