@@ -17,7 +17,7 @@ export default async function LoginPage({ searchParams }: Props) {
             <h1 className="text-2xl font-semibold">Faça login na plataforma</h1>
             <div className="space-y-2 text-gray-500">
               <p>Bem-vindo ao Tech Tracks</p>
-              <p>Conecte-se usando uma das forma de login abaixo</p>
+              <p>Conecte-se usando uma das formas de login abaixo</p>
             </div>
           </div>
 

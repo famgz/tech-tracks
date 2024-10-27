@@ -23,13 +23,16 @@ export default function LoginDialog({ children }: Props) {
         </DialogHeader>
 
         <DialogDescription className="space-y-2">
-          <p>Bem-vindo ao Tech Tracks.</p>
-          <p>Conecte-se usando uma das forma de login abaixo</p>
+          <span>Bem-vindo ao Tech Tracks.</span>
+          <span className="inline-block">
+            Conecte-se usando uma das formas de login abaixo
+          </span>
         </DialogDescription>
 
-        <LoginButton loginProvider="google" />
-
-        <LoginButton loginProvider="github" />
+        <div className="space-y-3">
+          <LoginButton loginProvider="google" />
+          <LoginButton loginProvider="github" />
+        </div>
       </DialogContent>
     </Dialog>
   );
