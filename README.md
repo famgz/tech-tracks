@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Tech Tracks
+
+
+Diagrama ERD
+
 
 ```mermaid
 erDiagram
@@ -227,6 +231,8 @@ erDiagram
     ModuleCourse ||--o{ Module : includes
 
 ```
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
