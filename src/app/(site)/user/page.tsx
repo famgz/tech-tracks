@@ -1,5 +1,6 @@
-import TrackCard from "@/app/(site)/tracks/_components/track-card";
-import { auth } from "@/auth";
+import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
+import { getUserTracks } from "@/actions/user-content";
+import TrackSlot from "@/app/(site)/user/_components/track-slot";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -8,39 +9,32 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { db } from "@/lib/prisma";
+import { USER_MAX_TRACK_SLOTS } from "@/constants/user";
 import { translate } from "@/lib/translate";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import { Track } from "@prisma/client";
 
 export default async function UserPage() {
-  const session = await auth();
+  const user = await getSessionUserElseRedirectToLogin();
 
-  if (!session) {
-    redirect("/");
-  }
+  const userTracks = await getUserTracks(user.id);
 
-  const mockedTracks = await db.track.findMany({
-    include: { skills: true, corporate: true, careers: true },
-    orderBy: { created: "desc" },
-    take: 9,
-  });
-
-  const user = session.user;
+  const enrolledTracks = userTracks?.filter((t) => t.isEnrolled);
+  const completedTracks = userTracks?.filter((t) => t.isCompleted);
+  const bookmarkedTracks = userTracks?.filter((t) => t.isBookmarked);
 
   return (
     <div className="_container flex-center flex-col py-10">
       <Card className="w-full max-w-5xl flex-1">
-        <CardHeader className="items-center gap-8">
+        <CardHeader className="items-center gap-6">
           <div className="flex-center flex-col gap-2">
             <CardTitle>{user.name}</CardTitle>
             <CardDescription className="text-center">
-              <p>{user.email}</p>
-              <p className="capitalze">({translate(user.role)})</p>
+              <span className="block">{user.email}</span>
+              <span className="capitalze block">({translate(user.role)})</span>
             </CardDescription>
           </div>
 
-          <Avatar className="size-40">
+          <Avatar className="size-32">
             <AvatarImage src={user.image || ""} alt="user avatar" />
             <AvatarFallback>
               {user.name?.slice(0, 2).toUpperCase()}
@@ -49,41 +43,71 @@ export default async function UserPage() {
         </CardHeader>
 
         <CardContent>
-          <div className="space-y-10">
-            <div className="space-y-2">
-              <h2 className="text-lg">Trilhas em andamento</h2>
-              <div className="flex flex-col gap-2 sm:grid sm:grid-cols-3">
-                {mockedTracks.slice(0, 2).map((t) => (
-                  <TrackCard track={t} key={t.id} />
-                ))}
+          {!userTracks ? (
+            <span>
+              Ocorreu um erro ao buscar os dados. Tente novamente mais tarde
+            </span>
+          ) : (
+            <div className="space-y-10">
+              <div className="space-y-2">
+                <h2 className="text-lg">Trilhas matriculadas</h2>
+                <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3">
+                  {Array.from({ length: USER_MAX_TRACK_SLOTS }).map((_, i) => {
+                    const track = enrolledTracks?.[i]?.Track;
+                    return (
+                      <TrackSlot
+                        key={i}
+                        track={track as Track}
+                        userId={user.id}
+                        type="bookmark"
+                      />
+                    );
+                  })}
+                </div>
+              </div>
 
-                <Link
-                  href={"/tracks"}
-                  className="flex-center aspect-[1200/564] size-full cursor-pointer rounded-lg border border-dashed border-muted-foreground bg-muted/70 py-10 text-center text-muted-foreground hover:bg-muted"
-                >
-                  Clique para inicar uma nova trilha
-                </Link>
+              <div className="space-y-2">
+                <h2 className="text-lg">Trilhas finalizadas</h2>
+
+                {completedTracks && completedTracks.length > 0 ? (
+                  <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3">
+                    {completedTracks.map(({ Track }) => (
+                      <TrackSlot
+                        key={Track.id}
+                        track={Track}
+                        userId={user.id}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="py-10 text-center text-muted-foreground">
+                    Nenhuma trilha finalizada até o momento
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <h2 className="text-lg">Trilhas salvas</h2>
+
+                {bookmarkedTracks && bookmarkedTracks.length > 0 ? (
+                  <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3">
+                    {bookmarkedTracks.map(({ Track }) => (
+                      <TrackSlot
+                        key={Track.id}
+                        track={Track}
+                        userId={user.id}
+                        type="bookmark"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="py-10 text-center text-muted-foreground">
+                    Nenhuma trilha salva até o momento
+                  </p>
+                )}
               </div>
             </div>
-
-            <div className="space-y-2">
-              <h2 className="text-lg">Trilhas finalizadas</h2>
-              <div className="flex flex-col gap-2 sm:grid sm:grid-cols-3">
-                {mockedTracks.slice(3, 6).map((t) => (
-                  <TrackCard track={t} key={t.id} />
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h2 className="text-lg">Trilhas desejadas</h2>
-              <div className="flex flex-col gap-2 sm:grid sm:grid-cols-3">
-                {mockedTracks.slice(6).map((t) => (
-                  <TrackCard track={t} key={t.id} />
-                ))}
-              </div>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

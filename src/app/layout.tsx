@@ -27,7 +27,7 @@ export default function RootLayout({
         >
           <div className="flex h-screen flex-col">{children}</div>
         </ThemeProvider>
-        <Toaster />
+        <Toaster position="top-center" duration={2000} />
       </body>
     </html>
   );

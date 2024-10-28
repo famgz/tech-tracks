@@ -1,20 +1,38 @@
+"use client";
+
+import { bookmarkUserTrack } from "@/actions/user-content";
 import { Button } from "@/components/ui/button";
 import { BookmarkIcon } from "lucide-react";
-import { User } from "next-auth";
+import { toast } from "sonner";
 
 interface Props {
   trackId: string;
-  user?: User;
+  userId: string;
+  isBookmarked: boolean | undefined;
 }
 
-export default function TrackBookmarkButton({ trackId, user }: Props) {
+export default function BookmarkTrackButton({
+  userId,
+  trackId,
+  isBookmarked,
+}: Props) {
+  async function handleClick() {
+    const res = await bookmarkUserTrack(userId, trackId);
+    res
+      ? toast.success("Trilha salva com sucesso!")
+      : toast.error("Erro ao salvar a trilha.");
+  }
+
   return (
     <Button
       variant={"outline"}
       className="gap-2 border-primary px-6 text-xl max-xs:w-full"
       size={"lg"}
+      onClick={handleClick}
+      disabled={isBookmarked}
     >
-      <BookmarkIcon size={20} /> Salvar
+      <BookmarkIcon size={20} />
+      {isBookmarked ? "Salvo" : "Salvar"}
     </Button>
   );
 }

@@ -1,10 +1,11 @@
+import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
+import { getTrackWithModulesAndCourses } from "@/actions/content";
+import { getUserTrack } from "@/actions/user-content";
+import EnrollTrackButton from "@/app/(site)/track/[slug]/_components/enroll-track-button";
 import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
-import TrackBookmarkButton from "@/app/(site)/track/[slug]/_components/track-bookmark.button";
-import TrackStartButton from "@/app/(site)/track/[slug]/_components/track-start-button";
-import { auth } from "@/auth";
+import BookmarkTrackButton from "@/app/(site)/track/[slug]/_components/track-bookmark.button";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import { baseAssetsUrl } from "@/constants/api";
-import { db } from "@/lib/prisma";
 import { translate } from "@/lib/translate";
 import { ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
 import Image from "next/image";
@@ -19,35 +20,20 @@ interface Props {
 }
 
 export default async function TrackPage({ params }: Props) {
+  const user = await getSessionUserElseRedirectToLogin();
+
   const { slug } = params;
-  const session = await auth();
-  const user = session?.user;
-
-  const track = await db.track.findUnique({
-    where: {
-      slug,
-    },
-    include: {
-      careers: true,
-      corporate: true,
-      modules: {
-        include: {
-          courses: {
-            include: {
-              Course: true,
-            },
-            orderBy: { order: "asc" },
-          },
-        },
-      },
-      skills: true,
-      track_activities: true,
-    },
-  });
-
+  const track = await getTrackWithModulesAndCourses(slug);
   if (!track) {
     return notFound();
   }
+
+  const userTrack = await getUserTrack(user.id, track.id);
+  const isEnrolled = userTrack?.isEnrolled;
+  const isBookmarked =
+    userTrack?.isBookmarked &&
+    !userTrack?.isEnrolled &&
+    !userTrack?.isCompleted;
 
   return (
     <div className="_container flex flex-col gap-12 py-10">
@@ -135,8 +121,16 @@ export default async function TrackPage({ params }: Props) {
 
       {/* buttons */}
       <div className="flex flex-col items-center gap-4 max-sm:justify-center xs:flex-row">
-        <TrackBookmarkButton trackId={track.id} user={user} />
-        <TrackStartButton trackId={track.id} user={user} />
+        <BookmarkTrackButton
+          trackId={track.id}
+          userId={user.id}
+          isBookmarked={isBookmarked}
+        />
+        <EnrollTrackButton
+          trackId={track.id}
+          userId={user.id}
+          isEnrolled={isEnrolled}
+        />
       </div>
 
       {/* description */}

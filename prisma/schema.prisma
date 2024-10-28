@@ -267,8 +267,7 @@ model UserTrack {
   userId  String
   trackId String
 
-  isStarted Boolean @default(false)
-
+  isEnrolled Boolean @default(false)
   isCompleted Boolean   @default(false)
   totalCompleted Int      @default(0) // nested courses completed
   completedAt DateTime?
@@ -307,8 +306,7 @@ model UserCourse {
   userId   String
   courseId String
 
-  isStarted Boolean @default(false)
-
+  isEnrolled Boolean @default(false)
   isCompleted           Boolean   @default(false)
   totalLessonsCompleted Int       @default(0)
   completedAt           DateTime?
