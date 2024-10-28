@@ -39,7 +39,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto flex size-full max-w-[1920px] flex-col">
-      <div className="flex h-full flex-col lg:grid lg:grid-cols-[2fr_1fr]">
+      <div className="flex h-full flex-col lg:grid lg:grid-cols-[3fr_1fr]">
         {/* video frame */}
         <div className="flex-center flex-1 flex-col border-r">
           <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
