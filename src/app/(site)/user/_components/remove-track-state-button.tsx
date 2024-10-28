@@ -1,12 +1,20 @@
 "use client";
 
+import { unbookmarkTrack, unenrollTrack } from "@/actions/user-content";
 import {
-  isUserAllowedToEnroll,
-  unbookmarkTrack,
-  unenrollTrack,
-} from "@/actions/user-content";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
@@ -20,10 +28,14 @@ export default function RemoveTrackStateButton({
   trackId,
   type,
 }: Props) {
+  const [open, setOpen] = useState(false);
+
   async function handleUnenrollClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
+    e.stopPropagation();
 
     const res = await unenrollTrack(userId, trackId);
+    setOpen(false);
     res
       ? toast.success("Trilha desmatriculada com sucesso")
       : toast.error("Erro ao desmatricular trilha");
@@ -31,8 +43,10 @@ export default function RemoveTrackStateButton({
 
   async function handleUnbokmarkClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
+    e.stopPropagation();
 
     const res = await unbookmarkTrack(userId, trackId);
+    setOpen(false);
     res
       ? toast.success("Trilha removida dos salvos")
       : toast.error("Erro ao remover trilha dos salvos");
@@ -50,14 +64,40 @@ export default function RemoveTrackStateButton({
     ? "Desmatricular-se desta trilha"
     : "Remover trilha dos salvos";
 
+  const message = isTypeEnroll
+    ? "Deseja desmatricular-se desta trilha? Você poderá rematricular a qualquer momento caso tenha slots disponíveis."
+    : "Deseja remover esta trilha da lista de salvos? Você poderá readicioná-la a qualquer momento.";
+
   return (
-    <Button
-      variant={"ghost"}
-      onClick={handleClickFunction}
-      className="flex-center size-8 rounded-full p-0"
-      title={title}
-    >
-      <XIcon className="size-4" strokeWidth={2.5} />
-    </Button>
+    <div onClick={(e) => e.stopPropagation()} role="presentation">
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogTrigger asChild>
+          <Button
+            variant={"ghost"}
+            className="flex-center size-8 rounded-full p-0"
+            title={title}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setOpen(true);
+            }}
+          >
+            <XIcon className="size-4" strokeWidth={2.5} />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{title}</AlertDialogTitle>
+            <AlertDialogDescription>{message}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+              Cancelar
+            </AlertDialogCancel>
+            <Button onClick={handleClickFunction}>Concluir</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }

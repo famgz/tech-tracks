@@ -3,7 +3,7 @@ import { getTrackWithModulesAndCourses } from "@/actions/content";
 import { getUserTrack } from "@/actions/user-content";
 import EnrollTrackButton from "@/app/(site)/track/[slug]/_components/enroll-track-button";
 import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
-import BookmarkTrackButton from "@/app/(site)/track/[slug]/_components/track-bookmark.button";
+import BookmarkTrackButton from "@/app/(site)/track/[slug]/_components/bookmark-track-button";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import { baseAssetsUrl } from "@/constants/api";
 import { translate } from "@/lib/translate";

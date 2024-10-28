@@ -1,8 +1,6 @@
 "use client";
 
-import { enrollTrack, isUserAllowedToEnroll } from "@/actions/user-content";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { bookmarkTrack } from "@/actions/user-content";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,58 +12,51 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { BookmarkIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface Props {
   trackId: string;
   userId: string;
-  isEnrolled: boolean | undefined;
+  isBookmarked: boolean | undefined;
 }
 
-export default function EnrollTrackButton({
+export default function BookmarkTrackButton({
   userId,
   trackId,
-  isEnrolled,
+  isBookmarked,
 }: Props) {
   const [open, setOpen] = useState(false);
 
   async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const canEnroll = await isUserAllowedToEnroll(userId);
-
-    if (!canEnroll) {
-      setOpen(false);
-      toast.error("Limite de matrículas atingido.");
-      return;
-    }
-
-    const res = await enrollTrack(userId, trackId);
+    const res = await bookmarkTrack(userId, trackId);
     setOpen(false);
     res
-      ? toast.success("Trilha matriculada com sucesso!")
-      : toast.error("Erro ao matricular a trilha.");
+      ? toast.success("Trilha salva com sucesso!")
+      : toast.error("Erro ao salvar a trilha.");
   }
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
-          variant={"default"}
-          className="gap-2 text-xl font-semibold max-xs:w-full"
+          variant={"outline"}
+          className="gap-2 border-primary px-6 text-xl max-xs:w-full"
           size={"lg"}
-          disabled={isEnrolled}
+          disabled={isBookmarked}
         >
-          {isEnrolled ? "Matriculado" : "Matricular-se"}
+          <BookmarkIcon size={20} />
+          {isBookmarked ? "Salvo" : "Salvar"}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Matricular-se na trilha</AlertDialogTitle>
-          <AlertDialogDescription asChild>
-            <div>
-              <p>Deseja matricular-se nesta trilha?</p>
-              <p>Você poderá ter acesso ao seu conteúdo.</p>
-            </div>
+          <AlertDialogTitle>Salvar trilha</AlertDialogTitle>
+          <AlertDialogDescription>
+            Desejar incluir esta trilha na lista de salvos?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
