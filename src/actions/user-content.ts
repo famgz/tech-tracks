@@ -7,10 +7,7 @@ import { revalidatePath } from "next/cache";
 export async function isUserAllowedToEnroll(userId: string): Promise<boolean> {
   const userTracks = (await getAllUserTracks(userId)) || [];
   const enrolledUserTracks = userTracks.filter((t) => t.isEnrolled);
-  console.log({ enrolledUserTracks });
-  return !!(
-    enrolledUserTracks && enrolledUserTracks.length < USER_MAX_TRACK_SLOTS
-  );
+  return enrolledUserTracks.length < USER_MAX_TRACK_SLOTS;
 }
 
 export async function getUserTrack(userId: string, trackId: string) {
@@ -50,9 +47,11 @@ export async function enrollTrack(userId: string, trackId: string) {
         userId,
         trackId,
         isEnrolled: true,
+        isBookmarked: false,
       },
     });
     revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
     return res;
   } catch (e) {
     console.error("Failed to enroll track:", e);
@@ -68,7 +67,7 @@ export async function unenrollTrack(userId: string, trackId: string) {
       },
     });
     revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user", "page");
+    revalidatePath("/user");
     return res;
   } catch (e) {
     console.error("Failed to unenroll track:", e);
@@ -89,6 +88,7 @@ export async function bookmarkTrack(userId: string, trackId: string) {
       },
     });
     revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
     return res;
   } catch (e) {
     console.error("Failed to bookmark track:", e);
@@ -104,7 +104,7 @@ export async function unbookmarkTrack(userId: string, trackId: string) {
       },
     });
     revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user", "page");
+    revalidatePath("/user");
     return res;
   } catch (e) {
     console.error("Failed to unbookmark track:", e);

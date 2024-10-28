@@ -1,9 +1,10 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
 import { getTrackWithModulesAndCourses } from "@/actions/content";
 import { getUserTrack, isUserAllowedToEnroll } from "@/actions/user-content";
-import EnrollTrackButton from "@/app/(site)/track/[slug]/_components/enroll-track-button";
-import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
 import BookmarkTrackButton from "@/app/(site)/track/[slug]/_components/bookmark-track-button";
+import EnrollTrackButton from "@/app/(site)/track/[slug]/_components/enroll-track-button";
+import EnrollTrackDialog from "@/app/(site)/track/[slug]/_components/enroll-track-dialog";
+import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import { baseAssetsUrl } from "@/constants/api";
 import { translate } from "@/lib/translate";
@@ -125,12 +126,7 @@ export default async function TrackPage({ params }: Props) {
           userId={user.id}
           isBookmarked={isBookmarked}
         />
-        <EnrollTrackButton
-          trackId={track.id}
-          userId={user.id}
-          isEnrolled={isEnrolled}
-          canEnroll={canEnroll}
-        />
+        <EnrollTrackButton isEnrolled={isEnrolled} />
       </div>
 
       {/* description */}
@@ -163,9 +159,20 @@ export default async function TrackPage({ params }: Props) {
 
         {/* modules */}
         <div className="max-w-[1000px]">
-          <ModulesAccordion modules={track.modules} />
+          <ModulesAccordion
+            modules={track.modules}
+            isEnrolled={isEnrolled}
+            isLoggedIn={!!user}
+          />
         </div>
       </div>
+
+      <EnrollTrackDialog
+        trackId={track.id}
+        userId={user.id}
+        isEnrolled={isEnrolled}
+        canEnroll={canEnroll}
+      />
     </div>
   );
 }

@@ -64,9 +64,17 @@ export default function RemoveTrackStateButton({
     ? "Desmatricular-se desta trilha"
     : "Remover trilha dos salvos";
 
-  const message = isTypeEnroll
-    ? "Deseja desmatricular-se desta trilha? Você poderá rematricular a qualquer momento caso tenha slots disponíveis."
-    : "Deseja remover esta trilha da lista de salvos? Você poderá readicioná-la a qualquer momento.";
+  const message = isTypeEnroll ? (
+    <>
+      <p> Deseja desmatricular-se desta trilha?</p>
+      <p>Você poderá rematricular depois caso tenha slots disponíveis.</p>
+    </>
+  ) : (
+    <>
+      <p>Deseja remover esta trilha da lista de salvos?</p>
+      <p>Você poderá readicioná-la a qualquer momento.</p>
+    </>
+  );
 
   return (
     <div onClick={(e) => e.stopPropagation()} role="presentation">
@@ -88,13 +96,17 @@ export default function RemoveTrackStateButton({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{title}</AlertDialogTitle>
-            <AlertDialogDescription>{message}</AlertDialogDescription>
+            <AlertDialogDescription asChild>
+              <div className="space-y-0.5">{message}</div>
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
               Cancelar
             </AlertDialogCancel>
-            <Button onClick={handleClickFunction}>Concluir</Button>
+            <Button onClick={handleClickFunction} variant={"destructive"}>
+              Concluir
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

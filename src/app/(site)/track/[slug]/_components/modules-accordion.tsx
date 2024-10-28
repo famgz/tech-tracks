@@ -1,21 +1,30 @@
+"use client";
+
 import CourseCard from "@/app/(site)/track/[slug]/_components/course-card";
-import { auth } from "@/auth";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { openEnrollTrackDialog } from "@/lib/utils";
 import { ModuleWithCourses } from "@/types/content";
 import { Accordion } from "@radix-ui/react-accordion";
 import { CircleIcon } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface Props {
   modules: ModuleWithCourses[];
+  isLoggedIn: boolean;
+  isEnrolled: boolean;
 }
 
-export default async function ModulesAccordion({ modules }: Props) {
-  const session = await auth();
-  const user = session?.user;
+export default function ModulesAccordion({
+  modules,
+  isLoggedIn,
+  isEnrolled,
+}: Props) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   return (
     <Accordion
@@ -41,7 +50,11 @@ export default async function ModulesAccordion({ modules }: Props) {
                 course={Course}
                 key={Course.id}
                 trackId={module.trackId}
-                isLoggedIn={!!user}
+                isLoggedIn={isLoggedIn}
+                isEnrolled={isEnrolled}
+                openEnrollTrackDialog={() =>
+                  openEnrollTrackDialog(pathname, searchParams)
+                }
               />
             ))}
           </AccordionContent>

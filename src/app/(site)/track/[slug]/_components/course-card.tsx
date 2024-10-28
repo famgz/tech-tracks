@@ -17,9 +17,17 @@ interface Props {
   course: Course;
   trackId: string | null;
   isLoggedIn: boolean;
+  isEnrolled: boolean;
+  openEnrollTrackDialog: () => void;
 }
 
-export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
+export default function CourseCard({
+  course,
+  trackId,
+  isLoggedIn,
+  isEnrolled,
+  openEnrollTrackDialog,
+}: Props) {
   const trackStore = useStore(useTrackStore, (state) => state!);
   const router = useRouter();
   const isCourseType = course.type === "course";
@@ -39,13 +47,23 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
     router.push(`/course/${course.id}${back}`);
   }
 
+  function handleClick() {
+    if (!isEnrolled) {
+      return openEnrollTrackDialog();
+    }
+
+    if (isCourseType) {
+      return handleGoToCourse();
+    }
+  }
+
   return (
     <Card
       className={cn("overflow-hidden bg-muted", {
         "cursor-pointer hover:bg-muted-foreground/20": isCourseType,
         "opacity-50": !isCourseType,
       })}
-      onClick={isCourseType ? handleGoToCourse : () => {}}
+      onClick={handleClick}
     >
       <CardHeader className="relative flex-row items-center gap-4 space-y-0 max-lg:p-4">
         {!isCourseType && (
@@ -103,7 +121,7 @@ export default function CourseCard({ course, trackId, isLoggedIn }: Props) {
         {course.type === "course" && (
           <div className="flex-center">
             <Button
-              onClick={handleGoToCourse}
+              onClick={handleClick}
               disabled={course.type !== "course"}
               className="gap-1 px-3"
             >
