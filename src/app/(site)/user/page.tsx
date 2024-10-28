@@ -1,5 +1,5 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
-import { getUserTracks } from "@/actions/user-content";
+import { getAllUserTracks } from "@/actions/user-content";
 import TrackSlot from "@/app/(site)/user/_components/track-slot";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -16,7 +16,7 @@ import { Track } from "@prisma/client";
 export default async function UserPage() {
   const user = await getSessionUserElseRedirectToLogin();
 
-  const userTracks = await getUserTracks(user.id);
+  const userTracks = await getAllUserTracks(user.id);
 
   const enrolledTracks = userTracks?.filter((t) => t.isEnrolled);
   const completedTracks = userTracks?.filter((t) => t.isCompleted);

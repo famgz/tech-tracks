@@ -20,7 +20,7 @@ export default function TrackSlot({
     <Link
       href={track ? `/track/${track.slug}` : "/tracks"}
       className={cn(
-        "relative flex aspect-[1200/564] size-full cursor-pointer rounded-lg border border-muted-foreground p-3 text-center text-sm text-muted-foreground hover:bg-muted/40",
+        "relative flex aspect-[1200/564] size-full cursor-pointer rounded-lg border border-muted-foreground p-3 text-center text-muted-foreground hover:bg-muted/40 sm:text-sm",
         { "border-dashed bg-muted/70 hover:bg-muted": !track },
       )}
     >
@@ -43,13 +43,11 @@ export default function TrackSlot({
               sizes="(max-width: 640px) 30vw, 10vw"
             />
           </div>
-          <span className="line-clamp-2 max-sm:text-lg">{track.name}</span>
+          <span className="line-clamp-2">{track.name}</span>
         </div>
       ) : (
         <div className="flex-center flex-1">
-          <span className="max-sm:text-lg">
-            Clique para inicar uma nova trilha
-          </span>
+          <span className="">Clique para inicar uma nova trilha</span>
         </div>
       )}
     </Link>

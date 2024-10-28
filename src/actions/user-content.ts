@@ -5,7 +5,7 @@ import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function isUserAllowedToEnroll(userId: string): Promise<Boolean> {
-  const userTracks = (await getUserTracks(userId)) || [];
+  const userTracks = (await getAllUserTracks(userId)) || [];
   const enrolledUserTracks = userTracks.filter((t) => t.isEnrolled);
   console.log({ enrolledUserTracks });
   return !!(
@@ -24,7 +24,7 @@ export async function getUserTrack(userId: string, trackId: string) {
   }
 }
 
-export async function getUserTracks(userId: string) {
+export async function getAllUserTracks(userId: string) {
   try {
     const res = await db.userTrack.findMany({
       where: { userId },
