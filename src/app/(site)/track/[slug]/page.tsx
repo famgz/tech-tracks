@@ -1,6 +1,6 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
 import { getTrackWithModulesAndCourses } from "@/actions/content";
-import { getUserTrack } from "@/actions/user-content";
+import { getUserTrack, isUserAllowedToEnroll } from "@/actions/user-content";
 import EnrollTrackButton from "@/app/(site)/track/[slug]/_components/enroll-track-button";
 import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
 import BookmarkTrackButton from "@/app/(site)/track/[slug]/_components/bookmark-track-button";
@@ -29,11 +29,10 @@ export default async function TrackPage({ params }: Props) {
   }
 
   const userTrack = await getUserTrack(user.id, track.id);
-  const isEnrolled = userTrack?.isEnrolled;
-  const isBookmarked =
-    userTrack?.isBookmarked &&
-    !userTrack?.isEnrolled &&
-    !userTrack?.isCompleted;
+  const isEnrolled = !!userTrack?.isEnrolled;
+  const isBookmarked = !!userTrack?.isBookmarked;
+
+  const canEnroll = await isUserAllowedToEnroll(user.id);
 
   return (
     <div className="_container flex flex-col gap-12 py-10">
@@ -130,6 +129,7 @@ export default async function TrackPage({ params }: Props) {
           trackId={track.id}
           userId={user.id}
           isEnrolled={isEnrolled}
+          canEnroll={canEnroll}
         />
       </div>
 

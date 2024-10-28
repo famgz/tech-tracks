@@ -4,7 +4,7 @@ import { USER_MAX_TRACK_SLOTS } from "@/constants/user";
 import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export async function isUserAllowedToEnroll(userId: string): Promise<Boolean> {
+export async function isUserAllowedToEnroll(userId: string): Promise<boolean> {
   const userTracks = (await getAllUserTracks(userId)) || [];
   const enrolledUserTracks = userTracks.filter((t) => t.isEnrolled);
   console.log({ enrolledUserTracks });
