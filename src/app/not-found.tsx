@@ -1,8 +1,8 @@
-import Logo from "@/components/icons/logo";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import notfoundImage from "@/assets/images/not-found.svg";
+import LogoFullIcon from "@/components/icons/logo-full";
 
 export default function NotFoundPage() {
   return (
@@ -23,7 +23,7 @@ export default function NotFoundPage() {
         </div>
 
         <div className="flex h-full flex-col justify-between gap-12 p-10">
-          <Logo className="h-16" />
+          <LogoFullIcon className="h-16" />
 
           <Button size={"lg"}>
             <Link href={"/"} className="text-lg !font-bold">

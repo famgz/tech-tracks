@@ -1,5 +1,6 @@
 import { ModeToggle } from "@/components/buttons/mode-toggle";
 import Logo from "@/components/icons/logo";
+import LogoFullIcon from "@/components/icons/logo-full";
 import Menu from "@/components/menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,8 +13,9 @@ export default async function Header() {
         <CardContent className="_container flex items-center justify-between py-3">
           <div className="flex items-center sm:gap-4">
             <Button variant={"ghost"} asChild>
-              <Link href={"/"}>
-                <Logo />
+              <Link href={"/"} className="flex-center">
+                <Logo className="mobile-only mt-2 size-7" />
+                <LogoFullIcon className="desktop-only" />
               </Link>
             </Button>
 
