@@ -87,7 +87,7 @@ export default async function UserPage() {
               </div>
 
               <div className="space-y-2">
-                <h2 className="text-lg">Trilhas salvas</h2>
+                <h2 className="text-lg">Lista de interesse</h2>
 
                 {bookmarkedTracks && bookmarkedTracks.length > 0 ? (
                   <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3">

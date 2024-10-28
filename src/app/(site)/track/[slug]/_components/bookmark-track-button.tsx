@@ -12,15 +12,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { BookmarkIcon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
   trackId: string;
   userId: string;
-  isBookmarked: boolean | undefined;
+  isBookmarked: boolean;
 }
 
 export default function BookmarkTrackButton({
@@ -55,8 +57,23 @@ export default function BookmarkTrackButton({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Salvar trilha</AlertDialogTitle>
-          <AlertDialogDescription>
-            Desejar incluir esta trilha na lista de salvos?
+          <AlertDialogDescription asChild>
+            <div className="space-y-0.5">
+              <p>Desejar salvar esta trilha na lista de interesses?</p>
+              <p>
+                Você pode gerenciá-la na sua página de{" "}
+                <Link
+                  href={"/user"}
+                  className={cn(
+                    "inline !h-fit !p-0 !text-foreground",
+                    buttonVariants({ variant: "link" }),
+                  )}
+                >
+                  perfil
+                </Link>
+                .
+              </p>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
