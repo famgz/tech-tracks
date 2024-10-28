@@ -59,7 +59,7 @@ export default async function UserPage() {
                         key={i}
                         track={track as Track}
                         userId={user.id}
-                        type="bookmark"
+                        type="enroll"
                       />
                     );
                   })}

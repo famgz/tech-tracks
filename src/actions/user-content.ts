@@ -68,7 +68,7 @@ export async function unenrollUserTrack(userId: string, trackId: string) {
       },
     });
     revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user");
+    revalidatePath("/user", "page");
     return res;
   } catch (e) {
     console.error("Failed to unenroll track:", e);
@@ -104,7 +104,7 @@ export async function unbookmarkUserTrack(userId: string, trackId: string) {
       },
     });
     revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user");
+    revalidatePath("/user", "page");
     return res;
   } catch (e) {
     console.error("Failed to unbookmark track:", e);
