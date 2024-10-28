@@ -36,7 +36,7 @@ export async function getUserTracks(userId: string) {
   }
 }
 
-export async function enrollUserTrack(userId: string, trackId: string) {
+export async function enrollTrack(userId: string, trackId: string) {
   try {
     if (!isUserAllowedToEnroll(userId)) {
       throw new Error("User has reached enrollment limit");
@@ -59,7 +59,7 @@ export async function enrollUserTrack(userId: string, trackId: string) {
   }
 }
 
-export async function unenrollUserTrack(userId: string, trackId: string) {
+export async function unenrollTrack(userId: string, trackId: string) {
   try {
     const res = await db.userTrack.update({
       where: { userId_trackId: { userId, trackId } },
@@ -75,7 +75,7 @@ export async function unenrollUserTrack(userId: string, trackId: string) {
   }
 }
 
-export async function bookmarkUserTrack(userId: string, trackId: string) {
+export async function bookmarkTrack(userId: string, trackId: string) {
   try {
     const res = await db.userTrack.upsert({
       where: { userId_trackId: { userId, trackId } },
@@ -95,7 +95,7 @@ export async function bookmarkUserTrack(userId: string, trackId: string) {
   }
 }
 
-export async function unbookmarkUserTrack(userId: string, trackId: string) {
+export async function unbookmarkTrack(userId: string, trackId: string) {
   try {
     const res = await db.userTrack.update({
       where: { userId_trackId: { userId, trackId } },

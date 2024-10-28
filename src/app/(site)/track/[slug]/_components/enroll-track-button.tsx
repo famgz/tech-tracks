@@ -1,6 +1,6 @@
 "use client";
 
-import { enrollUserTrack, isUserAllowedToEnroll } from "@/actions/user-content";
+import { enrollTrack, isUserAllowedToEnroll } from "@/actions/user-content";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -23,7 +23,7 @@ export default function EnrollTrackButton({
       return;
     }
 
-    const res = await enrollUserTrack(userId, trackId);
+    const res = await enrollTrack(userId, trackId);
     res
       ? toast.success("Trilha matriculada com sucesso!")
       : toast.error("Erro ao matricular a trilha.");

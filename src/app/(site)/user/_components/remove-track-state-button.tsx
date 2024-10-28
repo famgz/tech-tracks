@@ -2,8 +2,8 @@
 
 import {
   isUserAllowedToEnroll,
-  unbookmarkUserTrack,
-  unenrollUserTrack,
+  unbookmarkTrack,
+  unenrollTrack,
 } from "@/actions/user-content";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
@@ -23,7 +23,7 @@ export default function RemoveTrackStateButton({
   async function handleUnenrollClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
-    const res = await unenrollUserTrack(userId, trackId);
+    const res = await unenrollTrack(userId, trackId);
     res
       ? toast.success("Trilha desmatriculada com sucesso")
       : toast.error("Erro ao desmatricular trilha");
@@ -32,7 +32,7 @@ export default function RemoveTrackStateButton({
   async function handleUnbokmarkClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
-    const res = await unbookmarkUserTrack(userId, trackId);
+    const res = await unbookmarkTrack(userId, trackId);
     res
       ? toast.success("Trilha removida dos salvos")
       : toast.error("Erro ao remover trilha dos salvos");

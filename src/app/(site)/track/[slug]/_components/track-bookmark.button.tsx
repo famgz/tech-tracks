@@ -1,6 +1,6 @@
 "use client";
 
-import { bookmarkUserTrack } from "@/actions/user-content";
+import { bookmarkTrack } from "@/actions/user-content";
 import { Button } from "@/components/ui/button";
 import { BookmarkIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ export default function BookmarkTrackButton({
   isBookmarked,
 }: Props) {
   async function handleClick() {
-    const res = await bookmarkUserTrack(userId, trackId);
+    const res = await bookmarkTrack(userId, trackId);
     res
       ? toast.success("Trilha salva com sucesso!")
       : toast.error("Erro ao salvar a trilha.");
