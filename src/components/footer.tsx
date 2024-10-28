@@ -13,7 +13,7 @@ export default function Footer() {
             <span className="whitespace-nowrap font-bold">Tech Tracks</span>
           </p>
           <div className="flex flex-wrap items-center justify-end gap-x-3">
-            <span className="whitespace-nowrap">com o apoio de</span>
+            <span className="whitespace-nowrap">com o suporte de</span>
 
             <div className="flex-center gap-3">
               <Link href="https://dio.me" target="_blank">
