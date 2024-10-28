@@ -7,18 +7,22 @@ export default function Footer() {
   return (
     <footer>
       <Card className="rounded-b-none">
-        <CardContent className="_container flex-center gap-16 py-3 text-xs text-muted-foreground">
+        <CardContent className="_container flex-center gap-10 py-3 text-xs text-muted-foreground">
           <p className="">
-            ©2024 <span className="font-bold">Tech Tracks</span>
+            ©2024{" "}
+            <span className="whitespace-nowrap font-bold">Tech Tracks</span>
           </p>
-          <div className="flex items-center gap-3">
-            com o apoio de
-            <Link href="https://dio.me" target="_blank">
-              <DioIcon className="w-9 fill-slate-400" />
-            </Link>
-            <Link href="https://youtube.com" target="_blank">
-              <YoutubeIcon className="w-6 fill-slate-400" strokeWidth={1} />
-            </Link>
+          <div className="flex flex-wrap items-center justify-end gap-x-3">
+            <span className="whitespace-nowrap">com o apoio de</span>
+
+            <div className="flex-center gap-3">
+              <Link href="https://dio.me" target="_blank">
+                <DioIcon className="w-9 fill-slate-400" />
+              </Link>
+              <Link href="https://youtube.com" target="_blank">
+                <YoutubeIcon className="w-6 fill-slate-400" strokeWidth={1} />
+              </Link>
+            </div>
           </div>
         </CardContent>
       </Card>
