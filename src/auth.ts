@@ -1,19 +1,11 @@
-import NextAuth, { NextAuthConfig, User } from "next-auth";
-import Google from "next-auth/providers/google";
-import GitHub from "next-auth/providers/github";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/prisma";
-import { Adapter } from "next-auth/adapters";
+import { SessionUser } from "@/types/auth";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { UserRole } from "@prisma/client";
-
-declare module "next-auth" {
-  interface Session {
-    user: User & {
-      id: string;
-      role: UserRole;
-    };
-  }
-}
+import NextAuth, { NextAuthConfig } from "next-auth";
+import { Adapter } from "next-auth/adapters";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 
 const options: NextAuthConfig = {
   adapter: PrismaAdapter(db) as Adapter,
@@ -23,7 +15,7 @@ const options: NextAuthConfig = {
   providers: [Google, GitHub],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
+      if (user as SessionUser) {
         token.id = user.id;
         token.role = (user as any).role;
       }

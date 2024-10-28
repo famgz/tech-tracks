@@ -1,7 +1,8 @@
 "use server";
 
-import { signIn, signOut } from "@/auth";
-import { LoginProvider } from "@/types/auth";
+import { auth, signIn, signOut } from "@/auth";
+import { LoginProvider, SessionUser } from "@/types/auth";
+import { redirect } from "next/navigation";
 
 export async function login(formData: FormData) {
   const redirectTo = formData.get("redirect");
@@ -12,4 +13,13 @@ export async function login(formData: FormData) {
 
 export async function logout() {
   await signOut();
+}
+
+export async function getSessionUserElseRedirectToLogin(): Promise<SessionUser> {
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    redirect("/login");
+  }
+  return user;
 }
