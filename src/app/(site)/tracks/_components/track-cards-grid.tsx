@@ -1,69 +1,69 @@
 "use client";
 
 import TrackCard from "@/app/(site)/tracks/_components/track-card";
+import { parseSearchParams } from "@/app/(site)/tracks/_helpers/filters";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TrackWithExtraInfo } from "@/types/content";
-import { LoaderCircleIcon, SearchXIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useInView } from "react-intersection-observer";
+import { SearchXIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
-  filteredTracks: TrackWithExtraInfo[];
+  tracks: TrackWithExtraInfo[];
 }
 
-const ITEMS_PER_LOAD = 24;
+export default function TrackCardsGrid({ tracks }: Props) {
+  const searchParams = useSearchParams();
 
-export default function TrackCardsGrid({ filteredTracks }: Props) {
-  const totalItems = useMemo(
-    () => filteredTracks.length,
-    [filteredTracks.length],
-  );
-  const [offset, setOffset] = useState(ITEMS_PER_LOAD);
-  const hasMoreItems = useMemo(() => offset < totalItems, [totalItems, offset]);
-  const [scrollTrigger, isInView] = useInView();
-  const [visibleItems, setVisibleItems] = useState(
-    filteredTracks.slice(0, offset),
-  );
+  const parsedSearchParams = parseSearchParams(searchParams);
 
-  function loadMoreItems() {
-    if (hasMoreItems) {
-      setTimeout(() => {
-        setOffset((prev) => prev + ITEMS_PER_LOAD);
-        setVisibleItems(filteredTracks.slice(0, offset + ITEMS_PER_LOAD));
-      }, 700);
-    }
-  }
-
-  useEffect(() => {
-    if (isInView && hasMoreItems) {
-      loadMoreItems();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInView]);
-
-  useEffect(() => {
-    setOffset(ITEMS_PER_LOAD);
-    setVisibleItems(filteredTracks.slice(0, ITEMS_PER_LOAD));
-  }, [filteredTracks]);
+  const filteredTracks = Object.values(parsedSearchParams).every(
+    (x) => x === undefined,
+  )
+    ? tracks
+    : tracks.filter(
+        (t) =>
+          // search
+          (!parsedSearchParams.search ||
+            t.name.toLowerCase().includes(parsedSearchParams.search)) &&
+          // level
+          (parsedSearchParams.level.length === 0 ||
+            parsedSearchParams.level.includes(t.level.toString())) &&
+          // skill
+          (parsedSearchParams.skill.length === 0 ||
+            t.skills.some((skill) =>
+              parsedSearchParams.skill.includes(skill.id),
+            )) &&
+          // career
+          (parsedSearchParams.career.length === 0 ||
+            t.careers.some((career) =>
+              parsedSearchParams.career.includes(career.id),
+            )) &&
+          // corporate
+          (parsedSearchParams.corporate.length === 0 ||
+            parsedSearchParams.corporate.includes(t.corporate.id)),
+      );
 
   return (
     <>
+      <span className="mb-2 ml-2">
+        {filteredTracks.length ? (
+          <>
+            {filteredTracks.length} ite
+            {filteredTracks.length > 1 ? "ns" : "m"} encontrado
+            {filteredTracks.length > 1 ? "s" : ""}
+          </>
+        ) : (
+          "Sem resultados"
+        )}
+      </span>
+
       {filteredTracks.length > 0 ? (
         <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
           <div className="grid gap-3 p-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {visibleItems.map((t) => (
+            {filteredTracks.map((t) => (
               <TrackCard track={t} key={t.id} />
             ))}
           </div>
-
-          {hasMoreItems && (
-            <div
-              className="flex-center w-full py-4 text-muted-foreground"
-              ref={scrollTrigger}
-            >
-              <LoaderCircleIcon className="size-8 animate-spin stroke-[2px] text-muted-foreground" />
-            </div>
-          )}
         </ScrollArea>
       ) : (
         <div className="flex-center h-full w-full flex-col gap-6 text-2xl text-muted-foreground">

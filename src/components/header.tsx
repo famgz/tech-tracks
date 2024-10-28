@@ -11,7 +11,7 @@ export default async function Header() {
     <header>
       <Card className="rounded-t-none">
         <CardContent className="_container flex items-center justify-between py-3">
-          <div className="flex items-center sm:gap-4">
+          <div className="flex items-center">
             <Button variant={"ghost"} asChild>
               <Link href={"/"} className="flex-center">
                 <Logo className="mobile-only mt-2 size-7" />
@@ -28,7 +28,6 @@ export default async function Header() {
 
           <div className="flex-center gap-2.5">
             <ModeToggle />
-
             <Menu />
           </div>
         </CardContent>

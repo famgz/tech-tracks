@@ -1,6 +1,6 @@
 "use client";
 
-import { IFilters } from "@/app/(site)/tracks/page";
+import { parseSearchParams } from "@/app/(site)/tracks/_helpers/filters";
 import {
   Accordion,
   AccordionContent,
@@ -12,38 +12,26 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { translate } from "@/lib/translate";
 import { cn } from "@/lib/utils";
+import { FilterKeys, IFilters } from "@/types/content";
 import { SearchIcon, XIcon } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { ChangeEvent } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 interface Props {
-  searchString?: string;
   filters: IFilters;
   className?: string;
 }
 
-type FilterKeys = keyof Props["filters"];
-
-type ParsedSearchParams = {
-  [K in FilterKeys]: string[];
-};
-
-export default function Filters({ searchString, filters, className }: Props) {
+export default function Filters({ filters, className }: Props) {
   const searchParams = useSearchParams();
-  const parsedSearchParams: ParsedSearchParams = {
-    level: searchParams.getAll("level"),
-    career: searchParams.getAll("career"),
-    corporate: searchParams.getAll("corporate"),
-    skill: searchParams.getAll("skill"),
-  };
+  const parsedSearchParams = parseSearchParams(searchParams);
+  const searchString = parsedSearchParams.search;
   const pathname = usePathname();
-  const { replace } = useRouter();
-
   const params = new URLSearchParams(searchParams);
 
   function updateUrl() {
-    replace(`${pathname}?${params.toString()}`);
+    window.history.replaceState({}, "", `${pathname}?${params.toString()}`);
   }
 
   const handleInputChange = useDebouncedCallback(
@@ -68,14 +56,13 @@ export default function Filters({ searchString, filters, className }: Props) {
       params.append(key, value);
     } else {
       const values = params.getAll(key);
-      // Remove the specific value
       values.forEach((val) => {
         if (val === value) {
-          params.delete(key); // Delete all instances of the key first
+          params.delete(key);
           values
             .filter((v) => v !== value)
             .forEach((newValue) => {
-              params.append(key, newValue); // Add back all the other values
+              params.append(key, newValue);
             });
         }
       });
@@ -166,7 +153,7 @@ export default function Filters({ searchString, filters, className }: Props) {
         </div>
       </ScrollArea>
 
-      {Object.values(parsedSearchParams).some((x) => x.length) && (
+      {Object.values(parsedSearchParams).some((x) => x?.length) && (
         <Button variant={"outline"} onClick={handleResetAllCheckboxs}>
           Limpar todos
         </Button>
