@@ -20,7 +20,7 @@ export default function TrackSlot({
     <Link
       href={track ? `/track/${track.slug}` : "/tracks"}
       className={cn(
-        "relative flex aspect-[1200/564] size-full cursor-pointer rounded-lg border border-muted-foreground p-3 text-center text-muted-foreground hover:bg-muted/40 sm:text-sm",
+        "relative flex aspect-[1200/564] size-full cursor-pointer rounded-lg border border-muted-foreground p-3 text-center text-sm text-muted-foreground hover:bg-muted/40",
         { "border-dashed bg-muted/70 hover:bg-muted": !track },
       )}
     >
@@ -34,7 +34,7 @@ export default function TrackSlot({
             />
           </div>
 
-          <div className="relative size-full max-h-40 flex-1">
+          <div className="relative size-full max-h-36 flex-1">
             <Image
               src={`${baseAssetsUrl}/${track.badge}`}
               alt={track.name}

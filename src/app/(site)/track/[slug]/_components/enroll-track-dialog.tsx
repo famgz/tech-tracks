@@ -38,22 +38,27 @@ export default function EnrollTrackDialog({
 
   const { replace } = useRouter();
 
-  function closeDialog() {
+  function closeDialogWithRouter() {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("enrollDialog");
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
+  function closeDialogWithWindow() {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("enrollDialog");
+    window.history.replaceState({}, "", `${pathname}?${params.toString()}`);
   }
 
   async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
     if (!canEnroll) {
-      closeDialog();
-      toast.error("Limite de matrículas atingido.");
+      closeDialogWithWindow();
       return;
     }
 
-    closeDialog();
+    closeDialogWithRouter();
     const res = await enrollTrack(userId, trackId);
     res
       ? toast.success("Trilha matriculada com sucesso!")
@@ -63,7 +68,10 @@ export default function EnrollTrackDialog({
   if (isEnrolled) return;
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={(open) => !open && closeDialog()}>
+    <AlertDialog
+      open={isOpen}
+      onOpenChange={(open) => !open && closeDialogWithWindow()}
+    >
       <AlertDialogContent>
         {canEnroll ? (
           <>
