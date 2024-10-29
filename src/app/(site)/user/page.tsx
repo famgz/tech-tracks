@@ -51,7 +51,7 @@ export default async function UserPage() {
             <div className="space-y-10">
               <div className="space-y-2">
                 <h2 className="text-lg">Trilhas matriculadas</h2>
-                <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3">
+                <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3">
                   {Array.from({ length: USER_MAX_TRACK_SLOTS }).map((_, i) => {
                     const track = enrolledTracks?.[i]?.Track;
                     return (
@@ -70,7 +70,7 @@ export default async function UserPage() {
                 <h2 className="text-lg">Trilhas finalizadas</h2>
 
                 {completedTracks && completedTracks.length > 0 ? (
-                  <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3">
+                  <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3">
                     {completedTracks.map(({ Track }) => (
                       <TrackSlot
                         key={Track.id}
@@ -90,7 +90,7 @@ export default async function UserPage() {
                 <h2 className="text-lg">Lista de interesse</h2>
 
                 {bookmarkedTracks && bookmarkedTracks.length > 0 ? (
-                  <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3">
+                  <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3">
                     {bookmarkedTracks.map(({ Track }) => (
                       <TrackSlot
                         key={Track.id}

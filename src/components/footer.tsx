@@ -7,11 +7,12 @@ export default function Footer() {
   return (
     <footer>
       <Card className="rounded-b-none">
-        <CardContent className="_container flex-center gap-10 py-3 text-xs text-muted-foreground">
+        <CardContent className="_container flex !max-w-[500px] items-center justify-between py-3 text-xs text-muted-foreground">
           <p className="">
             ©2024{" "}
             <span className="whitespace-nowrap font-bold">Tech Tracks</span>
           </p>
+
           <div className="flex flex-wrap items-center justify-end gap-x-3">
             <span className="whitespace-nowrap">com o suporte de</span>
 
