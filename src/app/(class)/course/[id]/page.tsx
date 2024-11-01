@@ -1,8 +1,9 @@
+import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
+import { getCourseWithLessonsAndContents } from "@/actions/content";
 import LessonsAccordion from "@/app/(class)/course/[id]/_components/lessons-accordion";
 import BackButton from "@/components/buttons/back";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import YouTubeEmbed from "@/components/youtube-embed";
-import { db } from "@/lib/prisma";
+import YouTubeEmbed from "@/app/(class)/course/[id]/_components/youtube-embed";
 import { isContentVideo } from "@/lib/utils";
 import { YoutubeIcon } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -15,12 +16,9 @@ interface Props {
 }
 
 export default async function CoursePage({ params, searchParams }: Props) {
+  const user = await getSessionUserElseRedirectToLogin();
   const { id } = params;
-
-  const course = await db.course.findUnique({
-    where: { id },
-    include: { lessons: { include: { contents: true } } },
-  });
+  const course = await getCourseWithLessonsAndContents(id)
 
   if (!course) return notFound();
 

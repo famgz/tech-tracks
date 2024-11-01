@@ -1,23 +1,22 @@
+import {
+  getCareersWithCount,
+  getCorporatesWithCount,
+  getSkillsWithCount,
+  getTracksWithExtras,
+} from "@/actions/content";
 import Filters from "@/app/(site)/tracks/_components/filters";
 import TrackCardsGrid from "@/app/(site)/tracks/_components/track-cards-grid";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { db } from "@/lib/prisma";
 import { IFilters } from "@/types/content";
 import { FilterIcon } from "lucide-react";
 
 export default async function TracksPage() {
   const [skill, career, corporate, tracks] = await Promise.all([
-    db.skill.findMany({ orderBy: { name: "asc" }, include: { _count: true } }),
-    db.career.findMany({ orderBy: { name: "asc" }, include: { _count: true } }),
-    db.corporate.findMany({
-      orderBy: { name: "asc" },
-      include: { _count: true },
-    }),
-    db.track.findMany({
-      include: { skills: true, corporate: true, careers: true },
-      orderBy: { created: "desc" },
-    }),
+    getSkillsWithCount(),
+    getCareersWithCount(),
+    getCorporatesWithCount(),
+    getTracksWithExtras(),
   ]);
 
   const filters: IFilters = {
@@ -26,9 +25,9 @@ export default async function TracksPage() {
       { id: "2", name: "Intermediário" },
       { id: "3", name: "Avançado" },
     ],
-    career,
-    skill,
-    corporate,
+    career: career!,
+    skill: skill!,
+    corporate: corporate!,
   };
 
   return (
@@ -61,7 +60,7 @@ export default async function TracksPage() {
 
         {/* Track cards column */}
         <div className="flex flex-1 flex-col">
-          <TrackCardsGrid tracks={tracks} />
+          <TrackCardsGrid tracks={tracks!} />
         </div>
       </div>
     </div>

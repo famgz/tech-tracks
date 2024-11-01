@@ -3,12 +3,12 @@
 import TrackCard from "@/app/(site)/tracks/_components/track-card";
 import { parseSearchParams } from "@/app/(site)/tracks/_helpers/filters";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { TrackWithExtraInfo } from "@/types/content";
+import { TrackWithExtras } from "@/types/content";
 import { SearchXIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 interface Props {
-  tracks: TrackWithExtraInfo[];
+  tracks: TrackWithExtras[];
 }
 
 export default function TrackCardsGrid({ tracks }: Props) {
