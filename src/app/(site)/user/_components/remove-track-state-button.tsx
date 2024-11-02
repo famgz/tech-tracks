@@ -66,7 +66,7 @@ export default function RemoveTrackStateButton({
 
   const message = isTypeEnroll ? (
     <>
-      <p> Deseja desmatricular-se desta trilha?</p>
+      <p>Deseja remover a matricula desta trilha?</p>
       <p>Você poderá rematricular depois caso tenha slots disponíveis.</p>
     </>
   ) : (
@@ -105,7 +105,7 @@ export default function RemoveTrackStateButton({
               Cancelar
             </AlertDialogCancel>
             <Button onClick={handleClickFunction} variant={"destructive"}>
-              Concluir
+              Remover
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

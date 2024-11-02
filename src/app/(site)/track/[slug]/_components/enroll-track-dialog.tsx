@@ -33,10 +33,9 @@ export default function EnrollTrackDialog({
 }: Props) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const { replace } = useRouter();
 
   const isOpen = searchParams.get("enrollDialog") === "open";
-
-  const { replace } = useRouter();
 
   function closeDialogWithRouter() {
     const params = new URLSearchParams(searchParams.toString());
@@ -54,8 +53,7 @@ export default function EnrollTrackDialog({
     e.preventDefault();
 
     if (!canEnroll) {
-      closeDialogWithWindow();
-      return;
+      return closeDialogWithWindow();
     }
 
     closeDialogWithRouter();
