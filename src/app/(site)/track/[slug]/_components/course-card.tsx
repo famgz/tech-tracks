@@ -1,6 +1,5 @@
 "use client";
 
-import { getTrackById } from "@/actions/content";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -8,14 +7,14 @@ import { translate } from "@/lib/translate";
 import { cn } from "@/lib/utils";
 import { useTrackStore } from "@/store/track";
 import useStore from "@/store/use-store";
-import { Course } from "@prisma/client";
+import { Course, Track } from "@prisma/client";
 import { ArrowRightIcon, ClockIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface Props {
   course: Course;
-  trackId: string | null;
+  track: Track;
   isLoggedIn: boolean;
   isEnrolled: boolean;
   openEnrollTrackDialog: () => void;
@@ -23,7 +22,7 @@ interface Props {
 
 export default function CourseCard({
   course,
-  trackId,
+  track,
   isLoggedIn,
   isEnrolled,
   openEnrollTrackDialog,
@@ -33,18 +32,8 @@ export default function CourseCard({
   const isCourseType = course.type === "course";
 
   async function handleGoToCourse() {
-    let currentTrack;
-    let back = "";
-    if (trackId) {
-      currentTrack = await getTrackById(trackId);
-    }
-    if (currentTrack) {
-      back = `?back=/track/${currentTrack.slug}`;
-    }
-    if (currentTrack && isLoggedIn) {
-      trackStore?.setCurrentTrack(currentTrack);
-    }
-    router.push(`/course/${course.id}${back}`);
+    trackStore?.setCurrentTrack(track);
+    router.push(`/course/${course.id}?track=${track.slug}`);
   }
 
   function handleClick() {

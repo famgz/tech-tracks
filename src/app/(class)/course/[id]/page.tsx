@@ -1,38 +1,44 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
-import { getCourseWithLessonsAndContents } from "@/actions/content";
+import {
+  getCourseWithLessonsAndContents,
+  getTrackWithModulesAndCourses,
+  isCourseInTrack,
+} from "@/actions/content";
+import { getUserCourse } from "@/actions/user-content";
 import LessonsAccordion from "@/app/(class)/course/[id]/_components/lessons-accordion";
+import YouTubeEmbed from "@/app/(class)/course/[id]/_components/youtube-embed";
 import BackButton from "@/components/buttons/back";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import YouTubeEmbed from "@/app/(class)/course/[id]/_components/youtube-embed";
-import { isContentVideo } from "@/lib/utils";
+import { getVideoContent } from "@/lib/utils";
 import { YoutubeIcon } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 interface Props {
   params: {
     id: string;
   };
-  searchParams: { back: string; content: string };
+  searchParams: { track: string; content: string };
 }
 
 export default async function CoursePage({ params, searchParams }: Props) {
   const user = await getSessionUserElseRedirectToLogin();
   const { id } = params;
-  const course = await getCourseWithLessonsAndContents(id)
 
-  if (!course) return notFound();
+  const [track, course] = await Promise.all([
+    getTrackWithModulesAndCourses(searchParams.track),
+    getCourseWithLessonsAndContents(id),
+  ]);
+  if (!(track && course)) return notFound();
 
-  function getVideoContent() {
-    for (const lesson of course!.lessons) {
-      for (const content of lesson.contents) {
-        if (content.id === searchParams.content && isContentVideo(content)) {
-          return content;
-        }
-      }
-    }
-  }
+  const isCourseInCurrentTrack = await isCourseInTrack(track.id, course.id);
 
-  const currentVideoContent = getVideoContent();
+  console.log({ isCourseInCurrentTrack });
+
+  if(!isCourseInCurrentTrack) redirect('/')
+
+  const userCourse = await getUserCourse(user.id, course.id);
+
+  const currentVideoContent = getVideoContent(course, searchParams.content);
   const videoId = currentVideoContent?.youtube_code;
 
   return (
@@ -41,7 +47,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
         {/* video frame */}
         <div className="flex-center flex-1 flex-col border-r">
           <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
-            <BackButton backUrl={searchParams.back} />
+            <BackButton backUrl={`/track/${searchParams.track}`} />
             <h1 className="text-lg lg:text-xl">{course.name}</h1>
           </div>
           {!!videoId ? (

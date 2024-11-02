@@ -110,3 +110,23 @@ export async function getSkillsWithCount(): Promise<
     console.error("Failed to get skills with count:", e);
   }
 }
+
+export async function isCourseInTrack(
+  trackId: string,
+  courseId: string,
+): Promise<boolean> {
+  try {
+    const res = await db.moduleCourse.findFirst({
+      where: {
+        courseId,
+        Module: {
+          trackId,
+        },
+      },
+    });
+    return !!res;
+  } catch(e) {
+    console.error("Failed to check if course is in track:", e);
+    return false
+  }
+}

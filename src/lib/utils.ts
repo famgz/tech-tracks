@@ -1,3 +1,4 @@
+import { CourseWithLessonsAndContents } from "@/types/content";
 import { Content, Course } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
 import { ReadonlyURLSearchParams } from "next/navigation";
@@ -31,4 +32,14 @@ export function closeEnrollTrackDialog(
   const params = new URLSearchParams(searchParams.toString());
   params.delete("enrollDialog");
   window.history.replaceState({}, "", `${pathname}?${params.toString()}`);
+}
+
+export function getVideoContent(course: CourseWithLessonsAndContents, contentId: string): Content | undefined {
+  for (const lesson of course!.lessons) {
+    for (const content of lesson.contents) {
+      if (content.id === contentId && isContentVideo(content)) {
+        return content;
+      }
+    }
+  }
 }

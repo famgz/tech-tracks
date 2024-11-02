@@ -19,7 +19,7 @@ export async function getSessionUserElseRedirectToLogin(): Promise<SessionUser> 
   const session = await auth();
   const user = session?.user;
   if (!user) {
-    redirect("/login");
+    return redirect("/login");
   }
   return user;
 }

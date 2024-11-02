@@ -8,18 +8,21 @@ import {
 } from "@/components/ui/accordion";
 import { openEnrollTrackDialog } from "@/lib/utils";
 import { ModuleWithCourses } from "@/types/content";
+import { Track } from "@prisma/client";
 import { Accordion } from "@radix-ui/react-accordion";
 import { CircleIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 interface Props {
   modules: ModuleWithCourses[];
+  track: Track;
   isLoggedIn: boolean;
   isEnrolled: boolean;
 }
 
 export default function ModulesAccordion({
   modules,
+  track,
   isLoggedIn,
   isEnrolled,
 }: Props) {
@@ -49,7 +52,7 @@ export default function ModulesAccordion({
               <CourseCard
                 course={Course}
                 key={Course.id}
-                trackId={module.trackId}
+                track={track}
                 isLoggedIn={isLoggedIn}
                 isEnrolled={isEnrolled}
                 openEnrollTrackDialog={() =>

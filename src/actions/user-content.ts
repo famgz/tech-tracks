@@ -110,3 +110,14 @@ export async function unbookmarkTrack(userId: string, trackId: string) {
     console.error("Failed to unbookmark track:", e);
   }
 }
+
+export async function getUserCourse(userId: string, courseId: string) {
+  try {
+    const res = await db.userCourse.findUnique({
+      where: { userId_courseId: { userId, courseId } },
+    });
+    return res;
+  } catch (e) {
+    console.error("Failed to get user course:", e);
+  }
+}

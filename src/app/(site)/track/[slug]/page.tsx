@@ -161,6 +161,7 @@ export default async function TrackPage({ params }: Props) {
         <div className="max-w-[1000px]">
           <ModulesAccordion
             modules={track.modules}
+            track={track}
             isEnrolled={isEnrolled}
             isLoggedIn={!!user}
           />
