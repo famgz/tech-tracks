@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 export async function login(formData: FormData) {
   const redirectTo = formData.get("redirect");
   const loginProvider = formData.get("login-provider") as LoginProvider;
-  const opts = !!redirectTo ? { redirectTo: redirectTo as string } : {};
+  const opts = { redirectTo: (redirectTo || "/user") as string };
   await signIn(loginProvider, opts);
 }
 

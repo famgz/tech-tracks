@@ -79,6 +79,10 @@ export default function EnrollTrackDialog({
                 <div className="space-y-0.5">
                   <p>Deseja matricular-se nesta trilha?</p>
                   <p>Você poderá ter acesso ao seu conteúdo.</p>
+                  <p>
+                    É possível se matricular em até {USER_MAX_TRACK_SLOTS}{" "}
+                    trilhas simultâneas.
+                  </p>
                 </div>
               </AlertDialogDescription>
             </AlertDialogHeader>
