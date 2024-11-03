@@ -10,14 +10,19 @@ import { LessonWithContents } from "@/types/content";
 interface Props {
   lessons: LessonWithContents[];
   activeLessonId?: string;
+  userId: string;
 }
 
-export default function LessonsAccordion({ lessons, activeLessonId }: Props) {
+export default function LessonsAccordion({
+  lessons,
+  activeLessonId,
+  userId,
+}: Props) {
   return (
     <div>
       <Accordion
         type="single"
-        className="bg-muted"
+        className=""
         collapsible={true}
         defaultValue={activeLessonId}
       >
@@ -27,13 +32,19 @@ export default function LessonsAccordion({ lessons, activeLessonId }: Props) {
             value={lesson.id}
             className="border-muted-foreground/20"
           >
-            <AccordionTrigger className="text-left text-sm">
+            <AccordionTrigger className="bg-muted text-left text-sm">
               {lesson.name}
             </AccordionTrigger>
-            <AccordionContent className="bg-muted p-0">
-              {lesson.contents.map((content) => (
-                <ContentCard content={content} key={content.id} />
-              ))}
+            <AccordionContent className="bg-muted/50 p-2">
+              <div className="border border-b-0 p-0">
+                {lesson.contents.map((content) => (
+                  <ContentCard
+                    content={content}
+                    key={content.id}
+                    userId={userId}
+                  />
+                ))}
+              </div>
             </AccordionContent>
           </AccordionItem>
         ))}

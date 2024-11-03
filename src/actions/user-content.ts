@@ -121,3 +121,58 @@ export async function getUserCourse(userId: string, courseId: string) {
     console.error("Failed to get user course:", e);
   }
 }
+
+export async function getUserContent(userId: string, contentId: string) {
+  try {
+    const res = await db.userContent.findUnique({
+      where: { userId_contentId: { userId, contentId } },
+    });
+    return res;
+  } catch (e) {
+    console.error("Failed to get user content:", e);
+    return null;
+  }
+}
+
+export async function watchUserContent(userId: string, contentId: string) {
+  try {
+    const res = await db.userContent.upsert({
+      where: { userId_contentId: { userId, contentId } },
+      update: {
+        isCompleted: true,
+        completedAt: new Date(),
+      },
+      create: {
+        userId,
+        contentId,
+        isCompleted: true,
+        completedAt: new Date(),
+      },
+    });
+    return res;
+  } catch (e) {
+    console.error("Failed to mark user content as watched:", e);
+    return null;
+  }
+}
+
+export async function unwatchUserContent(userId: string, contentId: string) {
+  try {
+    const res = await db.userContent.upsert({
+      where: { userId_contentId: { userId, contentId } },
+      update: {
+        isCompleted: false,
+        completedAt: null,
+      },
+      create: {
+        userId,
+        contentId,
+        isCompleted: false,
+      },
+    });
+    return res;
+  } catch (e) {
+    console.error("Failed to mark user content as unwatched:", e);
+    return null;
+  }
+}

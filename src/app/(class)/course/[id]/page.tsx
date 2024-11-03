@@ -1,7 +1,6 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
 import {
   getCourseWithLessonsAndContents,
-  getFirstVideoContentInCourse,
   getTrackWithModulesAndCourses,
   isCourseInTrack,
 } from "@/actions/content";
@@ -14,7 +13,7 @@ import {
   getFirstVideoContentFromCourse,
   getVideoContentByIdFromCourse,
 } from "@/lib/utils";
-import { ArrowRightIcon, YoutubeIcon } from "lucide-react";
+import { YoutubeIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -48,7 +47,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto flex size-full max-w-[1920px] flex-col">
-      <div className="flex h-full flex-col lg:grid lg:grid-cols-[3fr_1fr]">
+      <div className="flex h-full flex-col lg:grid lg:grid-cols-[5fr_2fr]">
         {/* video frame */}
         <div className="flex-center flex-1 flex-col border-r">
           <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
@@ -91,6 +90,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
             <LessonsAccordion
               lessons={course.lessons}
               activeLessonId={currentContent?.lessonId || ""}
+              userId={user.id}
             />
           </ScrollArea>
         </div>
