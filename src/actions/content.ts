@@ -65,7 +65,10 @@ export async function getCourseWithLessonsAndContents(
     const res = await db.course.findUnique({
       where: { id: courseId },
       include: {
-        lessons: { orderBy: { order: "asc" }, include: { contents: true } },
+        lessons: {
+          orderBy: { order: "asc" },
+          include: { contents: { orderBy: { order: "asc" } } },
+        },
       },
     });
     return res;
@@ -136,7 +139,7 @@ export async function isCourseInTrack(
   }
 }
 
-export async function getVideoContentInCourse(
+export async function getVideoContentByIdInCourse(
   contentId: string,
   courseId: string,
 ): Promise<Content | null> {
@@ -173,6 +176,9 @@ export async function getFirstVideoContentInCourse(
           Lesson: {
             order: "asc",
           },
+        },
+        {
+          order: "asc",
         },
       ],
     });

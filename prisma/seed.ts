@@ -127,33 +127,43 @@ async function updateSubtitles(subtitles: Subtitle[]) {
         contentId: subtitle.contentId,
       },
     });
-
     console.log(`Added subtitle ${subtitle.name}`);
   }
 }
 
 async function updateContents(contents: Content[]) {
+  const amount = contents.length;
+  let totalUpdated = 0;
+
   for (const content of contents) {
     const contentExists = await prisma.content.findUnique({
       where: { id: content.id },
     });
-
     if (contentExists) {
-      console.log(`Existing content ${content.name}`);
-      continue;
-      prisma.content.update({
+      console.log(chalk.gray(`Existing content ${content.name}`));
+      const res = await prisma.content.update({
         where: { id: content.id },
         data: {
-          lessonId: content.lessonId,
+          order: content.order,
         },
       });
+      totalUpdated++;
+      const prefix = `${totalUpdated}/${amount}`;
+      if (res) {
+        console.log(chalk.green(`${prefix} Updated content ${content.name}`));
+      } else {
+        console.log(
+          chalk.red(`${prefix} Failed updating content ${content.name}`),
+        );
+      }
+      continue;
     }
-
     const res = await prisma.content.create({
       data: {
         id: content.id,
         slug: content.slug,
         content: content.content as Prisma.InputJsonValue,
+        order: content.order,
         duration: content.duration,
         name: content.name,
         pdf_url: content.pdf_url,
@@ -167,9 +177,11 @@ async function updateContents(contents: Content[]) {
         // },
       },
     });
-
-    console.log(res);
-    console.log(`Added content ${content.name}`);
+    if (res) {
+      console.log(chalk.green(`Added content ${content.name}`));
+    } else {
+      console.log(chalk.red(`Failed adding content ${content.name}`));
+    }
   }
 }
 
@@ -210,7 +222,6 @@ async function updateLessons(lessons: any[]) {
         },
       },
     });
-
     console.log(`Added lesson ${lesson.name}`);
   }
 }
@@ -243,7 +254,6 @@ async function updateCourses(courses: any[]) {
         workload: course.workload,
       },
     });
-
     console.log(`Added course ${course.name}`);
   }
 }
@@ -268,7 +278,6 @@ async function updatetrackActivities(_trackActivities: any[]) {
         trackId: trackActivities.trackId,
       },
     });
-
     console.log(`Added trackActivities`);
   }
 }
@@ -320,7 +329,6 @@ async function updateTracks(tracks: any[]) {
         workload: track.workload,
       },
     });
-
     console.log(`Added track ${track.name}`);
   }
 }
@@ -408,8 +416,10 @@ async function readCourseJSONFiles() {
         lessons.push(lesson);
       }
 
-      for (const content of lesson.contents) {
+      for (const i in lesson.contents) {
+        const content = lesson.contents[i];
         content.lessonId = lesson.id;
+        content.order = Number(i) + 1;
         if (!contents.some((x) => x.id === content.id)) {
           contents.push(content);
         }
@@ -426,8 +436,8 @@ async function readCourseJSONFiles() {
 
   // await updateLessons(lessons);
   // await updateCourses(courses);
-  // await updateContents(contents);
-  await updateSubtitles(subtitles);
+  await updateContents(contents);
+  // await updateSubtitles(subtitles);
 }
 
 async function readTrackJSONFiles() {
@@ -496,8 +506,8 @@ async function readTrackJSONFiles() {
 }
 
 async function main() {
-  await readTrackJSONFiles();
-  // await readCourseJSONFiles();
+  // await readTrackJSONFiles();
+  await readCourseJSONFiles();
 }
 
 main()
