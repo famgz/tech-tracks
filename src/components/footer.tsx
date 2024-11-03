@@ -7,18 +7,18 @@ export default function Footer() {
   return (
     <footer>
       <Card className="rounded-b-none">
-        <CardContent className="_container flex !max-w-[500px] items-center justify-between py-3 text-xs text-muted-foreground">
+        <CardContent className="_container flex !max-w-[500px] items-center justify-between gap-4 py-3 text-xs text-muted-foreground">
           <p className="">
             ©2024{" "}
             <span className="whitespace-nowrap font-bold">Tech Tracks</span>
           </p>
 
-          <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-0">
+          <div className="flex flex-wrap items-center justify-end gap-x-1 gap-y-0">
             <span className="whitespace-nowrap">com o suporte de</span>
 
-            <div className="flex-center gap-2">
+            <div className="flex-center gap-1">
               <Link href="https://dio.me" target="_blank">
-                <DioIcon className="w-9 fill-slate-400" />
+                <DioIcon className="h-4 w-9 fill-slate-400" />
               </Link>
               <Link href="https://youtube.com" target="_blank">
                 <YoutubeIcon className="w-6 fill-slate-400" strokeWidth={1} />
