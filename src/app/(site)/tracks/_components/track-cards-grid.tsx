@@ -59,7 +59,7 @@ export default function TrackCardsGrid({ tracks }: Props) {
 
       {filteredTracks.length > 0 ? (
         <ScrollArea className="-mr-2 h-[100px] flex-auto pr-4">
-          <div className="grid gap-3 p-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 sm:p-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredTracks.map((t) => (
               <TrackCard track={t} key={t.id} />
             ))}
