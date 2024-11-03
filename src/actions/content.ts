@@ -8,6 +8,7 @@ import {
   SkillWithCount,
   TrackWithWithModulesCoursesAndExtras,
 } from "@/types/content";
+import { Content } from "@prisma/client";
 
 export async function getTrackById(trackId: string) {
   return db.track.findUnique({ where: { id: trackId } });
@@ -22,12 +23,13 @@ export async function getTracksWithExtras() {
     return res;
   } catch (e) {
     console.error("Failed to get track with extras:", e);
+    return null;
   }
 }
 
 export async function getTrackWithModulesAndCourses(
   slug: string,
-): Promise<TrackWithWithModulesCoursesAndExtras | undefined | null> {
+): Promise<TrackWithWithModulesCoursesAndExtras | null> {
   try {
     return await db.track.findUnique({
       where: {
@@ -52,26 +54,28 @@ export async function getTrackWithModulesAndCourses(
     });
   } catch (e) {
     console.error("Failed to get track with modules and courses:", e);
+    return null;
   }
 }
 
 export async function getCourseWithLessonsAndContents(
   courseId: string,
-): Promise<CourseWithLessonsAndContents | undefined | null> {
+): Promise<CourseWithLessonsAndContents | null> {
   try {
     const res = await db.course.findUnique({
       where: { id: courseId },
-      include: { lessons: { include: { contents: true } } },
+      include: {
+        lessons: { orderBy: { order: "asc" }, include: { contents: true } },
+      },
     });
     return res;
   } catch (e) {
     console.error("Failed to get course with lessons and contents:", e);
+    return null;
   }
 }
 
-export async function getCareersWithCount(): Promise<
-  CareerWithCount[] | undefined
-> {
+export async function getCareersWithCount(): Promise<CareerWithCount[] | null> {
   try {
     const res = await db.career.findMany({
       orderBy: { name: "asc" },
@@ -80,11 +84,12 @@ export async function getCareersWithCount(): Promise<
     return res;
   } catch (e) {
     console.error("Failed to get careers with count:", e);
+    return null;
   }
 }
 
 export async function getCorporatesWithCount(): Promise<
-  CorporateWithCount[] | undefined
+  CorporateWithCount[] | null
 > {
   try {
     const res = await db.corporate.findMany({
@@ -94,12 +99,11 @@ export async function getCorporatesWithCount(): Promise<
     return res;
   } catch (e) {
     console.error("Failed to get corporates with count:", e);
+    return null;
   }
 }
 
-export async function getSkillsWithCount(): Promise<
-  SkillWithCount[] | undefined
-> {
+export async function getSkillsWithCount(): Promise<SkillWithCount[] | null> {
   try {
     const res = await db.skill.findMany({
       orderBy: { name: "asc" },
@@ -108,6 +112,7 @@ export async function getSkillsWithCount(): Promise<
     return res;
   } catch (e) {
     console.error("Failed to get skills with count:", e);
+    return null;
   }
 }
 
@@ -125,8 +130,55 @@ export async function isCourseInTrack(
       },
     });
     return !!res;
-  } catch(e) {
+  } catch (e) {
     console.error("Failed to check if course is in track:", e);
-    return false
+    return false;
+  }
+}
+
+export async function getVideoContentInCourse(
+  contentId: string,
+  courseId: string,
+): Promise<Content | null> {
+  try {
+    const res = await db.content.findUnique({
+      where: {
+        type: "video",
+        Lesson: {
+          courseId,
+        },
+        id: contentId,
+      },
+    });
+    return res;
+  } catch (e) {
+    console.error("Failed to get video content in course:", e);
+    return null;
+  }
+}
+
+export async function getFirstVideoContentInCourse(
+  courseId: string,
+): Promise<Content | null> {
+  try {
+    const res = await db.content.findFirst({
+      where: {
+        type: "video",
+        Lesson: {
+          courseId,
+        },
+      },
+      orderBy: [
+        {
+          Lesson: {
+            order: "asc",
+          },
+        },
+      ],
+    });
+    return res;
+  } catch (e) {
+    console.error("Failed to get first video content in course:", e);
+    return null;
   }
 }

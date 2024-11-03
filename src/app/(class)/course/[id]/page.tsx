@@ -1,6 +1,7 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
 import {
   getCourseWithLessonsAndContents,
+  getFirstVideoContentInCourse,
   getTrackWithModulesAndCourses,
   isCourseInTrack,
 } from "@/actions/content";
@@ -9,7 +10,10 @@ import LessonsAccordion from "@/app/(class)/course/[id]/_components/lessons-acco
 import YouTubeEmbed from "@/app/(class)/course/[id]/_components/youtube-embed";
 import BackButton from "@/components/buttons/back";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getVideoContent } from "@/lib/utils";
+import {
+  getFirstVideoContentFromCourse,
+  getVideoContentByIdFromCourse,
+} from "@/lib/utils";
 import { YoutubeIcon } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 
@@ -31,15 +35,15 @@ export default async function CoursePage({ params, searchParams }: Props) {
   if (!(track && course)) return notFound();
 
   const isCourseInCurrentTrack = await isCourseInTrack(track.id, course.id);
-
-  console.log({ isCourseInCurrentTrack });
-
-  if(!isCourseInCurrentTrack) redirect('/')
+  if (!isCourseInCurrentTrack) redirect("/");
 
   const userCourse = await getUserCourse(user.id, course.id);
 
-  const currentVideoContent = getVideoContent(course, searchParams.content);
-  const videoId = currentVideoContent?.youtube_code;
+  const currentContent =
+    getVideoContentByIdFromCourse(course, searchParams.content) ||
+    getFirstVideoContentFromCourse(course);
+
+  const videoId = currentContent?.youtube_code;
 
   return (
     <div className="mx-auto flex size-full max-w-[1920px] flex-col">
@@ -48,7 +52,12 @@ export default async function CoursePage({ params, searchParams }: Props) {
         <div className="flex-center flex-1 flex-col border-r">
           <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
             <BackButton backUrl={`/track/${searchParams.track}`} />
-            <h1 className="text-lg lg:text-xl">{course.name}</h1>
+            <div className="flex flex-col">
+              <h1 className="text-lg lg:text-xl">
+                {currentContent?.name || "Escolha um conteúdo para assistir"}
+              </h1>
+              <h2 className="text-sm text-muted-foreground">{course.name}</h2>
+            </div>
           </div>
           {!!videoId ? (
             <YouTubeEmbed videoId={videoId} />

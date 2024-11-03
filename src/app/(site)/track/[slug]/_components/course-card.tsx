@@ -1,5 +1,6 @@
 "use client";
 
+import { getFirstVideoContentInCourse } from "@/actions/content";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -31,9 +32,13 @@ export default function CourseCard({
   const router = useRouter();
   const isCourseType = course.type === "course";
 
-  async function handleGoToCourse() {
+  async function goToCourse() {
+    const firstVideoContent = await getFirstVideoContentInCourse(course.id);
+    const contentParam = firstVideoContent
+      ? `&content=${firstVideoContent.id}`
+      : "";
     trackStore?.setCurrentTrack(track);
-    router.push(`/course/${course.id}?track=${track.slug}`);
+    router.push(`/course/${course.id}?track=${track.slug}${contentParam}`);
   }
 
   function handleClick() {
@@ -42,7 +47,7 @@ export default function CourseCard({
     }
 
     if (isCourseType) {
-      return handleGoToCourse();
+      return goToCourse();
     }
   }
 

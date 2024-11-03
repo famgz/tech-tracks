@@ -14,17 +14,15 @@ export default function ContentCard({ content }: Props) {
   const pathname = usePathname();
   const { replace } = useRouter();
   const params = new URLSearchParams(searchParams);
+
   const isCurrentContent = searchParams.get("content") === content.id;
-  const isThisContentVideo = isContentVideo(content);
+  const isVideo = isContentVideo(content);
 
-  function updateUrl() {
-    replace(`${pathname}?${params.toString()}`);
-  }
-
-  function handleContentClick(content: Content) {
-    if (!isContentVideo(content)) return;
-    params.set("content", content.id);
-    updateUrl();
+  function udpateUrlContent() {
+    if (isVideo) {
+      params.set("content", content.id);
+      replace(`${pathname}?${params.toString()}`);
+    }
   }
 
   return (
@@ -34,12 +32,12 @@ export default function ContentCard({ content }: Props) {
         {
           "border border-foreground font-semibold text-primary":
             isCurrentContent,
-          "cursor-not-allowed text-muted-foreground": !isThisContentVideo,
+          "cursor-not-allowed text-muted-foreground": !isVideo,
         },
       )}
-      onClick={() => handleContentClick(content)}
+      onClick={() => udpateUrlContent()}
       title={
-        !isThisContentVideo
+        !isVideo
           ? "No momento apenas conteúdos de vídeo são suportados na plataforma"
           : ""
       }
@@ -48,7 +46,7 @@ export default function ContentCard({ content }: Props) {
 
       <p className="flex-1 text-left">{content.name}</p>
 
-      <span>{isThisContentVideo && (content.duration || "?")}</span>
+      {isVideo && <span>{content.duration || "?"}</span>}
     </div>
   );
 }

@@ -34,10 +34,27 @@ export function closeEnrollTrackDialog(
   window.history.replaceState({}, "", `${pathname}?${params.toString()}`);
 }
 
-export function getVideoContent(course: CourseWithLessonsAndContents, contentId: string): Content | undefined {
-  for (const lesson of course!.lessons) {
+export function getVideoContentByIdFromCourse(
+  course: CourseWithLessonsAndContents,
+  contentId: string,
+): Content | undefined {
+  if (!contentId) return;
+
+  for (const lesson of course.lessons) {
     for (const content of lesson.contents) {
       if (content.id === contentId && isContentVideo(content)) {
+        return content;
+      }
+    }
+  }
+}
+
+export function getFirstVideoContentFromCourse(
+  course: CourseWithLessonsAndContents,
+): Content | undefined {
+  for (const lesson of course.lessons) {
+    for (const content of lesson.contents) {
+      if (isContentVideo(content)) {
         return content;
       }
     }
