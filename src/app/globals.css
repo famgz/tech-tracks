@@ -86,3 +86,7 @@
 .desktop-only {
   @apply max-sm:hidden;
 }
+
+.link {
+  @apply cursor-pointer hover:underline hover:brightness-125;
+}

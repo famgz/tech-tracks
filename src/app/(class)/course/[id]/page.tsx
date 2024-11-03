@@ -14,7 +14,8 @@ import {
   getFirstVideoContentFromCourse,
   getVideoContentByIdFromCourse,
 } from "@/lib/utils";
-import { YoutubeIcon } from "lucide-react";
+import { ArrowRightIcon, YoutubeIcon } from "lucide-react";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 interface Props {
@@ -52,11 +53,18 @@ export default async function CoursePage({ params, searchParams }: Props) {
         <div className="flex-center flex-1 flex-col border-r">
           <div className="flex w-full items-center justify-start gap-3 px-5 py-3">
             <BackButton backUrl={`/track/${searchParams.track}`} />
+
             <div className="flex flex-col">
               <h1 className="text-lg lg:text-xl">
                 {currentContent?.name || "Escolha um conteúdo para assistir"}
               </h1>
-              <h2 className="text-sm text-muted-foreground">{course.name}</h2>
+              <h2 className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Link href={`/track/${track.slug}`} className="link">
+                  {track.name}
+                </Link>
+                {" / "}
+                {course.name}
+              </h2>
             </div>
           </div>
           {!!videoId ? (
