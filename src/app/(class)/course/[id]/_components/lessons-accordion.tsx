@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { cn } from "@/lib/utils";
 import { LessonWithContents } from "@/types/content";
 
 interface Props {
@@ -33,7 +34,13 @@ export default function LessonsAccordion({
             className="border-muted-foreground/20"
           >
             <AccordionTrigger className="bg-muted text-left text-sm">
-              {lesson.name}
+              <span
+                className={cn({
+                  "text-primary/90": lesson.id === activeLessonId,
+                })}
+              >
+                {lesson.name}
+              </span>
             </AccordionTrigger>
             <AccordionContent className="bg-muted/50 p-2">
               <div className="border border-b-0 p-0">

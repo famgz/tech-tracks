@@ -4,9 +4,7 @@ import { getUserContent, watchUserContent } from "@/actions/user-content";
 import ContentIcon from "@/components/icons/content";
 import { cn, isContentVideo } from "@/lib/utils";
 import { Content, UserContent } from "@prisma/client";
-import {
-  CheckIcon
-} from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -49,7 +47,7 @@ export default function ContentCard({ content, userId }: Props) {
       className={cn(
         "flex items-center gap-5 border-b bg-background p-4 text-xs font-light hover:bg-background/60",
         {
-          "border border-primary font-semibold": isCurrentContent,
+          "border border-primary/60 font-semibold": isCurrentContent,
           "cursor-not-allowed text-muted-foreground": !isVideo,
         },
       )}
@@ -75,7 +73,7 @@ export default function ContentCard({ content, userId }: Props) {
             className={cn(
               "flex-center size-4 cursor-pointer rounded-full border border-foreground",
               {
-                "bg-foreground": userContent?.isCompleted,
+                "border-primary/10 bg-primary/70": userContent?.isCompleted,
               },
             )}
           >

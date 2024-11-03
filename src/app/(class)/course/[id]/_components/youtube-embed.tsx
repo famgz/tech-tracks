@@ -13,7 +13,7 @@ export default function YouTubeEmbed({ videoId }: { videoId: string }) {
   return (
     <div className="relative flex w-full flex-1 items-center">
       <iframe
-        src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+        src={`https://www.youtube.com/embed/${videoId}?rel=0`} // &enablejsapi=1
         width="100%"
         height="100%"
         title="YouTube video player"

@@ -54,15 +54,18 @@ export default async function CoursePage({ params, searchParams }: Props) {
             <BackButton backUrl={`/track/${searchParams.track}`} />
 
             <div className="flex flex-col">
-              <h1 className="text-lg lg:text-xl">
+              <h1 className="line-clamp-1 text-lg lg:text-xl">
                 {currentContent?.name || "Escolha um conteúdo para assistir"}
               </h1>
               <h2 className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Link href={`/track/${track.slug}`} className="link">
+                <Link
+                  href={`/track/${track.slug}`}
+                  className="link line-clamp-1"
+                >
                   {track.name}
                 </Link>
                 {" / "}
-                {course.name}
+                <span className="line-clamp-1">{course.name}</span>
               </h2>
             </div>
           </div>
