@@ -9,12 +9,18 @@ import { LessonWithContents } from "@/types/content";
 
 interface Props {
   lessons: LessonWithContents[];
+  activeLessonId?: string;
 }
 
-export default function LessonsAccordion({ lessons }: Props) {
+export default function LessonsAccordion({ lessons, activeLessonId }: Props) {
   return (
     <div>
-      <Accordion type="multiple" className="bg-muted">
+      <Accordion
+        type="single"
+        className="bg-muted"
+        collapsible={true}
+        defaultValue={activeLessonId}
+      >
         {lessons.map((lesson) => (
           <AccordionItem
             key={lesson.id}

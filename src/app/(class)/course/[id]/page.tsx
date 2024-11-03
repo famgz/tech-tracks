@@ -80,7 +80,10 @@ export default async function CoursePage({ params, searchParams }: Props) {
             Lições
           </h1>
           <ScrollArea className="h-[100px] flex-auto">
-            <LessonsAccordion lessons={course.lessons} />
+            <LessonsAccordion
+              lessons={course.lessons}
+              activeLessonId={currentContent?.lessonId || ""}
+            />
           </ScrollArea>
         </div>
       </div>
