@@ -7,6 +7,7 @@ import { cn, isContentVideo } from "@/lib/utils";
 import { Content, UserContent } from "@prisma/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface Props {
   content: Content;
@@ -44,7 +45,12 @@ export default function ContentCard({
       return;
     }
     const res = await watchUserContent(userId, content.id);
-    setUserContent(res);
+    if (res) {
+      setUserContent(res);
+      toast.success(`Conteúdo ${content.name} marcado como visto`);
+    } else {
+      toast.error("Erro ao marcar conteúdo como visto");
+    }
   }
 
   return (
