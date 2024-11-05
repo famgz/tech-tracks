@@ -187,48 +187,52 @@ export default async function TrackPage({ params }: Props) {
           </div>
         </div>
 
-        {/* right column user activities */}
+        {/* right column (desktop) */}
         <div className="flex flex-col gap-12">
           <div className="space-y-3">
-            <h3 className="text-xl">
-              {allUserTracksInTrackFeedback.length > 0 ? (
-                <p>
-                  <span className="font-semibold">
-                    {allUserTracksInTrack.length} aluno
-                    {allUserTracksInTrack.length > 1 && "s"}
-                  </span>{" "}
-                  já se matricularam
-                </p>
+            <h3 className="text-xl font-medium">Alunos matriculados</h3>
+
+            <p className="text-sm text-muted-foreground">
+              {allUserTracksInTrack.length > 0 ? (
+                <span>
+                  {allUserTracksInTrack.length} aluno
+                  {allUserTracksInTrack.length > 1 && "s"} já se{" "}
+                  {allUserTracksInTrack.length > 1
+                    ? "matricularam"
+                    : "matriculou"}
+                </span>
               ) : (
-                <p>Seja o primeiro aluno a se matricular!</p>
+                <span>Seja o primeiro aluno a se matricular!</span>
               )}
-            </h3>
-            <div className="flex -space-x-2.5">
-              {allUserTracksInTrack.map((x) => (
-                <Avatar
-                  className="size-10 border-2 border-primary/60"
-                  key={x.trackId + x.userId}
-                  title={x.User.name || ""}
-                >
-                  <AvatarImage
-                    src={x.User.image || ""}
-                    alt="enrolled user avatar"
-                  />
-                  <AvatarFallback>
-                    {user.name?.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              ))}
-            </div>
+            </p>
+            {allUserTracksInTrack.length > 0 && (
+              <div className="flex -space-x-2.5">
+                {allUserTracksInTrack.map((x) => (
+                  <Avatar
+                    className="size-10 border-2 border-primary/60"
+                    key={x.trackId + x.userId}
+                    title={x.User.name || ""}
+                  >
+                    <AvatarImage
+                      src={x.User.image || ""}
+                      alt="enrolled user avatar"
+                    />
+                    <AvatarFallback>
+                      {user.name?.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-1 flex-col gap-3">
-            <h3 className="text-xl">Feedback Alunos</h3>
+            <h3 className="text-xl font-medium">Feedback Alunos</h3>
             <ScrollArea className="h-[200px] flex-auto">
               <div className="space-y-6">
                 {allUserTracksInTrackFeedback.length == 0 ? (
                   <p className="text-sm text-muted-foreground">
-                    Nenhum feedback encontrado para este curso
+                    Nenhum feedback encontrado para este curso.
                   </p>
                 ) : (
                   allUserTracksInTrackFeedback.map((x) => (
