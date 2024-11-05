@@ -59,7 +59,7 @@ export default function BookmarkTrackButton({
           <AlertDialogTitle>Salvar trilha</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-0.5">
-              <p>Desejar salvar esta trilha na lista de interesses?</p>
+              <p>Deseja salvar esta trilha na lista de interesses?</p>
               <p>
                 Você pode gerenciá-la na sua página de{" "}
                 <Link

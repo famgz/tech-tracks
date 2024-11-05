@@ -56,7 +56,7 @@ export default function MarkContentWatchedButton({
               <AlertDialogTitle>Marcar conteúdo como visto</AlertDialogTitle>
               <AlertDialogDescription asChild>
                 <div className="space-y-0.5">
-                  <p>Desejar marcar este conteúdo como visto?</p>
+                  <p>Deseja marcar este conteúdo como visto?</p>
                   <p>Esta ação é irreversível.</p>
                 </div>
               </AlertDialogDescription>
