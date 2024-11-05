@@ -1,11 +1,18 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
 import { getTrackWithModulesAndCourses } from "@/actions/content";
-import { getUserTrack, isUserAllowedToEnroll } from "@/actions/user-content";
+import {
+  getAllUserTracksInTrack,
+  getUserTrack,
+  isUserAllowedToEnroll,
+} from "@/actions/user-content";
 import BookmarkTrackButton from "@/app/(site)/track/[slug]/_components/bookmark-track-button";
 import EnrollTrackButton from "@/app/(site)/track/[slug]/_components/enroll-track-button";
 import EnrollTrackDialog from "@/app/(site)/track/[slug]/_components/enroll-track-dialog";
 import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
 import ChartFilledIcon from "@/components/icons/chart-filed";
+import StarRating from "@/components/star-rating";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { baseAssetsUrl } from "@/constants/api";
 import { translate } from "@/lib/translate";
 import { ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
@@ -22,12 +29,20 @@ interface Props {
 
 export default async function TrackPage({ params }: Props) {
   const user = await getSessionUserElseRedirectToLogin();
-
   const { slug } = params;
-  const track = await getTrackWithModulesAndCourses(slug);
-  if (!track) {
+
+  const [track, allUserTracksInTrack] = await Promise.all([
+    getTrackWithModulesAndCourses(slug),
+    getAllUserTracksInTrack(slug),
+  ]);
+
+  if (!(track && allUserTracksInTrack)) {
     return notFound();
   }
+
+  const allUserTracksInTrackFeedback = allUserTracksInTrack.filter(
+    (x) => x.rating || x.comment,
+  );
 
   const userTrack = await getUserTrack(user.id, track.id);
   const isEnrolled = !!userTrack?.isEnrolled;
@@ -129,42 +144,121 @@ export default async function TrackPage({ params }: Props) {
         <EnrollTrackButton isEnrolled={isEnrolled} />
       </div>
 
-      {/* description */}
-      <div
-        className="pointer-events-none max-w-[1000px] font-light text-muted-foreground max-lg:text-sm"
-        dangerouslySetInnerHTML={{
-          __html: track.description,
-        }}
-      />
+      <div className="flex flex-col gap-8 sm:grid sm:grid-cols-[3fr_1fr]">
+        {/* left column (desktop) */}
+        <div className="space-y-12">
+          {/* description */}
+          <div
+            className="pointer-events-none max-w-[1000px] font-light text-muted-foreground max-lg:text-sm"
+            dangerouslySetInnerHTML={{
+              __html: track.description,
+            }}
+          />
 
-      {/* track content */}
-      <div className="space-y-3">
-        {/* track data */}
-        <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
-          {Object.entries(track.track_activities).map(([k, v], i, a) => {
-            if (i === a.length - 1) return;
-            if (!v) return;
-            return (
-              <Fragment key={k}>
-                <p>
-                  {v} {translate(k)}
-                </p>
-                {i < a.length - 2 && (
-                  <DotIcon className="text-muted-foreground" />
-                )}
-              </Fragment>
-            );
-          })}
+          {/* track content */}
+          <div className="space-y-3">
+            {/* track data */}
+            <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
+              {Object.entries(track.track_activities).map(([k, v], i, a) => {
+                if (i === a.length - 1) return;
+                if (!v) return;
+                return (
+                  <Fragment key={k}>
+                    <p>
+                      {v} {translate(k)}
+                    </p>
+                    {i < a.length - 2 && (
+                      <DotIcon className="text-muted-foreground" />
+                    )}
+                  </Fragment>
+                );
+              })}
+            </div>
+
+            {/* modules */}
+            <div className="max-w-[1000px]">
+              <ModulesAccordion
+                modules={track.modules}
+                track={track}
+                isEnrolled={isEnrolled}
+                isLoggedIn={!!user}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* modules */}
-        <div className="max-w-[1000px]">
-          <ModulesAccordion
-            modules={track.modules}
-            track={track}
-            isEnrolled={isEnrolled}
-            isLoggedIn={!!user}
-          />
+        {/* right column user activities */}
+        <div className="flex flex-col gap-12">
+          <div className="space-y-3">
+            <h3 className="text-xl">
+              {allUserTracksInTrackFeedback.length > 0 ? (
+                <p>
+                  <span className="font-semibold">
+                    {allUserTracksInTrack.length} aluno
+                    {allUserTracksInTrack.length > 1 && "s"}
+                  </span>{" "}
+                  já se matricularam
+                </p>
+              ) : (
+                <p>Seja o primeiro aluno a se matricular!</p>
+              )}
+            </h3>
+            <div className="flex -space-x-2.5">
+              {allUserTracksInTrack.map((x) => (
+                <Avatar
+                  className="size-10 border-2 border-primary/60"
+                  key={x.trackId + x.userId}
+                  title={x.User.name || ""}
+                >
+                  <AvatarImage
+                    src={x.User.image || ""}
+                    alt="enrolled user avatar"
+                  />
+                  <AvatarFallback>
+                    {user.name?.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-1 flex-col gap-3">
+            <h3 className="text-xl">Feedback Alunos</h3>
+            <ScrollArea className="h-[200px] flex-auto">
+              <div className="space-y-6">
+                {allUserTracksInTrackFeedback.length == 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Nenhum feedback encontrado para este curso
+                  </p>
+                ) : (
+                  allUserTracksInTrackFeedback.map((x) => (
+                    <div key={x.trackId + x.userId} className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Avatar
+                          className="size-8"
+                          key={x.trackId + x.userId}
+                          title={x.User.name || ""}
+                        >
+                          <AvatarImage
+                            src={x.User.image || ""}
+                            alt="enrolled user avatar"
+                          />
+                          <AvatarFallback>
+                            {user.name?.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p>{x.User.name}</p>
+                      </div>
+                      {x.rating && <StarRating rating={x.rating} />}
+                      <p className="text-sm text-muted-foreground">
+                        {x.comment}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </div>
         </div>
       </div>
 

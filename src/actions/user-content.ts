@@ -18,6 +18,7 @@ export async function getUserTrack(userId: string, trackId: string) {
     return res;
   } catch (e) {
     console.error("Failed to get user track:", e);
+    return null;
   }
 }
 
@@ -29,7 +30,24 @@ export async function getAllUserTracks(userId: string) {
     });
     return res;
   } catch (e) {
-    console.error("Failed to get user tracks:", e);
+    console.error("Failed to get all user tracks:", e);
+    return null;
+  }
+}
+
+export async function getAllUserTracksInTrack(trackSlug: string) {
+  try {
+    const res = await db.userTrack.findMany({
+      where: { Track: { slug: trackSlug } },
+      include: { User: true },
+    });
+    return res;
+  } catch (e) {
+    console.error(
+      `Failed to get all user tracks for trackSlug ${trackSlug}:`,
+      e,
+    );
+    return null;
   }
 }
 
@@ -55,6 +73,7 @@ export async function enrollTrack(userId: string, trackId: string) {
     return res;
   } catch (e) {
     console.error("Failed to enroll track:", e);
+    return null;
   }
 }
 
@@ -71,6 +90,7 @@ export async function unenrollTrack(userId: string, trackId: string) {
     return res;
   } catch (e) {
     console.error("Failed to unenroll track:", e);
+    return null;
   }
 }
 
@@ -92,6 +112,7 @@ export async function bookmarkTrack(userId: string, trackId: string) {
     return res;
   } catch (e) {
     console.error("Failed to bookmark track:", e);
+    return null;
   }
 }
 
@@ -108,6 +129,7 @@ export async function unbookmarkTrack(userId: string, trackId: string) {
     return res;
   } catch (e) {
     console.error("Failed to unbookmark track:", e);
+    return null;
   }
 }
 
@@ -119,6 +141,7 @@ export async function getUserCourse(userId: string, courseId: string) {
     return res;
   } catch (e) {
     console.error("Failed to get user course:", e);
+    return null;
   }
 }
 
@@ -134,12 +157,13 @@ export async function getUserContent(userId: string, contentId: string) {
   }
 }
 
-export async function getAllUserContentsInCourse(userId: string, courseId: string) {
+export async function getAllUserContentsInCourse(
+  userId: string,
+  courseId: string,
+) {
   try {
     const res = await db.userContent.findMany({
-      where: { userId,
-        Content: {Lesson: {courseId}}
-       },
+      where: { userId, Content: { Lesson: { courseId } } },
     });
     return res;
   } catch (e) {
