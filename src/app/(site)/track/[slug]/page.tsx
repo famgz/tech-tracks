@@ -135,13 +135,17 @@ export default async function TrackPage({ params }: Props) {
       </div>
 
       {/* buttons */}
-      <div className="flex flex-col items-center gap-4 max-sm:justify-center xs:flex-row">
+      <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
         <BookmarkTrackButton
           trackId={track.id}
           userId={user.id}
           isBookmarked={isBookmarked}
         />
         <EnrollTrackButton isEnrolled={isEnrolled} />
+        <StarRating
+          rating={0}
+          starClassName="size-8 fill-none stroke-muted-foreground"
+        />
       </div>
 
       <div className="flex flex-col gap-8 sm:grid sm:grid-cols-[3fr_1fr]">
@@ -157,22 +161,25 @@ export default async function TrackPage({ params }: Props) {
 
           {/* track content */}
           <div className="space-y-3">
-            {/* track data */}
-            <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
-              {Object.entries(track.track_activities).map(([k, v], i, a) => {
-                if (i === a.length - 1) return;
-                if (!v) return;
-                return (
-                  <Fragment key={k}>
-                    <p>
-                      {v} {translate(k)}
-                    </p>
-                    {i < a.length - 2 && (
-                      <DotIcon className="text-muted-foreground" />
-                    )}
-                  </Fragment>
-                );
-              })}
+            <div>
+              <h2 className="text-xl font-medium">Módulos</h2>
+              {/* track data */}
+              <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
+                {Object.entries(track.track_activities).map(([k, v], i, a) => {
+                  if (i === a.length - 1) return;
+                  if (!v) return;
+                  return (
+                    <Fragment key={k}>
+                      <p>
+                        {v} {translate(k)}
+                      </p>
+                      {i < a.length - 2 && (
+                        <DotIcon className="text-muted-foreground" />
+                      )}
+                    </Fragment>
+                  );
+                })}
+              </div>
             </div>
 
             {/* modules */}
@@ -191,7 +198,6 @@ export default async function TrackPage({ params }: Props) {
         <div className="flex flex-col gap-12">
           <div className="space-y-3">
             <h3 className="text-xl font-medium">Alunos matriculados</h3>
-
             <p className="text-sm text-muted-foreground">
               {allUserTracksInTrack.length > 0 ? (
                 <span>

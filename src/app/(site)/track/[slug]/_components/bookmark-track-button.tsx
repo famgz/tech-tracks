@@ -46,7 +46,7 @@ export default function BookmarkTrackButton({
       <AlertDialogTrigger asChild>
         <Button
           variant={"outline"}
-          className="gap-2 border-primary px-6 text-xl max-xs:w-full"
+          className="min-w-48 gap-2 border-primary px-6 text-xl max-xs:w-full"
           size={"lg"}
           disabled={isBookmarked}
         >

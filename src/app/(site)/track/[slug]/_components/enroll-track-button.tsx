@@ -19,12 +19,12 @@ export default function EnrollTrackButton({ isEnrolled }: Props) {
   return (
     <Button
       variant={"default"}
-      className="gap-2 text-xl font-semibold max-xs:w-full"
+      className="min-w-48 gap-2 text-xl font-semibold max-xs:w-full"
       size={"lg"}
       disabled={isEnrolled}
       onClick={handleClick}
     >
-      {isEnrolled ? "Matriculado" : "Matricular-se"}
+      {isEnrolled ? "Matriculado" : "Matricular"}
     </Button>
   );
 }
