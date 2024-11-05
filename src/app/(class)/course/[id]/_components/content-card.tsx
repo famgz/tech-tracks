@@ -1,26 +1,35 @@
 "use client";
 
-import { getUserContent, watchUserContent } from "@/actions/user-content";
+import { watchUserContent } from "@/actions/user-content";
+import MarkContentWatchedButton from "@/app/(class)/course/[id]/_components/mark-content-watched-button";
 import ContentIcon from "@/components/icons/content";
 import { cn, isContentVideo } from "@/lib/utils";
 import { Content, UserContent } from "@prisma/client";
-import { CheckIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface Props {
   content: Content;
   userId: string;
+  currentContentId: string | undefined;
+  userContentInCourse: UserContent | undefined;
 }
 
-export default function ContentCard({ content, userId }: Props) {
+export default function ContentCard({
+  content,
+  userId,
+  currentContentId,
+  userContentInCourse,
+}: Props) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   const params = new URLSearchParams(searchParams);
-  const [userContent, setUserContent] = useState<UserContent | null>(null);
 
-  const isCurrentContent = searchParams.get("content") === content.id;
+  const [userContent, setUserContent] = useState<
+    UserContent | undefined | null
+  >(userContentInCourse);
+  const isCurrentContent = currentContentId === content.id;
   const isVideo = isContentVideo(content);
 
   function udpateUrlContent() {
@@ -31,16 +40,12 @@ export default function ContentCard({ content, userId }: Props) {
   }
 
   async function handleWatchClick() {
+    if (userContent && userContent?.isCompleted) {
+      return;
+    }
     const res = await watchUserContent(userId, content.id);
     setUserContent(res);
   }
-
-  useEffect(() => {
-    (async () => {
-      const res = await getUserContent(userId, content.id);
-      setUserContent(res);
-    })();
-  }, [userId, content.id]);
 
   return (
     <div
@@ -67,21 +72,10 @@ export default function ContentCard({ content, userId }: Props) {
 
       {isVideo && (
         <div className="flex items-center gap-3">
-          {/* check icon */}
-          <div
-            onClick={handleWatchClick}
-            className={cn(
-              "flex-center size-4 cursor-pointer rounded-full border border-foreground",
-              {
-                "border-primary/10 bg-primary/70": userContent?.isCompleted,
-              },
-            )}
-          >
-            {userContent && userContent?.isCompleted && (
-              <CheckIcon className="size-3 text-background" strokeWidth={4.5} />
-            )}
-          </div>
-
+          <MarkContentWatchedButton
+            userContent={userContent}
+            handleWatchClick={handleWatchClick}
+          />
           <span className="w-9 text-right">{content.duration || "?"}</span>
         </div>
       )}

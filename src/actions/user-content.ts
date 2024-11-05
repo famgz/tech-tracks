@@ -134,6 +134,20 @@ export async function getUserContent(userId: string, contentId: string) {
   }
 }
 
+export async function getAllUserContentsInCourse(userId: string, courseId: string) {
+  try {
+    const res = await db.userContent.findMany({
+      where: { userId,
+        Content: {Lesson: {courseId}}
+       },
+    });
+    return res;
+  } catch (e) {
+    console.error("Failed to get all user contents in course:", e);
+    return null;
+  }
+}
+
 export async function watchUserContent(userId: string, contentId: string) {
   try {
     const res = await db.userContent.upsert({

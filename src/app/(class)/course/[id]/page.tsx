@@ -4,7 +4,10 @@ import {
   getTrackWithModulesAndCourses,
   isCourseInTrack,
 } from "@/actions/content";
-import { getUserCourse } from "@/actions/user-content";
+import {
+  getAllUserContentsInCourse,
+  getUserCourse,
+} from "@/actions/user-content";
 import LessonsAccordion from "@/app/(class)/course/[id]/_components/lessons-accordion";
 import YouTubeEmbed from "@/app/(class)/course/[id]/_components/youtube-embed";
 import BackButton from "@/components/buttons/back";
@@ -38,6 +41,9 @@ export default async function CoursePage({ params, searchParams }: Props) {
   if (!isCourseInCurrentTrack) redirect("/");
 
   const userCourse = await getUserCourse(user.id, course.id);
+
+  const userContentsInCourse =
+    (await getAllUserContentsInCourse(user.id, course.id)) || [];
 
   const currentContent =
     getVideoContentByIdFromCourse(course, searchParams.content) ||
@@ -92,8 +98,10 @@ export default async function CoursePage({ params, searchParams }: Props) {
           <ScrollArea className="h-[100px] flex-auto">
             <LessonsAccordion
               lessons={course.lessons}
-              activeLessonId={currentContent?.lessonId || ""}
+              currentLessonId={currentContent?.lessonId || ""}
+              currentContentId={currentContent?.id}
               userId={user.id}
+              userContentsInCourse={userContentsInCourse}
             />
           </ScrollArea>
         </div>
