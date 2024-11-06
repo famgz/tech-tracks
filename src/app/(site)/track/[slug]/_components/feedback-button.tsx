@@ -62,6 +62,7 @@ export default function FeedbackButton({ userId, userTrack, track }: Props) {
       const res = await feedbackUserTrack(userId, userTrack.trackId, data);
       if (res) {
         toast.success("Feedback enviado com sucesso");
+        setOpen(false)
       } else {
         throw new Error();
       }
