@@ -214,3 +214,28 @@ export async function unwatchUserContent(userId: string, contentId: string) {
     return null;
   }
 }
+
+export async function feedbackUserTrack(
+  userId: string,
+  trackId: string,
+  feedback: { comment: string; rating: number; liked: boolean },
+) {
+  if(feedback.comment && feedback.comment?.length < 5) {
+    throw new Error('Comment is too short')
+  }
+  try {
+    const res = await db.userTrack.update({
+      where: { userId_trackId: { userId, trackId } },
+      data: {
+        comment: feedback.comment.trim() || null,
+        rating: feedback.rating || null,
+        liked: feedback.liked ?? null
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    return res;
+  } catch (e) {
+    console.error("Failed to send user track feedback:", e);
+    return null;
+  }
+}

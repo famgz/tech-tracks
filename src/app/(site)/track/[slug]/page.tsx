@@ -9,6 +9,7 @@ import BookmarkTrackButton from "@/app/(site)/track/[slug]/_components/bookmark-
 import EnrollTrackButton from "@/app/(site)/track/[slug]/_components/enroll-track-button";
 import EnrollTrackDialog from "@/app/(site)/track/[slug]/_components/enroll-track-dialog";
 import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
+import FeedbackButton from "@/app/(site)/track/[slug]/_components/feedback-button";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import StarRating from "@/components/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -134,23 +135,29 @@ export default async function TrackPage({ params }: Props) {
         </div>
       </div>
 
-      {/* buttons */}
-      <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
-        <BookmarkTrackButton
-          trackId={track.id}
-          userId={user.id}
-          isBookmarked={isBookmarked}
-        />
-        <EnrollTrackButton isEnrolled={isEnrolled} />
-        <StarRating
-          rating={0}
-          starClassName="size-8 fill-none stroke-muted-foreground"
-        />
-      </div>
-
-      <div className="flex flex-col gap-8 sm:grid sm:grid-cols-[3fr_1fr]">
+      <div className="flex flex-col gap-12 sm:grid sm:grid-cols-[3fr_1fr]">
         {/* left column (desktop) */}
         <div className="space-y-12">
+          {/* buttons */}
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
+              <BookmarkTrackButton
+                trackId={track.id}
+                userId={user.id}
+                isBookmarked={isBookmarked}
+              />
+              <EnrollTrackButton isEnrolled={isEnrolled} />
+            </div>
+
+            {isEnrolled && (
+              <FeedbackButton
+                userId={user.id}
+                userTrack={userTrack}
+                track={track}
+              />
+            )}
+          </div>
+
           {/* description */}
           <div
             className="pointer-events-none max-w-[1000px] font-light text-muted-foreground max-lg:text-sm"
