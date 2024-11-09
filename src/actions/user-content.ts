@@ -187,6 +187,7 @@ export async function watchUserContent(userId: string, contentId: string) {
         completedAt: new Date(),
       },
     });
+    revalidatePath("/course/[id]", "page");
     return res;
   } catch (e) {
     console.error("Failed to mark user content as watched:", e);
@@ -208,6 +209,7 @@ export async function unwatchUserContent(userId: string, contentId: string) {
         isCompleted: false,
       },
     });
+    revalidatePath("/course/[id]", "page");
     return res;
   } catch (e) {
     console.error("Failed to mark user content as unwatched:", e);
@@ -220,8 +222,8 @@ export async function feedbackUserTrack(
   trackId: string,
   feedback: { comment: string; rating: number; liked: boolean },
 ) {
-  if(feedback.comment && feedback.comment?.length < 5) {
-    throw new Error('Comment is too short')
+  if (feedback.comment && feedback.comment?.length < 5) {
+    throw new Error("Comment is too short");
   }
   try {
     const res = await db.userTrack.update({
@@ -229,7 +231,7 @@ export async function feedbackUserTrack(
       data: {
         comment: feedback.comment.trim() || null,
         rating: feedback.rating || null,
-        liked: feedback.liked ?? null
+        liked: feedback.liked ?? null,
       },
     });
     revalidatePath("/track/[slug]", "page");
