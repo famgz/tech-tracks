@@ -34,7 +34,11 @@ export default function TrackCard({ track }: Props) {
       <HoverCardContent className="flex items-center gap-4" sideOffset={-50}>
         <div className="relative size-24 shrink-0">
           <Image
-            src={`${baseAssetsUrl}/${track.badge}`}
+            src={
+              track.badge.startsWith("tracks")
+                ? `${baseAssetsUrl}/${track.badge}`
+                : track.badge
+            }
             fill
             alt={track.name}
             className="object-contain"
