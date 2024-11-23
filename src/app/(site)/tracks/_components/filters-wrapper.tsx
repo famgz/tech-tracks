@@ -2,7 +2,13 @@
 
 import Filters from "@/app/(site)/tracks/_components/filters";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { IFilters } from "@/types/content";
 import { FilterIcon } from "lucide-react";
 
@@ -28,6 +34,10 @@ export default function FiltersWrapper({ filters }: Props) {
           </Button>
         </SheetTrigger>
         <SheetContent className="mobile-only flex">
+          <SheetTitle className="sr-only">Filtros</SheetTitle>
+          <SheetDescription className="sr-only">
+            Lista de Filtros
+          </SheetDescription>
           <Filters filters={filters} className="flex-1" />
         </SheetContent>
       </Sheet>
