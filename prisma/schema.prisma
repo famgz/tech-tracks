@@ -86,6 +86,7 @@ model Track {
   color                  String
   created                DateTime         @default(now()) // imported creation date
   description            String
+  allowHTMLDescription   Boolean          @default(false)
   level                  Int
   level_name             LevelName
   name                   String
@@ -173,7 +174,7 @@ model Content {
   duration     String?
   name         String
   pdf_url      String?
-  type         ContentType @default(video)
+  type         ContentType   @default(video)
   youtube_code String?
   lessonId     String?
   Lesson       Lesson?       @relation(fields: [lessonId], references: [id])

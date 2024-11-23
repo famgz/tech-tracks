@@ -21,6 +21,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
+import { cn } from "@/lib/utils";
 
 interface Props {
   params: {
@@ -134,6 +135,7 @@ export default async function TrackPage({ params }: Props) {
               className="h-auto"
               alt={track.corporate.name}
               style={{ height: "auto" }}
+              title={track.corporate.name}
             />
           </Link>
         </div>
@@ -164,7 +166,10 @@ export default async function TrackPage({ params }: Props) {
 
           {/* description */}
           <div
-            className="pointer-events-none max-w-[1000px] font-light text-muted-foreground max-lg:text-sm"
+            className={cn(
+              "max-w-[1000px] font-light text-muted-foreground max-lg:text-sm",
+              { "pointer-events-none": !track.allowHTMLDescription },
+            )}
             dangerouslySetInnerHTML={{
               __html: track.description,
             }}
