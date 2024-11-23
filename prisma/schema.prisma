@@ -102,10 +102,10 @@ model Track {
   corporateId            String
   createdAt              DateTime         @default(now())
   updatedAt              DateTime         @default(now()) @updatedAt
-  trackActivitiesTrackId String           @unique
+  trackActivitiesTrackId String?          @unique
   modules                Module[]
   corporate              Corporate        @relation(fields: [corporateId], references: [id])
-  track_activities       TrackActivities  @relation(fields: [trackActivitiesTrackId], references: [trackId])
+  track_activities       TrackActivities? @relation(fields: [trackActivitiesTrackId], references: [trackId])
   careers                Career[]         @relation("CareerToTrack")
   skills                 Skill[]          @relation("SkillToTrack")
   UserTrack              UserTrack[]
@@ -168,12 +168,12 @@ model Lesson {
 model Content {
   id           String        @id @default(uuid())
   slug         String // found duplicate
-  content      Json
-  order        Int           
+  content      Json?
+  order        Int
   duration     String?
   name         String
   pdf_url      String?
-  type         ContentType
+  type         ContentType @default(video)
   youtube_code String?
   lessonId     String?
   Lesson       Lesson?       @relation(fields: [lessonId], references: [id])
