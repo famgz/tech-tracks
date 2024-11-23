@@ -59,7 +59,11 @@ export default async function TrackPage({ params }: Props) {
           {/* track image */}
           <div className="relative size-32 shrink-0">
             <Image
-              src={`${baseAssetsUrl}/${track.badge}`}
+              src={
+                track.badge.startsWith("tracks")
+                  ? `${baseAssetsUrl}/${track.badge}`
+                  : track.badge
+              }
               fill
               alt={track.name}
               className="object-contain"
@@ -172,20 +176,21 @@ export default async function TrackPage({ params }: Props) {
               <h2 className="text-xl font-medium">Módulos</h2>
               {/* track data */}
               <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
-                {Object.entries(track.track_activities).map(([k, v], i, a) => {
-                  if (i === a.length - 1) return;
-                  if (!v) return;
-                  return (
-                    <Fragment key={k}>
-                      <p>
-                        {v} {translate(k)}
-                      </p>
-                      {i < a.length - 2 && (
-                        <DotIcon className="text-muted-foreground" />
-                      )}
-                    </Fragment>
-                  );
-                })}
+                {track.track_activities &&
+                  Object.entries(track.track_activities).map(([k, v], i, a) => {
+                    if (i === a.length - 1) return;
+                    if (!v) return;
+                    return (
+                      <Fragment key={k}>
+                        <p>
+                          {v} {translate(k)}
+                        </p>
+                        {i < a.length - 2 && (
+                          <DotIcon className="text-muted-foreground" />
+                        )}
+                      </Fragment>
+                    );
+                  })}
               </div>
             </div>
 
