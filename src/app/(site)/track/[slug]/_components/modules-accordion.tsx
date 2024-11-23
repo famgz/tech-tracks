@@ -44,7 +44,10 @@ export default function ModulesAccordion({
             <CircleIcon className="size-5 text-muted-foreground" />
             <div className="flex flex-1 gap-y-1 text-left max-lg:flex-col lg:gap-3">
               <p className="flex-1 text-muted-foreground">{module.name}</p>
-              <p>{module.total_activities} atividades</p>
+              <p>
+                {module.total_activities} atividade
+                {module.courses.length > 1 && "s"}
+              </p>
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-5 p-4">
