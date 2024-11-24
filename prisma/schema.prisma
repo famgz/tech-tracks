@@ -194,7 +194,7 @@ model Career {
 
 model Skill {
   id     String  @id @default(uuid())
-  name   String
+  name   String  @unique
   tracks Track[] @relation("SkillToTrack")
 }
 
