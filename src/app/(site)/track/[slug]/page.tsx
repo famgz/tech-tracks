@@ -138,15 +138,15 @@ export default async function TrackPage({ params }: Props) {
               style={{ height: "auto" }}
               title={track.corporate.name}
             />
-            <Button asChild variant={"link"} size={"sm"}>
-              <Link
-                href={`/tracks?corporate=${track.corporateId}`}
-                className="w-full text-center text-xs !text-muted-foreground"
-              >
-                todas as trilhas
-              </Link>
-            </Button>
           </Link>
+          <Button asChild variant={"link"} size={"sm"}>
+            <Link
+              href={`/tracks?corporate=${track.corporateId}`}
+              className="h-fit w-full text-center text-xs !text-muted-foreground"
+            >
+              todas as trilhas
+            </Link>
+          </Button>
         </div>
       </div>
 
