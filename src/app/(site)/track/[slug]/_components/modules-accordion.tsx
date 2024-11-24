@@ -34,24 +34,24 @@ export default function ModulesAccordion({
       type="multiple"
       className="overflow-hidden rounded-xl border border-muted-foreground/20"
     >
-      {modules.map((module) => (
+      {modules.map((_module) => (
         <AccordionItem
-          key={module.id}
-          value={module.id}
+          key={_module.id}
+          value={_module.id}
           className="border-muted-foreground/20"
         >
           <AccordionTrigger className="gap-4 bg-muted p-4 max-lg:text-sm lg:p-6">
             <CircleIcon className="size-5 text-muted-foreground" />
             <div className="flex flex-1 gap-y-1 text-left max-lg:flex-col lg:gap-3">
-              <p className="flex-1 text-muted-foreground">{module.name}</p>
+              <p className="flex-1 text-muted-foreground">{_module.name}</p>
               <p>
-                {module.total_activities} atividade
-                {module.courses.length > 1 && "s"}
+                {_module.courses.length} atividade
+                {_module.courses.length > 1 && "s"}
               </p>
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-5 p-4">
-            {module.courses.map(({ Course }) => (
+            {_module.courses.map(({ Course }) => (
               <CourseCard
                 course={Course}
                 key={Course.id}
