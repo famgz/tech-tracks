@@ -222,6 +222,7 @@ export default async function TrackPage({ params }: Props) {
 
         {/* right column (desktop) */}
         <div className="flex flex-col gap-12">
+          {/* enrolled users */}
           <div className="space-y-3">
             <h3 className="text-xl font-medium">Alunos matriculados</h3>
             <p className="text-sm text-muted-foreground">
@@ -250,7 +251,7 @@ export default async function TrackPage({ params }: Props) {
                       alt="enrolled user avatar"
                     />
                     <AvatarFallback>
-                      {user.name?.slice(0, 2).toUpperCase()}
+                      {x.User.name?.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 ))}
@@ -258,6 +259,7 @@ export default async function TrackPage({ params }: Props) {
             )}
           </div>
 
+          {/* feedbacks */}
           <div className="flex flex-1 flex-col gap-3">
             <h3 className="text-xl font-medium">Feedback Alunos</h3>
             <ScrollArea className="h-[200px] flex-auto">
@@ -280,7 +282,7 @@ export default async function TrackPage({ params }: Props) {
                             alt="enrolled user avatar"
                           />
                           <AvatarFallback>
-                            {user.name?.slice(0, 2).toUpperCase()}
+                            {x.User.name?.slice(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <p>{x.User.name}</p>
