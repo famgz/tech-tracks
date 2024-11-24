@@ -35,7 +35,7 @@ export default function TrackCard({ track }: Props) {
         <div className="relative size-24 shrink-0">
           <Image
             src={
-              track.badge.startsWith("tracks")
+              track.badge.startsWith("tracks/")
                 ? `${baseAssetsUrl}/${track.badge}`
                 : track.badge
             }

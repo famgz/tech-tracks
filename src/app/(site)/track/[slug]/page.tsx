@@ -22,6 +22,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   params: {
@@ -61,7 +62,7 @@ export default async function TrackPage({ params }: Props) {
           <div className="relative size-32 shrink-0">
             <Image
               src={
-                track.badge.startsWith("tracks")
+                track.badge.startsWith("tracks/")
                   ? `${baseAssetsUrl}/${track.badge}`
                   : track.badge
               }
@@ -137,6 +138,14 @@ export default async function TrackPage({ params }: Props) {
               style={{ height: "auto" }}
               title={track.corporate.name}
             />
+            <Button asChild variant={"link"} size={"sm"}>
+              <Link
+                href={`/tracks?corporate=${track.corporateId}`}
+                className="w-full text-center text-xs !text-muted-foreground"
+              >
+                todas as trilhas
+              </Link>
+            </Button>
           </Link>
         </div>
       </div>

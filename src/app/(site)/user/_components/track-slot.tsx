@@ -37,7 +37,7 @@ export default function TrackSlot({
           <div className="relative size-full max-h-36 flex-1">
             <Image
               src={
-                track.badge.startsWith("tracks")
+                track.badge.startsWith("tracks/")
                   ? `${baseAssetsUrl}/${track.badge}`
                   : track.badge
               }
