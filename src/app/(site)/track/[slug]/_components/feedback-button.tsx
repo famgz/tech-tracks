@@ -18,7 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Track, UserTrack } from "@prisma/client";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
@@ -37,9 +37,13 @@ export default function FeedbackButton({ userId, userTrack, track }: Props) {
     setComment(userTrack.comment || "");
     setRating(userTrack.rating);
     setLiked(userTrack.liked);
-
     setOpen((prev) => !prev);
   }
+
+  const canSubmit = useMemo(
+    () => comment.trim().length >= 5 || (rating && rating > 0),
+    [comment, rating],
+  );
 
   async function handleSendFeedback() {
     if (!(comment && rating)) {
@@ -62,7 +66,7 @@ export default function FeedbackButton({ userId, userTrack, track }: Props) {
       const res = await feedbackUserTrack(userId, userTrack.trackId, data);
       if (res) {
         toast.success("Feedback enviado com sucesso");
-        setOpen(false)
+        setOpen(false);
       } else {
         throw new Error();
       }
@@ -111,7 +115,7 @@ export default function FeedbackButton({ userId, userTrack, track }: Props) {
               id="comment"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="font-light"
+              className="font-light max-sm:text-sm"
             />
           </div>
 
@@ -146,7 +150,7 @@ export default function FeedbackButton({ userId, userTrack, track }: Props) {
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <Button onClick={handleSendFeedback} disabled={!comment || !rating}>
+          <Button onClick={handleSendFeedback} disabled={!canSubmit}>
             Salvar
           </Button>
         </AlertDialogFooter>
