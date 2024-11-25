@@ -19,12 +19,16 @@ const translations: Translations = {
   challenge: "desafio de projeto",
   course: "curso",
   live: "live",
-  // project: 'desafio de projeto',
 
   // user role
   student: "estudante",
   creator: "criador de conteúdo",
   admin: "administrador",
+
+  // level
+  beginner: "básico",
+  intermediary: "intermediário",
+  advanced: "avançado",
 };
 
 export const translate = (word: string): string => {

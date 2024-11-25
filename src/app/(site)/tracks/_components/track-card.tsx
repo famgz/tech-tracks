@@ -2,6 +2,7 @@ import ChartIcon from "@/components/icons/chart";
 import { buttonVariants } from "@/components/ui/button";
 import { HoverCard, HoverCardContent } from "@/components/ui/hover-card";
 import { baseAssetsUrl } from "@/constants/api";
+import { translate } from "@/lib/translate";
 import { cn } from "@/lib/utils";
 import { TrackWithExtras } from "@/types/content";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
@@ -23,7 +24,7 @@ export default function TrackCard({ track }: Props) {
           className="relative aspect-[1200/564] min-w-[200px] cursor-pointer overflow-hidden rounded-lg transition-transform duration-200 hover:scale-[102%]"
         >
           <Image
-            src={track.preview}
+            src={track.banner}
             fill
             alt=""
             className="object-cover"
@@ -54,8 +55,8 @@ export default function TrackCard({ track }: Props) {
               {/* level */}
               <div className="flex items-end gap-1">
                 <ChartIcon fontSize={14} />
-                <span className="whitespace-nowrap text-[10px] leading-none">
-                  Nível {track.level}
+                <span className="whitespace-nowrap text-[10px] capitalize leading-none">
+                  {translate(track.level)}
                 </span>
               </div>
 
@@ -63,7 +64,7 @@ export default function TrackCard({ track }: Props) {
               <div className="flex items-end gap-1">
                 <ClockIcon size={14} />
                 <span className="text-[10px] leading-none">
-                  {track.workload}h
+                  {track.workloadHours}h
                 </span>
               </div>
 

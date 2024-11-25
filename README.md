@@ -53,12 +53,12 @@ erDiagram
         Int level
         LevelName level_name
         String name
-        String name_ascii
+        String nameAscii
         String preview
         String public_route
         Int relevance
         String scheduled
-        SectionType section_type
+        SectionType sectionType
         SubscriptionType subscription_type
         Int total_activities
         String web_route
@@ -87,7 +87,7 @@ erDiagram
         Int total
         CourseType type
         Int workload
-        Json extra_information
+        Json extraInformation
         DateTime createdAt
         DateTime updatedAt
     }
@@ -96,8 +96,8 @@ erDiagram
         String course
         String description
         Int experience
-        String large_cover
-        String large_cover_disabled
+        String largeCover
+        String largeCover_disabled
         String name
         String next_content
         String next_slug
@@ -115,7 +115,7 @@ erDiagram
         String name
         String pdf_url
         ContentType type
-        String youtube_code
+        String youtubeCode
         String lessonId
         DateTime createdAt
         DateTime updatedAt
@@ -131,7 +131,7 @@ erDiagram
     Corporate {
         String id
         String description
-        String image_url
+        String imageUrl
         String name
         String site
     }

@@ -70,12 +70,12 @@ Table Track {
   level Int [not null]
   level_name LevelName [not null]
   name String [not null]
-  name_ascii String [not null]
+  nameAscii String [not null]
   preview String [not null]
   public_route String [not null]
   relevance Int [not null]
   scheduled String [not null]
-  section_type SectionType [not null]
+  sectionType SectionType [not null]
   subscription_type SubscriptionType [not null]
   total_activities Int [not null]
   web_route String [not null]
@@ -116,7 +116,7 @@ Table Course {
   total Int [not null]
   type CourseType [not null]
   workload Int [not null]
-  extra_information Json
+  extraInformation Json
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   lessons Lesson [not null]
@@ -129,8 +129,8 @@ Table Lesson {
   course String [not null]
   description String [not null]
   experience Int [not null]
-  large_cover String
-  large_cover_disabled String
+  largeCover String
+  largeCover_disabled String
   name String [not null]
   next_content String
   next_slug String
@@ -152,7 +152,7 @@ Table Content {
   name String [not null]
   pdf_url String
   type ContentType [not null]
-  youtube_code String
+  youtubeCode String
   lessonId String
   Lesson Lesson
   createdAt DateTime [default: `now()`, not null]
@@ -176,7 +176,7 @@ Table Skill {
 Table Corporate {
   id String [pk]
   description String [not null]
-  image_url String [not null]
+  imageUrl String [not null]
   name String [not null]
   site String
   tracks Track [not null]

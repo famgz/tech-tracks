@@ -13,7 +13,7 @@ export type TrackWithWithModulesCoursesAndExtras = Prisma.TrackGetPayload<{
     careers: true;
     corporate: true;
     skills: true;
-    track_activities: true;
+    // track_activities: true;
     modules: {
       include: {
         courses: {
@@ -44,14 +44,20 @@ export type LessonWithContents = Prisma.LessonGetPayload<{
   include: { contents: true };
 }>;
 
-export type CareerWithCount = Prisma.CareerGetPayload<{ include: { _count: true } }>
+export type CareerWithCount = Prisma.CareerGetPayload<{
+  include: { _count: true };
+}>;
 
-export type CorporateWithCount = Prisma.CorporateGetPayload<{ include: { _count: true } }>
+export type CorporateWithCount = Prisma.CorporateGetPayload<{
+  include: { _count: true };
+}>;
 
-export type SkillWithCount = Prisma.SkillGetPayload<{ include: { _count: true } }>
+export type SkillWithCount = Prisma.SkillGetPayload<{
+  include: { _count: true };
+}>;
 
 export interface IFilters {
-  career: CareerWithCount[]
+  career: CareerWithCount[];
   corporate: CorporateWithCount[];
   level: { id: string; name: string }[];
   skill: SkillWithCount[];

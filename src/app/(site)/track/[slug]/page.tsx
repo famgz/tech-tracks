@@ -84,8 +84,8 @@ export default async function TrackPage({ params }: Props) {
                 {/* level */}
                 <div className="flex items-end gap-1">
                   <ChartFilledIcon fontSize={16} className="fill-primary" />
-                  <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
-                    Nível {track.level}
+                  <span className="whitespace-nowrap text-xs capitalize leading-none text-muted-foreground">
+                    {translate(track.level)}
                   </span>
                 </div>
 
@@ -93,7 +93,7 @@ export default async function TrackPage({ params }: Props) {
                 <div className="flex items-end gap-1">
                   <ClockIcon size={16} className="shrink-0" />
                   <span className="text-xs leading-none text-muted-foreground">
-                    {track.workload}h
+                    {track.workloadHours}h
                   </span>
                 </div>
 
@@ -123,14 +123,14 @@ export default async function TrackPage({ params }: Props) {
         </div>
 
         {/* Corporate logo */}
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm">Patrocinador</p>
+        <div className="flex flex-col items-center gap-1">
+          <p className="text-sm font-light">Patrocinador</p>
           <Link
             href={track.corporate.site || "#"}
             target={track.corporate.site ? "_blank" : "_self"}
           >
             <Image
-              src={track.corporate.image_url}
+              src={track.corporate.imageUrl}
               width={96}
               height={0}
               className="h-auto"
@@ -139,14 +139,17 @@ export default async function TrackPage({ params }: Props) {
               title={track.corporate.name}
             />
           </Link>
-          <Button asChild variant={"link"} size={"sm"}>
-            <Link
-              href={`/tracks?corporate=${track.corporateId}`}
-              className="h-fit w-full text-center text-xs !text-muted-foreground"
-            >
-              todas as trilhas
-            </Link>
-          </Button>
+          <div className="flex-center flex-col">
+            <p className="text-sm font-medium">{track.corporate.name}</p>
+            <Button asChild variant={"link"} size={"sm"}>
+              <Link
+                href={`/tracks?corporate=${track.corporateId}`}
+                className="h-fit w-full text-center text-xs !text-muted-foreground"
+              >
+                ver mais
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -189,8 +192,8 @@ export default async function TrackPage({ params }: Props) {
             <div>
               <h2 className="text-xl font-medium">Módulos</h2>
               {/* track data */}
-              <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
-                {track.track_activities &&
+              {/* <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
+                {track?.track_activities &&
                   Object.entries(track.track_activities).map(([k, v], i, a) => {
                     if (i === a.length - 1) return;
                     if (!v) return;
@@ -205,7 +208,7 @@ export default async function TrackPage({ params }: Props) {
                       </Fragment>
                     );
                   })}
-              </div>
+              </div> */}
             </div>
 
             {/* modules */}

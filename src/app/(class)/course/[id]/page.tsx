@@ -49,7 +49,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
     getVideoContentByIdFromCourse(course, searchParams.content) ||
     getFirstVideoContentFromCourse(course);
 
-  const videoId = currentContent?.youtube_code;
+  const videoId = currentContent?.youtubeCode;
 
   return (
     <div className="mx-auto flex size-full max-w-[1920px] flex-col">

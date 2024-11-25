@@ -97,8 +97,8 @@ export default function CourseCard({
             {/* level */}
             <div className="flex items-end gap-1">
               <ChartFilledIcon fontSize={16} className="fill-primary" />
-              <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
-                {course.level}
+              <span className="whitespace-nowrap text-xs capitalize leading-none text-muted-foreground">
+                {translate(course.level)}
               </span>
             </div>
 
@@ -106,7 +106,7 @@ export default function CourseCard({
             <div className="flex items-end gap-1">
               <ClockIcon size={16} />
               <span className="text-xs leading-none text-muted-foreground">
-                {course.workload}h
+                {course.workloadHours}h
               </span>
             </div>
           </div>

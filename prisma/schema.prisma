@@ -24,8 +24,6 @@ model User {
   emailVerified DateTime?
   role          UserRole      @default(student)
   image         String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
   accounts      Account[]
   sessions      Session[]
   UserTrack     UserTrack[]
@@ -33,6 +31,9 @@ model User {
   UserContent   UserContent[]
   UserModule    UserModule[]
   UserLesson    UserLesson[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {
@@ -47,9 +48,10 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([provider, providerAccountId])
 }
@@ -58,9 +60,10 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -80,48 +83,40 @@ enum UserRole {
 // -------------- Content --------------
 
 model Track {
-  id                     String           @id @default(uuid())
-  slug                   String           @unique
-  badge                  String // square image
-  color                  String
-  created                DateTime         @default(now()) // imported creation date
-  description            String
-  allowHTMLDescription   Boolean          @default(false)
-  level                  Int
-  level_name             LevelName
-  name                   String
-  name_ascii             String
-  preview                String // card horizontal image
-  public_route           String // endpoint to dio website
-  relevance              Int
-  scheduled              String
-  section_type           SectionType
-  subscription_type      SubscriptionType
-  total_activities       Int
-  web_route              String
-  workload               Int
-  corporateId            String
-  createdAt              DateTime         @default(now())
-  updatedAt              DateTime         @default(now()) @updatedAt
-  trackActivitiesTrackId String?          @unique
-  modules                Module[]
-  corporate              Corporate        @relation(fields: [corporateId], references: [id])
-  track_activities       TrackActivities? @relation(fields: [trackActivitiesTrackId], references: [trackId])
-  careers                Career[]         @relation("CareerToTrack")
-  skills                 Skill[]          @relation("SkillToTrack")
-  UserTrack              UserTrack[]
+  id                   String      @id @default(uuid())
+  slug                 String      @unique
+  badge                String // square image
+  banner               String // banner image
+  color                String?
+  created              DateTime    @default(now()) // imported creation date
+  description          String
+  allowHTMLDescription Boolean     @default(false)
+  level                Level
+  name                 String
+  nameAscii           String
+  sectionType         SectionType @default(bootcamp)
+  workloadHours             Int
+  corporateId          String
+  corporate            Corporate   @relation(fields: [corporateId], references: [id])
+  careers              Career[]    @relation("CareerToTrack")
+  skills               Skill[]     @relation("SkillToTrack")
+  modules              Module[]
+  UserTrack            UserTrack[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Module {
-  id               String         @id @default(uuid())
-  name             String
-  total_activities Int
-  trackId          String?
-  Track            Track?         @relation(fields: [trackId], references: [id])
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @default(now()) @updatedAt
-  courses          ModuleCourse[]
-  UserModule       UserModule[]
+  id         String         @id @default(uuid())
+  name       String
+  trackId    String?
+  Track      Track?         @relation(fields: [trackId], references: [id])
+  courses    ModuleCourse[]
+  UserModule UserModule[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Course {
@@ -129,19 +124,17 @@ model Course {
   slug              String // found duplicates
   badge             String // image badge
   description       String
-  first_slug        String?
-  first_uuid        String?
-  level             String
+  level             Level
   name              String
-  total             Int // total lessons
   type              CourseType
-  workload          Int
-  extra_information Json?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @default(now()) @updatedAt
+  workloadHours          Int
+  extraInformation Json?
   lessons           Lesson[]
   modules           ModuleCourse[]
   UserCourse        UserCourse[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Lesson {
@@ -149,21 +142,19 @@ model Lesson {
   // author            Author  // TODO:
   course               String
   description          String
-  experience           Int
-  large_cover          String?
-  large_cover_disabled String?
+  largeCover          String?
+  largeCoverDisabled String?
   name                 String
-  next_content         String?
-  next_slug            String?
   order                Int
   // reference         Reference  // TODO: a book reference
-  workload             Int
+  workloadHours             Int
   courseId             String?
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @default(now()) @updatedAt
   contents             Content[]
   Course               Course?      @relation(fields: [courseId], references: [id])
   UserLesson           UserLesson[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Content {
@@ -173,47 +164,47 @@ model Content {
   order        Int
   duration     String?
   name         String
-  pdf_url      String?
   type         ContentType   @default(video)
-  youtube_code String?
+  youtubeCode String?
   lessonId     String?
   Lesson       Lesson?       @relation(fields: [lessonId], references: [id])
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
   subtitles    Subtitle[]
   UserContent  UserContent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([order, lessonId])
 }
 
 model Career {
   id     String  @id @default(uuid())
-  name   String
+  name   String  @unique
   tracks Track[] @relation("CareerToTrack")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Skill {
   id     String  @id @default(uuid())
   name   String  @unique
   tracks Track[] @relation("SkillToTrack")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Corporate {
   id          String  @id @default(uuid())
   description String
-  image_url   String
-  name        String
+  imageUrl   String
+  name        String  @unique
   site        String?
   tracks      Track[]
-}
 
-model TrackActivities {
-  code    Int
-  courses Int
-  lives   Int
-  project Int
-  trackId String @id
-  track   Track?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Subtitle {
@@ -222,6 +213,9 @@ model Subtitle {
   name      String // language
   contentId String?
   Content   Content? @relation(fields: [contentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model ModuleCourse {
@@ -231,11 +225,14 @@ model ModuleCourse {
   Course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   Module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@id([moduleId, courseId])
   @@unique([moduleId, courseId, order])
 }
 
-enum LevelName {
+enum Level {
   beginner
   intermediary
   advanced
@@ -265,6 +262,13 @@ enum ContentType {
   video
 }
 
+// enum TrackActivities {
+//   code
+//   courses
+//   lives
+//   project
+// }
+
 // -------------- Interaction --------------
 
 model UserTrack {
@@ -275,19 +279,18 @@ model UserTrack {
   isCompleted    Boolean   @default(false)
   totalCompleted Int       @default(0) // nested courses completed
   completedAt    DateTime?
-
-  isBookmarked Boolean   @default(false)
-  bookmarkedAt DateTime?
+  isBookmarked   Boolean   @default(false)
+  bookmarkedAt   DateTime?
 
   rating  Int?
   liked   Boolean @default(false)
   comment String? @db.VarChar(255)
 
-  createdAt DateTime @default(now()) // startedAt
-  updatedAt DateTime @updatedAt
-
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   Track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([userId, trackId])
 }
@@ -303,6 +306,9 @@ model UserModule {
   User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   Module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@id([userId, moduleId])
 }
 
@@ -314,16 +320,15 @@ model UserCourse {
   isCompleted           Boolean   @default(false)
   totalLessonsCompleted Int       @default(0)
   completedAt           DateTime?
-
-  rating  Int?
-  liked   Boolean @default(false)
-  comment String? @db.VarChar(255)
-
-  createdAt DateTime @default(now()) // startedAt
-  updatedAt DateTime @updatedAt
+  rating                Int?
+  liked                 Boolean   @default(false)
+  comment               String?   @db.VarChar(255)
 
   User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   Course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([userId, courseId])
 }
@@ -339,6 +344,9 @@ model UserLesson {
   User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@id([userId, lessonId])
 }
 
@@ -348,14 +356,13 @@ model UserContent {
 
   isCompleted Boolean   @default(false)
   completedAt DateTime?
-
-  liked Boolean @default(false)
-
-  createdAt DateTime @default(now()) // startedAt
-  updatedAt DateTime @updatedAt
+  liked       Boolean   @default(false)
 
   User    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   Content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([userId, contentId])
 }

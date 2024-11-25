@@ -9,7 +9,6 @@ import type {
   Skill,
   Subtitle,
   Track,
-  TrackActivities,
 } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import chalk from "chalk";
@@ -166,9 +165,8 @@ async function updateContents(contents: Content[]) {
         order: content.order,
         duration: content.duration,
         name: content.name,
-        pdf_url: content.pdf_url,
         type: content.type,
-        youtube_code: content.youtube_code,
+        youtubeCode: content.youtubeCode,
         lessonId: content.lessonId,
         // subtitles: {
         //   connect: content.subtitles.map((x: Subtitle) => ({
@@ -209,14 +207,11 @@ async function updateLessons(lessons: any[]) {
         id: lesson.id,
         course: lesson.course,
         description: lesson.description,
-        experience: lesson.experience,
-        large_cover: lesson.large_cover,
-        large_cover_disabled: lesson.large_cover_disabled,
+        largeCover: lesson.largeCover,
+        largeCover_disabled: lesson.largeCover_disabled,
         name: lesson.name,
-        next_content: lesson.next_content,
-        next_slug: lesson.next_slug,
         order: lesson.order,
-        workload: lesson.workload,
+        workloadHours: lesson.workload,
         contents: {
           connect: lesson.contents.map((x: Content) => ({ id: x.id })),
         },
@@ -243,42 +238,15 @@ async function updateCourses(courses: any[]) {
         slug: course.slug,
         badge: course.badge,
         description: course.description,
-        extra_information: course.extra_information,
-        first_slug: course.first_slug,
-        first_uuid: course.first_uuid,
+        extraInformation: course.extraInformation,
         lessons: { connect: course.lessons.map((x: Lesson) => ({ id: x.id })) },
         level: course.level,
         name: course.name,
-        total: course.total,
         type: course.type,
-        workload: course.workload,
+        workloadHours: course.workload,
       },
     });
     console.log(`Added course ${course.name}`);
-  }
-}
-
-async function updatetrackActivities(_trackActivities: any[]) {
-  for (const trackActivities of _trackActivities) {
-    const trackActivitiesExists = await prisma.trackActivities.findUnique({
-      where: { trackId: trackActivities.trackId },
-    });
-
-    if (trackActivitiesExists) {
-      console.log(`Existing trackActivities`);
-      continue;
-    }
-
-    await prisma.trackActivities.create({
-      data: {
-        code: trackActivities.code,
-        courses: trackActivities.courses,
-        lives: trackActivities.lives,
-        project: trackActivities.project,
-        trackId: trackActivities.trackId,
-      },
-    });
-    console.log(`Added trackActivities`);
   }
 }
 
@@ -310,23 +278,13 @@ async function updateTracks(tracks: any[]) {
         created: toDate(track.created),
         description: track.description,
         level: track.level,
-        level_name: track.level_name,
         modules: { connect: track.modules.map((x: Module) => ({ id: x.id })) },
         name: track.name,
-        name_ascii: track.name_ascii,
-        preview: track.preview,
-        public_route: track.public_route,
-        relevance: track.relevance,
-        scheduled: track.scheduled,
-        section_type: track.section_type,
+        nameAscii: track.nameAscii,
+        banner: track.banner,
+        sectionType: track.sectionType,
         skills: { connect: track.skills.map((x: Skill) => ({ id: x.id })) },
-        subscription_type: track.subscription_type,
-        total_activities: track.total_activities,
-        track_activities: {
-          connect: { trackId: track.id },
-        },
-        web_route: track.web_route,
-        workload: track.workload,
+        workloadHours: track.workload,
       },
     });
     console.log(`Added track ${track.name}`);
@@ -347,7 +305,6 @@ async function updateModules(modules: any[]) {
       where: { id: _module.id },
       update: {
         name: _module.name,
-        total_activities: _module.total_activities,
         courses: {
           upsert: _module.courses.map((courseId: string, index: number) => ({
             where: {
@@ -369,7 +326,6 @@ async function updateModules(modules: any[]) {
       create: {
         id: _module.id,
         name: _module.name,
-        total_activities: _module.total_activities,
         courses: {
           create: _module.courses.map((courseId: string, index: number) => ({
             courseId: courseId,
@@ -443,7 +399,6 @@ async function readCourseJSONFiles() {
 async function readTrackJSONFiles() {
   const trackFiles = getJSONFiles(tracksDirPath);
 
-  const trackActivities: TrackActivities[] = [];
   const modules: Module[] = [];
   const tracks: Track[] = [];
   const careers: Career[] = [];
@@ -452,12 +407,6 @@ async function readTrackJSONFiles() {
 
   for (const filePath of trackFiles) {
     const track = readJSONFile(filePath);
-
-    track.track_activities.trackId = track.id;
-
-    if (!trackActivities.some((x) => x.trackId === track.id)) {
-      trackActivities.push(track.track_activities);
-    }
 
     if (!tracks.some((x) => x.id === track.id)) {
       tracks.push(track);
@@ -489,7 +438,6 @@ async function readTrackJSONFiles() {
 
   console.table({
     trackFiles: trackFiles.length,
-    trackActivities: trackActivities.length,
     modules: modules.length,
     tracks: tracks.length,
     careers: careers.length,

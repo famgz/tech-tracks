@@ -49,7 +49,7 @@ export async function getTrackWithModulesAndCourses(
           },
         },
         skills: true,
-        track_activities: true,
+        // track_activities: true,
       },
     });
   } catch (e) {
