@@ -127,7 +127,9 @@ export default async function TrackPage({ params }: Props) {
           <p className="text-sm font-light">Patrocinador</p>
 
           <Link
-            href={track.corporate.site || "#"}
+            href={
+              track.corporate.site ? new URL(track.corporate.site).href : "#"
+            }
             target={track.corporate.site ? "_blank" : "_self"}
             className="flex-center min-h-9"
           >
