@@ -1620,7 +1620,7 @@
     <text style="dominant-baseline: middle; font-size: 10.2px;"
       transform="translate(59.095550537109375,147.5)" y="0" x="0"
       id="text-entity-Lesson-3cb60e37-9049-5546-a7d4-adf21eecc6d3-attr-6-name"
-      class="er entityLabel">largeCover_disabled</text>
+      class="er entityLabel">largeCoverDisabled</text>
     <rect height="23" width="22.578125" y="136" x="161.18817138671875" class="er attributeBoxEven" />
     <text style="dominant-baseline: middle; font-size: 10.2px;"
       transform="translate(166.18817138671875,147.5)" y="0" x="0"

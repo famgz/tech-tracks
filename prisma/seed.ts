@@ -208,7 +208,7 @@ async function updateLessons(lessons: any[]) {
         course: lesson.course,
         description: lesson.description,
         largeCover: lesson.largeCover,
-        largeCover_disabled: lesson.largeCover_disabled,
+        largeCoverDisabled: lesson.largeCoverDisabled,
         name: lesson.name,
         order: lesson.order,
         workloadHours: lesson.workload,

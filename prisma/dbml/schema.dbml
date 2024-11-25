@@ -130,7 +130,7 @@ Table Lesson {
   description String [not null]
   experience Int [not null]
   largeCover String
-  largeCover_disabled String
+  largeCoverDisabled String
   name String [not null]
   next_content String
   next_slug String

@@ -97,7 +97,7 @@ erDiagram
         String description
         Int experience
         String largeCover
-        String largeCover_disabled
+        String largeCoverDisabled
         String name
         String next_content
         String next_slug
