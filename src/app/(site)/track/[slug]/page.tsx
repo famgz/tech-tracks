@@ -123,17 +123,18 @@ export default async function TrackPage({ params }: Props) {
         </div>
 
         {/* Corporate logo */}
-        <div className="flex flex-col items-center gap-1">
+        <div className="flex flex-col items-center gap-2">
           <p className="text-sm font-light">Patrocinador</p>
+
           <Link
             href={track.corporate.site || "#"}
             target={track.corporate.site ? "_blank" : "_self"}
+            className="flex-center min-h-9"
           >
             <Image
               src={track.corporate.imageUrl}
-              width={96}
+              width={128}
               height={0}
-              className="h-auto"
               alt={track.corporate.name}
               style={{ height: "auto" }}
               title={track.corporate.name}
