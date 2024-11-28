@@ -110,14 +110,11 @@ export default function Filters({ filters, className }: Props) {
         <div className="overflow-x-hidden">
           {Object.entries(filters).map(([k, v]) => {
             const key = k as FilterKeys;
-
             return (
               <Accordion key={key} type="multiple" defaultValue={["skill"]}>
                 <AccordionItem value={key} className="">
                   <AccordionTrigger className="py-2 pl-1 pr-2 hover:bg-muted/40">
-                    <h3 className="text-sm font-bold capitalize">
-                      {translate(k)}
-                    </h3>
+                    <h3 className="text-sm font-bold">{translate(k)}</h3>
                   </AccordionTrigger>
                   <AccordionContent className="py-2">
                     {v.map((x: any) => (
@@ -138,7 +135,11 @@ export default function Filters({ filters, className }: Props) {
                           htmlFor={x.name}
                           className="truncatee flex flex-1 cursor-pointer items-center gap-1 whitespace-nowrap py-1 text-xs"
                         >
-                          <span className="inline-block max-w-[45vw] truncate sm:max-w-[min(12vw,180px)]">
+                          <span
+                            className={cn(
+                              "inline-block max-w-[45vw] truncate sm:max-w-[min(12vw,180px)]",
+                            )}
+                          >
                             {x.name}
                           </span>
                           <span>({x._count?.tracks ?? 0})</span>

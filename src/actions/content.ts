@@ -6,6 +6,7 @@ import {
   CorporateWithCount,
   CourseWithLessonsAndContents,
   SkillWithCount,
+  TrackWithExtras,
   TrackWithWithModulesCoursesAndExtras,
 } from "@/types/content";
 import { Content } from "@prisma/client";
@@ -14,7 +15,7 @@ export async function getTrackById(trackId: string) {
   return db.track.findUnique({ where: { id: trackId } });
 }
 
-export async function getTracksWithExtras() {
+export async function getTracksWithExtras(): Promise<TrackWithExtras[] | null> {
   try {
     const res = await db.track.findMany({
       include: { skills: true, corporate: true, careers: true },
@@ -49,7 +50,6 @@ export async function getTrackWithModulesAndCourses(
           },
         },
         skills: true,
-        // track_activities: true,
       },
     });
   } catch (e) {

@@ -55,7 +55,7 @@ export default function TrackCard({ track }: Props) {
               {/* level */}
               <div className="flex items-end gap-1">
                 <ChartIcon fontSize={14} />
-                <span className="whitespace-nowrap text-[10px] capitalize leading-none">
+                <span className="whitespace-nowrap text-[10px] leading-none">
                   {translate(track.level)}
                 </span>
               </div>

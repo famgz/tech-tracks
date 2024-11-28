@@ -6,6 +6,7 @@ import {
 } from "@/actions/content";
 import FiltersWrapper from "@/app/(site)/tracks/_components/filters-wrapper";
 import TrackCardsGrid from "@/app/(site)/tracks/_components/track-cards-grid";
+import { getLevelFilters } from "@/app/(site)/tracks/_helpers/filters";
 import { IFilters } from "@/types/content";
 
 export default async function TracksPage() {
@@ -17,15 +18,13 @@ export default async function TracksPage() {
   ]);
 
   const filters: IFilters = {
-    level: [
-      { id: "1", name: "Iniciante" },
-      { id: "2", name: "Intermediário" },
-      { id: "3", name: "Avançado" },
-    ],
+    level: getLevelFilters(tracks!),
     career: career!,
     skill: skill!,
     corporate: corporate!,
   };
+
+  console.log(filters.career);
 
   return (
     <div className="_container relative flex flex-1 flex-col pb-6 pt-2">
@@ -34,13 +33,8 @@ export default async function TracksPage() {
       </h1>
 
       <div className="flex flex-1 gap-6 sm:gap-4 xl:gap-8">
-        {/* Filters column */}
         <FiltersWrapper filters={filters} />
-
-        {/* Track cards column */}
-        <div className="flex flex-1 flex-col">
-          <TrackCardsGrid tracks={tracks!} />
-        </div>
+        <TrackCardsGrid tracks={tracks!} />
       </div>
     </div>
   );

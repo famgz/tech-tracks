@@ -81,9 +81,7 @@ export default function CourseCard({
         <div className="flex-1 space-y-4 overflow-hidden">
           {/* course type and title */}
           <div className="space-y-1">
-            <p className="capitalize text-muted-foreground">
-              {translate(course.type)}
-            </p>
+            <p className="text-muted-foreground">{translate(course.type)}</p>
             <p
               className="truncate font-semibold"
               title={isCourseType ? course.name : undefined}
@@ -97,7 +95,7 @@ export default function CourseCard({
             {/* level */}
             <div className="flex items-end gap-1">
               <ChartFilledIcon fontSize={16} className="fill-primary" />
-              <span className="whitespace-nowrap text-xs capitalize leading-none text-muted-foreground">
+              <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
                 {translate(course.level)}
               </span>
             </div>

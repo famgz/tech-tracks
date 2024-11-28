@@ -84,7 +84,7 @@ export default async function TrackPage({ params }: Props) {
                 {/* level */}
                 <div className="flex items-end gap-1">
                   <ChartFilledIcon fontSize={16} className="fill-primary" />
-                  <span className="whitespace-nowrap text-xs capitalize leading-none text-muted-foreground">
+                  <span className="whitespace-nowrap text-xs leading-none text-muted-foreground">
                     {translate(track.level)}
                   </span>
                 </div>

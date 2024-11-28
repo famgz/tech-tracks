@@ -44,7 +44,7 @@ export default function TrackCardsGrid({ tracks }: Props) {
       );
 
   return (
-    <>
+    <div className="flex flex-1 flex-col">
       <span className="mb-2 ml-2">
         {filteredTracks.length ? (
           <>
@@ -71,6 +71,6 @@ export default function TrackCardsGrid({ tracks }: Props) {
           <p>Nenhum item encontrado</p>
         </div>
       )}
-    </>
+    </div>
   );
 }

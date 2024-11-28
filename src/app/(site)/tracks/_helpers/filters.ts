@@ -1,3 +1,6 @@
+import { translate } from "@/lib/translate";
+import { TrackWithExtras } from "@/types/content";
+import { Level } from "@prisma/client";
 import { ReadonlyURLSearchParams } from "next/navigation";
 
 const normalizeParams = (param: string | string[]) =>
@@ -11,4 +14,17 @@ export function parseSearchParams(searchParams: ReadonlyURLSearchParams) {
     level: normalizeParams(searchParams.getAll("level")),
     skill: normalizeParams(searchParams.getAll("skill")),
   };
+}
+
+export function getLevelFilters(tracks: TrackWithExtras[]) {
+  return Object.keys(Level).map((level) => ({
+    id: level,
+    name: translate(level),
+    _count: {
+      tracks: tracks.reduce(
+        (acc, track) => (track.level === level ? acc + 1 : acc),
+        0,
+      ),
+    },
+  }));
 }

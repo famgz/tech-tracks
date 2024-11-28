@@ -13,7 +13,6 @@ export type TrackWithWithModulesCoursesAndExtras = Prisma.TrackGetPayload<{
     careers: true;
     corporate: true;
     skills: true;
-    // track_activities: true;
     modules: {
       include: {
         courses: {

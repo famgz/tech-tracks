@@ -4,10 +4,10 @@ interface Translations {
 
 const translations: Translations = {
   //filters
-  level: "nível",
-  career: "carreira",
-  corporate: "empresa",
-  skill: "tecnologia",
+  level: "Nível",
+  career: "Carreira",
+  corporate: "Empresa",
+  skill: "Tecnologia",
 
   // track activities
   code: "desafio de códigos",
@@ -21,14 +21,14 @@ const translations: Translations = {
   live: "live",
 
   // user role
-  student: "estudante",
-  creator: "criador de conteúdo",
-  admin: "administrador",
+  student: "Estudante",
+  creator: "Criador de conteúdo",
+  admin: "Administrador",
 
   // level
-  beginner: "básico",
-  intermediary: "intermediário",
-  advanced: "avançado",
+  beginner: "Básico",
+  intermediary: "Intermediário",
+  advanced: "Avançado",
 };
 
 export const translate = (word: string): string => {
