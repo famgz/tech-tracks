@@ -20,13 +20,11 @@ import { toast } from "sonner";
 
 interface Props {
   trackId: string;
-  userId: string;
   isEnrolled: boolean;
   canEnroll: boolean;
 }
 
 export default function EnrollTrackDialog({
-  userId,
   trackId,
   isEnrolled,
   canEnroll,
@@ -57,7 +55,7 @@ export default function EnrollTrackDialog({
     }
 
     closeDialogWithRouter();
-    const res = await enrollTrack(userId, trackId);
+    const res = await enrollTrack(trackId);
     res
       ? toast.success("Trilha matriculada com sucesso!")
       : toast.error("Erro ao matricular a trilha.");

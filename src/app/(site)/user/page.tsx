@@ -15,8 +15,7 @@ import { Track } from "@prisma/client";
 
 export default async function UserPage() {
   const user = await getSessionUserElseRedirectToLogin();
-
-  const userTracks = await getAllUserTracks(user.id);
+  const userTracks = await getAllUserTracks();
 
   const enrolledTracks = userTracks?.filter((t) => t.isEnrolled);
   const completedTracks = userTracks?.filter((t) => t.isCompleted);
@@ -55,12 +54,7 @@ export default async function UserPage() {
                   {Array.from({ length: USER_MAX_TRACK_SLOTS }).map((_, i) => {
                     const track = enrolledTracks?.[i]?.Track;
                     return (
-                      <TrackSlot
-                        key={i}
-                        track={track as Track}
-                        userId={user.id}
-                        type="enroll"
-                      />
+                      <TrackSlot key={i} track={track as Track} type="enroll" />
                     );
                   })}
                 </div>
@@ -72,11 +66,7 @@ export default async function UserPage() {
                 {completedTracks && completedTracks.length > 0 ? (
                   <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3">
                     {completedTracks.map(({ Track }) => (
-                      <TrackSlot
-                        key={Track.id}
-                        track={Track}
-                        userId={user.id}
-                      />
+                      <TrackSlot key={Track.id} track={Track} />
                     ))}
                   </div>
                 ) : (
@@ -92,12 +82,7 @@ export default async function UserPage() {
                 {bookmarkedTracks && bookmarkedTracks.length > 0 ? (
                   <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3">
                     {bookmarkedTracks.map(({ Track }) => (
-                      <TrackSlot
-                        key={Track.id}
-                        track={Track}
-                        userId={user.id}
-                        type="bookmark"
-                      />
+                      <TrackSlot key={Track.id} track={Track} type="bookmark" />
                     ))}
                   </div>
                 ) : (

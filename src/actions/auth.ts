@@ -23,3 +23,12 @@ export async function getSessionUserElseRedirectToLogin(): Promise<SessionUser> 
   }
   return user;
 }
+
+export async function getSessionUserIdElseThrow(): Promise<string> {
+  const session = await auth();
+  const userId = session?.user.id;
+  if (!userId) {
+    throw new Error("Not authenticated");
+  }
+  return userId;
+}

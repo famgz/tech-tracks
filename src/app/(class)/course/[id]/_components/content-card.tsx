@@ -11,14 +11,12 @@ import { toast } from "sonner";
 
 interface Props {
   content: Content;
-  userId: string;
   currentContentId: string | undefined;
   userContentInCourse: UserContent | undefined;
 }
 
 export default function ContentCard({
   content,
-  userId,
   currentContentId,
   userContentInCourse,
 }: Props) {
@@ -44,7 +42,7 @@ export default function ContentCard({
     if (userContent && userContent?.isCompleted) {
       return;
     }
-    const res = await watchUserContent(userId, content.id);
+    const res = await watchUserContent(content.id);
     if (res) {
       setUserContent(res);
       toast.success(`Conteúdo ${content.name} marcado como visto`);

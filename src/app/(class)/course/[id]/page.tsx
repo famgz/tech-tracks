@@ -28,7 +28,7 @@ interface Props {
 }
 
 export default async function CoursePage({ params, searchParams }: Props) {
-  const user = await getSessionUserElseRedirectToLogin();
+  await getSessionUserElseRedirectToLogin();
   const { id } = params;
 
   const [track, course] = await Promise.all([
@@ -40,10 +40,10 @@ export default async function CoursePage({ params, searchParams }: Props) {
   const isCourseInCurrentTrack = await isCourseInTrack(track.id, course.id);
   if (!isCourseInCurrentTrack) redirect("/");
 
-  const userCourse = await getUserCourse(user.id, course.id);
+  const userCourse = await getUserCourse(course.id);
 
   const userContentsInCourse =
-    (await getAllUserContentsInCourse(user.id, course.id)) || [];
+    (await getAllUserContentsInCourse(course.id)) || [];
 
   const currentContent =
     getVideoContentByIdFromCourse(course, searchParams.content) ||
@@ -100,7 +100,6 @@ export default async function CoursePage({ params, searchParams }: Props) {
               lessons={course.lessons}
               currentLessonId={currentContent?.lessonId || ""}
               currentContentId={currentContent?.id}
-              userId={user.id}
               userContentsInCourse={userContentsInCourse}
             />
           </ScrollArea>

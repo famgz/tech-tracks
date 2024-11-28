@@ -7,15 +7,10 @@ import Link from "next/link";
 
 interface Props {
   track: Track | undefined;
-  userId: string;
   type?: "enroll" | "bookmark" | "no-action";
 }
 
-export default function TrackSlot({
-  track,
-  userId,
-  type = "no-action",
-}: Props) {
+export default function TrackSlot({ track, type = "no-action" }: Props) {
   return (
     <Link
       href={track ? `/track/${track.slug}` : "/tracks"}
@@ -27,11 +22,7 @@ export default function TrackSlot({
       {track ? (
         <div className="flex flex-1 flex-col items-center justify-between">
           <div className="absolute right-2 top-2 z-10">
-            <RemoveTrackStateButton
-              userId={userId}
-              trackId={track.id}
-              type={type}
-            />
+            <RemoveTrackStateButton trackId={track.id} type={type} />
           </div>
 
           <div className="relative size-full max-h-36 flex-1">

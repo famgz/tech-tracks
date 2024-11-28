@@ -13,7 +13,6 @@ interface Props {
   lessons: LessonWithContents[];
   currentLessonId: string | undefined;
   currentContentId: string | undefined;
-  userId: string;
   userContentsInCourse: UserContent[];
 }
 
@@ -22,7 +21,6 @@ export default function LessonsAccordion({
   currentLessonId,
   currentContentId,
   userContentsInCourse,
-  userId,
 }: Props) {
   return (
     <div>
@@ -53,7 +51,6 @@ export default function LessonsAccordion({
                   <ContentCard
                     key={content.id}
                     content={content}
-                    userId={userId}
                     currentContentId={currentContentId}
                     userContentInCourse={userContentsInCourse.find(
                       (x) => x.contentId === content.id,

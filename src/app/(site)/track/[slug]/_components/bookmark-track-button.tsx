@@ -21,20 +21,15 @@ import { toast } from "sonner";
 
 interface Props {
   trackId: string;
-  userId: string;
   isBookmarked: boolean;
 }
 
-export default function BookmarkTrackButton({
-  userId,
-  trackId,
-  isBookmarked,
-}: Props) {
+export default function BookmarkTrackButton({ trackId, isBookmarked }: Props) {
   const [open, setOpen] = useState(false);
 
   async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const res = await bookmarkTrack(userId, trackId);
+    const res = await bookmarkTrack(trackId);
     setOpen(false);
     res
       ? toast.success("Trilha salva com sucesso!")

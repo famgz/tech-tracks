@@ -22,12 +22,11 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
-  userId: string;
   userTrack: UserTrack;
   track: Track;
 }
 
-export default function FeedbackButton({ userId, userTrack, track }: Props) {
+export default function FeedbackButton({ userTrack, track }: Props) {
   const [open, setOpen] = useState(false);
   const [comment, setComment] = useState(userTrack.comment || "");
   const [rating, setRating] = useState(userTrack.rating);
@@ -63,7 +62,7 @@ export default function FeedbackButton({ userId, userTrack, track }: Props) {
     };
 
     try {
-      const res = await feedbackUserTrack(userId, userTrack.trackId, data);
+      const res = await feedbackUserTrack(userTrack.trackId, data);
       if (res) {
         toast.success("Feedback enviado com sucesso");
         setOpen(false);

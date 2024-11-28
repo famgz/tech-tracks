@@ -18,23 +18,18 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
-  userId: string;
   trackId: string;
   type: "enroll" | "bookmark" | "no-action";
 }
 
-export default function RemoveTrackStateButton({
-  userId,
-  trackId,
-  type,
-}: Props) {
+export default function RemoveTrackStateButton({ trackId, type }: Props) {
   const [open, setOpen] = useState(false);
 
   async function handleUnenrollClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     e.stopPropagation();
 
-    const res = await unenrollTrack(userId, trackId);
+    const res = await unenrollTrack(trackId);
     setOpen(false);
     res
       ? toast.success("Trilha desmatriculada com sucesso")
@@ -45,7 +40,7 @@ export default function RemoveTrackStateButton({
     e.preventDefault();
     e.stopPropagation();
 
-    const res = await unbookmarkTrack(userId, trackId);
+    const res = await unbookmarkTrack(trackId);
     setOpen(false);
     res
       ? toast.success("Trilha removida dos salvos")

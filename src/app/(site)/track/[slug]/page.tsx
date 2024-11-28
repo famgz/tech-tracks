@@ -47,11 +47,11 @@ export default async function TrackPage({ params }: Props) {
     (x) => x.rating || x.comment,
   );
 
-  const userTrack = await getUserTrack(user.id, track.id);
+  const userTrack = await getUserTrack(track.id);
   const isEnrolled = !!userTrack?.isEnrolled;
   const isBookmarked = !!userTrack?.isBookmarked;
 
-  const canEnroll = await isUserAllowedToEnroll(user.id);
+  const canEnroll = await isUserAllowedToEnroll();
 
   return (
     <div className="_container flex flex-col gap-12 py-10">
@@ -164,18 +164,13 @@ export default async function TrackPage({ params }: Props) {
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
               <BookmarkTrackButton
                 trackId={track.id}
-                userId={user.id}
                 isBookmarked={isBookmarked}
               />
               <EnrollTrackButton isEnrolled={isEnrolled} />
             </div>
 
             {isEnrolled && (
-              <FeedbackButton
-                userId={user.id}
-                userTrack={userTrack}
-                track={track}
-              />
+              <FeedbackButton userTrack={userTrack} track={track} />
             )}
           </div>
 
@@ -266,49 +261,50 @@ export default async function TrackPage({ params }: Props) {
           </div>
 
           {/* feedbacks */}
-          <div className="flex flex-1 flex-col gap-3">
-            <h3 className="text-xl font-medium">Feedback Alunos</h3>
-            <ScrollArea className="h-[200px] flex-auto">
-              <div className="space-y-6">
-                {allUserTracksInTrackFeedback.length == 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    Nenhum feedback encontrado para este curso.
-                  </p>
-                ) : (
-                  allUserTracksInTrackFeedback.map((x) => (
-                    <div key={x.trackId + x.userId} className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Avatar
-                          className="size-8"
-                          key={x.trackId + x.userId}
-                          title={x.User.name || ""}
-                        >
-                          <AvatarImage
-                            src={x.User.image || ""}
-                            alt="enrolled user avatar"
-                          />
-                          <AvatarFallback>
-                            {x.User.name?.slice(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <p>{x.User.name}</p>
+          {allUserTracksInTrack.length > 0 && (
+            <div className="flex flex-1 flex-col gap-3">
+              <h3 className="text-xl font-medium">Feedback Alunos</h3>
+              {allUserTracksInTrackFeedback.length > 0 ? (
+                <ScrollArea className="h-[min(fit,400px)] flex-auto">
+                  <div className="space-y-6">
+                    {allUserTracksInTrackFeedback.map((t) => (
+                      <div key={t.trackId + t.userId} className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Avatar
+                            className="size-8"
+                            key={t.trackId + t.userId}
+                            title={t.User.name || ""}
+                          >
+                            <AvatarImage
+                              src={t.User.image || ""}
+                              alt="enrolled user avatar"
+                            />
+                            <AvatarFallback>
+                              {t.User.name?.slice(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <p>{t.User.name}</p>
+                        </div>
+                        {t.rating && <StarRating rating={t.rating} />}
+                        <p className="text-sm text-muted-foreground">
+                          {t.comment}
+                        </p>
                       </div>
-                      {x.rating && <StarRating rating={x.rating} />}
-                      <p className="text-sm text-muted-foreground">
-                        {x.comment}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </ScrollArea>
-          </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Nenhum feedback encontrado para este curso.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       <EnrollTrackDialog
         trackId={track.id}
-        userId={user.id}
         isEnrolled={isEnrolled}
         canEnroll={canEnroll}
       />

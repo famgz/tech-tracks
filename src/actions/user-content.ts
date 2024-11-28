@@ -1,17 +1,19 @@
 "use server";
 
+import { getSessionUserIdElseThrow } from "@/actions/auth";
 import { USER_MAX_TRACK_SLOTS } from "@/constants/user";
 import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export async function isUserAllowedToEnroll(userId: string): Promise<boolean> {
-  const userTracks = (await getAllUserTracks(userId)) || [];
+export async function isUserAllowedToEnroll(): Promise<boolean> {
+  const userTracks = (await getAllUserTracks()) || [];
   const enrolledUserTracks = userTracks.filter((t) => t.isEnrolled);
   return enrolledUserTracks.length < USER_MAX_TRACK_SLOTS;
 }
 
-export async function getUserTrack(userId: string, trackId: string) {
+export async function getUserTrack(trackId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userTrack.findUnique({
       where: { userId_trackId: { userId, trackId } },
     });
@@ -22,8 +24,9 @@ export async function getUserTrack(userId: string, trackId: string) {
   }
 }
 
-export async function getAllUserTracks(userId: string) {
+export async function getAllUserTracks() {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userTrack.findMany({
       where: { userId },
       include: { Track: true },
@@ -51,11 +54,12 @@ export async function getAllUserTracksInTrack(trackSlug: string) {
   }
 }
 
-export async function enrollTrack(userId: string, trackId: string) {
+export async function enrollTrack(trackId: string) {
   try {
-    if (!isUserAllowedToEnroll(userId)) {
+    if (!isUserAllowedToEnroll()) {
       throw new Error("User has reached enrollment limit");
     }
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userTrack.upsert({
       where: { userId_trackId: { userId, trackId } },
       update: {
@@ -77,8 +81,9 @@ export async function enrollTrack(userId: string, trackId: string) {
   }
 }
 
-export async function unenrollTrack(userId: string, trackId: string) {
+export async function unenrollTrack(trackId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userTrack.update({
       where: { userId_trackId: { userId, trackId } },
       data: {
@@ -94,8 +99,9 @@ export async function unenrollTrack(userId: string, trackId: string) {
   }
 }
 
-export async function bookmarkTrack(userId: string, trackId: string) {
+export async function bookmarkTrack(trackId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userTrack.upsert({
       where: { userId_trackId: { userId, trackId } },
       update: {
@@ -116,8 +122,9 @@ export async function bookmarkTrack(userId: string, trackId: string) {
   }
 }
 
-export async function unbookmarkTrack(userId: string, trackId: string) {
+export async function unbookmarkTrack(trackId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userTrack.update({
       where: { userId_trackId: { userId, trackId } },
       data: {
@@ -133,8 +140,9 @@ export async function unbookmarkTrack(userId: string, trackId: string) {
   }
 }
 
-export async function getUserCourse(userId: string, courseId: string) {
+export async function getUserCourse(courseId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userCourse.findUnique({
       where: { userId_courseId: { userId, courseId } },
     });
@@ -145,8 +153,9 @@ export async function getUserCourse(userId: string, courseId: string) {
   }
 }
 
-export async function getUserContent(userId: string, contentId: string) {
+export async function getUserContent(contentId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userContent.findUnique({
       where: { userId_contentId: { userId, contentId } },
     });
@@ -157,11 +166,9 @@ export async function getUserContent(userId: string, contentId: string) {
   }
 }
 
-export async function getAllUserContentsInCourse(
-  userId: string,
-  courseId: string,
-) {
+export async function getAllUserContentsInCourse(courseId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userContent.findMany({
       where: { userId, Content: { Lesson: { courseId } } },
     });
@@ -172,8 +179,9 @@ export async function getAllUserContentsInCourse(
   }
 }
 
-export async function watchUserContent(userId: string, contentId: string) {
+export async function watchUserContent(contentId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userContent.upsert({
       where: { userId_contentId: { userId, contentId } },
       update: {
@@ -195,8 +203,9 @@ export async function watchUserContent(userId: string, contentId: string) {
   }
 }
 
-export async function unwatchUserContent(userId: string, contentId: string) {
+export async function unwatchUserContent(contentId: string) {
   try {
+    const userId = await getSessionUserIdElseThrow();
     const res = await db.userContent.upsert({
       where: { userId_contentId: { userId, contentId } },
       update: {
@@ -218,14 +227,14 @@ export async function unwatchUserContent(userId: string, contentId: string) {
 }
 
 export async function feedbackUserTrack(
-  userId: string,
   trackId: string,
   feedback: { comment: string; rating: number; liked: boolean },
 ) {
-  if (feedback.comment && feedback.comment?.length < 5) {
-    throw new Error("Comment is too short");
-  }
   try {
+    const userId = await getSessionUserIdElseThrow();
+    if (feedback.comment && feedback.comment?.length < 5) {
+      throw new Error("Comment is too short");
+    }
     const res = await db.userTrack.update({
       where: { userId_trackId: { userId, trackId } },
       data: {
