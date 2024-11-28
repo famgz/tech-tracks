@@ -140,6 +140,31 @@ export async function unbookmarkTrack(trackId: string) {
   }
 }
 
+export async function feedbackUserTrack(
+  trackId: string,
+  feedback: { comment: string; rating: number; liked: boolean },
+) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    if (feedback.comment && feedback.comment?.length < 5) {
+      throw new Error("Comment is too short");
+    }
+    const res = await db.userTrack.update({
+      where: { userId_trackId: { userId, trackId } },
+      data: {
+        comment: feedback.comment.trim() || null,
+        rating: feedback.rating || null,
+        liked: feedback.liked ?? null,
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    return res;
+  } catch (e) {
+    console.error("Failed to send user track feedback:", e);
+    return null;
+  }
+}
+
 export async function getUserCourse(courseId: string) {
   try {
     const userId = await getSessionUserIdElseThrow();
@@ -222,31 +247,6 @@ export async function unwatchUserContent(contentId: string) {
     return res;
   } catch (e) {
     console.error("Failed to mark user content as unwatched:", e);
-    return null;
-  }
-}
-
-export async function feedbackUserTrack(
-  trackId: string,
-  feedback: { comment: string; rating: number; liked: boolean },
-) {
-  try {
-    const userId = await getSessionUserIdElseThrow();
-    if (feedback.comment && feedback.comment?.length < 5) {
-      throw new Error("Comment is too short");
-    }
-    const res = await db.userTrack.update({
-      where: { userId_trackId: { userId, trackId } },
-      data: {
-        comment: feedback.comment.trim() || null,
-        rating: feedback.rating || null,
-        liked: feedback.liked ?? null,
-      },
-    });
-    revalidatePath("/track/[slug]", "page");
-    return res;
-  } catch (e) {
-    console.error("Failed to send user track feedback:", e);
     return null;
   }
 }

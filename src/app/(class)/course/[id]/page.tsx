@@ -40,9 +40,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
   const isCourseInCurrentTrack = await isCourseInTrack(track.id, course.id);
   if (!isCourseInCurrentTrack) redirect("/");
 
-  const userCourse = await getUserCourse(course.id);
-
-  const userContentsInCourse =
+  const allUserContentsInCourse =
     (await getAllUserContentsInCourse(course.id)) || [];
 
   const currentContent =
@@ -100,7 +98,7 @@ export default async function CoursePage({ params, searchParams }: Props) {
               lessons={course.lessons}
               currentLessonId={currentContent?.lessonId || ""}
               currentContentId={currentContent?.id}
-              userContentsInCourse={userContentsInCourse}
+              allUserContentsInCourse={allUserContentsInCourse}
             />
           </ScrollArea>
         </div>

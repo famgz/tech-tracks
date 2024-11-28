@@ -13,20 +13,19 @@ interface Props {
   lessons: LessonWithContents[];
   currentLessonId: string | undefined;
   currentContentId: string | undefined;
-  userContentsInCourse: UserContent[];
+  allUserContentsInCourse: UserContent[];
 }
 
 export default function LessonsAccordion({
   lessons,
   currentLessonId,
   currentContentId,
-  userContentsInCourse,
+  allUserContentsInCourse,
 }: Props) {
   return (
     <div>
       <Accordion
         type="single"
-        className=""
         collapsible={true}
         defaultValue={currentLessonId}
       >
@@ -52,7 +51,7 @@ export default function LessonsAccordion({
                     key={content.id}
                     content={content}
                     currentContentId={currentContentId}
-                    userContentInCourse={userContentsInCourse.find(
+                    userContentInCourse={allUserContentsInCourse.find(
                       (x) => x.contentId === content.id,
                     )}
                   />
