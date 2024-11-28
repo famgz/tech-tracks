@@ -81,11 +81,14 @@ export default function FeedbackButton({ userTrack, track }: Props) {
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger>
-        <StarRating
-          rating={userTrack.rating}
-          fillStars={false}
-          starClassName="size-8"
-        />
+        <div className="flex-center mx-auto flex-col gap-2 text-muted-foreground">
+          <p>Seu Feedback</p>
+          <StarRating
+            rating={userTrack.rating}
+            fillStars={false}
+            starClassName="size-8"
+          />
+        </div>
       </AlertDialogTrigger>
 
       <AlertDialogContent>

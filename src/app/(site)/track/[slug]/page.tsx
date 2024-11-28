@@ -160,8 +160,8 @@ export default async function TrackPage({ params }: Props) {
         {/* left column (desktop) */}
         <div className="space-y-12">
           {/* buttons */}
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
+          <div className="flex flex-col items-center gap-4 gap-y-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mx-auto flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
               <BookmarkTrackButton
                 trackId={track.id}
                 isBookmarked={isBookmarked}
