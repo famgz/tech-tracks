@@ -3,6 +3,8 @@
 import { getSessionUserIdElseThrow } from "@/actions/auth";
 import { USER_MAX_TRACK_SLOTS } from "@/constants/user";
 import { db } from "@/lib/prisma";
+import { UserTrackWithUserModulesAndUserCourses } from "@/types/user-content";
+import { UserTrack } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 export async function isUserAllowedToEnroll(): Promise<boolean> {
@@ -165,6 +167,79 @@ export async function feedbackUserTrack(
   }
 }
 
+/**
+ * Fetches all user modules and their courses for a specific track.
+ * @param trackId - The ID of the track.
+ * @returns User modules and their associated user courses.
+ */
+export async function getUserTrackWithUserModulesAndUserCourses(
+  trackId: string,
+): Promise<UserTrackWithUserModulesAndUserCourses | null> {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const res = await db.userTrack.findUnique({
+      where: {
+        userId_trackId: {
+          userId,
+          trackId,
+        },
+      },
+      include: {
+        Track: {
+          include: {
+            modules: {
+              include: {
+                UserModule: {
+                  where: { userId },
+                },
+                courses: {
+                  include: {
+                    Course: {
+                      include: {
+                        UserCourse: {
+                          where: { userId },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return res;
+  } catch (error) {
+    console.error(
+      "Error fetching user track with user modules and user courses:",
+      error,
+    );
+    return null;
+  }
+}
+
+export async function enrollModule(moduleId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const res = await db.userModule.upsert({
+      where: { userId_moduleId: { userId, moduleId } },
+      update: {},
+      create: {
+        userId,
+        moduleId,
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
+    return res;
+  } catch (e) {
+    console.error("Failed to enroll module:", e);
+    return null;
+  }
+}
+
 export async function getUserCourse(courseId: string) {
   try {
     const userId = await getSessionUserIdElseThrow();
@@ -174,6 +249,46 @@ export async function getUserCourse(courseId: string) {
     return res;
   } catch (e) {
     console.error("Failed to get user course:", e);
+    return null;
+  }
+}
+
+export async function enrollCourse(courseId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const res = await db.userCourse.upsert({
+      where: { userId_courseId: { userId, courseId } },
+      update: {},
+      create: {
+        userId,
+        courseId,
+        isEnrolled: true,
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
+    return res;
+  } catch (e) {
+    console.error("Failed to enroll course:", e);
+    return null;
+  }
+}
+
+export async function enrollLesson(lessonId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const res = await db.userLesson.upsert({
+      where: { userId_lessonId: { userId, lessonId } },
+      update: {},
+      create: {
+        userId,
+        lessonId,
+      },
+    });
+    revalidatePath("/course/[slug]", "page");
+    return res;
+  } catch (e) {
+    console.error("Failed to enroll lesson:", e);
     return null;
   }
 }
@@ -247,6 +362,441 @@ export async function unwatchUserContent(contentId: string) {
     return res;
   } catch (e) {
     console.error("Failed to mark user content as unwatched:", e);
+    return null;
+  }
+}
+
+export async function computeProgress(
+  contentId: string,
+): Promise<boolean | null> {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+
+    // Step 1: Find the UserContent record for the given contentId
+    const userContent = await db.userContent.findUnique({
+      where: {
+        userId_contentId: {
+          userId,
+          contentId,
+        },
+      },
+      include: {
+        Content: {
+          include: {
+            Lesson: {
+              include: {
+                Course: {
+                  include: {
+                    modules: {
+                      include: {
+                        Module: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!userContent || !userContent.Content?.Lesson?.Course) {
+      throw new Error("Content, Lesson, or Course not found.");
+    }
+
+    const { Content } = userContent;
+    const { Lesson } = Content;
+    const { Course } = Lesson!;
+    const { modules } = Course!;
+
+    // Step 2: Compute UserLesson progress
+    const userLesson = await db.userLesson.findUnique({
+      where: {
+        userId_lessonId: {
+          userId,
+          lessonId: Lesson!.id,
+        },
+      },
+    });
+
+    if (!userLesson) {
+      throw new Error("UserLesson not found.");
+    }
+
+    const totalContentsCompleted = await db.userContent.count({
+      where: {
+        userId,
+        Content: {
+          lessonId: Lesson!.id,
+        },
+        isCompleted: true,
+      },
+    });
+
+    const lessonIsCompleted =
+      totalContentsCompleted ===
+      (await db.content.count({
+        where: {
+          lessonId: Lesson!.id,
+        },
+      }));
+
+    // Update UserLesson
+    await db.userLesson.update({
+      where: {
+        userId_lessonId: {
+          userId,
+          lessonId: Lesson!.id,
+        },
+      },
+      data: {
+        totalContentsCompleted,
+        isCompleted: lessonIsCompleted,
+        completedAt: lessonIsCompleted ? new Date() : null,
+      },
+    });
+
+    // Step 3: Compute UserCourse progress
+    const userCourse = await db.userCourse.findUnique({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId: Course!.id,
+        },
+      },
+    });
+
+    if (!userCourse) {
+      throw new Error("UserCourse not found.");
+    }
+
+    const totalLessonsCompleted = await db.userLesson.count({
+      where: {
+        userId,
+        lesson: {
+          courseId: Course!.id,
+        },
+        isCompleted: true,
+      },
+    });
+
+    const courseIsCompleted =
+      totalLessonsCompleted ===
+      (await db.lesson.count({
+        where: {
+          courseId: Course!.id,
+        },
+      }));
+
+    // Update UserCourse
+    await db.userCourse.update({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId: Course!.id,
+        },
+      },
+      data: {
+        totalLessonsCompleted,
+        isCompleted: courseIsCompleted,
+        completedAt: courseIsCompleted ? new Date() : null,
+      },
+    });
+
+    // Step 4: Compute UserModule progress
+    for (const _module of modules) {
+      const userModule = await db.userModule.findUnique({
+        where: {
+          userId_moduleId: {
+            userId,
+            moduleId: _module.moduleId,
+          },
+        },
+      });
+
+      if (!userModule) {
+        throw new Error(
+          `UserModule for moduleId ${_module.moduleId} not found.`,
+        );
+      }
+
+      const totalCoursesCompleted = await db.userCourse.count({
+        where: {
+          userId,
+          Course: {
+            modules: {
+              some: {
+                moduleId: _module.moduleId,
+              },
+            },
+          },
+          isCompleted: true,
+        },
+      });
+
+      const moduleIsCompleted =
+        totalCoursesCompleted ===
+        (await db.moduleCourse.count({
+          where: {
+            moduleId: _module.moduleId,
+          },
+        }));
+
+      // Update UserModule
+      await db.userModule.update({
+        where: {
+          userId_moduleId: {
+            userId,
+            moduleId: _module.moduleId,
+          },
+        },
+        data: {
+          totalCoursesCompleted,
+          isCompleted: moduleIsCompleted,
+          completedAt: moduleIsCompleted ? new Date() : null,
+        },
+      });
+    }
+
+    revalidatePath("/course/[id]", "page");
+    revalidatePath("/track/[id]", "page");
+    return true;
+  } catch (e) {
+    console.error("Failed to compute progress:", e);
+    return null;
+  }
+}
+
+export async function computeProgress2(
+  contentId: string,
+): Promise<boolean | null> {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+
+    // Step 1: Find the UserContent record for the given contentId
+    const userContent = await db.userContent.findUnique({
+      where: {
+        userId_contentId: {
+          userId,
+          contentId,
+        },
+      },
+      include: {
+        Content: {
+          include: {
+            Lesson: {
+              include: {
+                Course: {
+                  include: {
+                    modules: true, // Include related modules
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!userContent || !userContent.Content?.Lesson?.Course) {
+      throw new Error("Content, Lesson, or Course not found.");
+    }
+
+    const { Content } = userContent;
+    const { Lesson } = Content;
+    const { Course } = Lesson!;
+    const { modules } = Course!;
+
+    // Step 2: Compute UserLesson progress
+    const userLesson = await db.userLesson.findUnique({
+      where: {
+        userId_lessonId: {
+          userId,
+          lessonId: Lesson!.id,
+        },
+      },
+    });
+
+    if (!userLesson) {
+      throw new Error("UserLesson not found.");
+    }
+
+    const totalContentsCompleted = await db.userContent.count({
+      where: {
+        userId,
+        Content: {
+          lessonId: Lesson!.id,
+        },
+        isCompleted: true,
+      },
+    });
+
+    const lessonIsCompleted =
+      totalContentsCompleted ===
+      (await db.content.count({
+        where: {
+          lessonId: Lesson!.id,
+        },
+      }));
+
+    // Update UserLesson
+    await db.userLesson.update({
+      where: {
+        userId_lessonId: {
+          userId,
+          lessonId: Lesson!.id,
+        },
+      },
+      data: {
+        totalContentsCompleted,
+        isCompleted: lessonIsCompleted,
+        completedAt: lessonIsCompleted ? new Date() : null,
+      },
+    });
+
+    // Step 3: Compute UserCourse progress
+    const userCourse = await db.userCourse.findUnique({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId: Course!.id,
+        },
+      },
+    });
+
+    if (!userCourse) {
+      throw new Error("UserCourse not found.");
+    }
+
+    const totalLessonsCompleted = await db.userLesson.count({
+      where: {
+        userId,
+        lesson: {
+          courseId: Course!.id,
+        },
+        isCompleted: true,
+      },
+    });
+
+    const courseIsCompleted =
+      totalLessonsCompleted ===
+      (await db.lesson.count({
+        where: {
+          courseId: Course!.id,
+        },
+      }));
+
+    // Update UserCourse
+    await db.userCourse.update({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId: Course!.id,
+        },
+      },
+      data: {
+        totalLessonsCompleted,
+        isCompleted: courseIsCompleted,
+        completedAt: courseIsCompleted ? new Date() : null,
+      },
+    });
+
+    // Step 4: Compute UserModule progress
+    for (const _module of modules) {
+      const userModule = await db.userModule.findUnique({
+        where: {
+          userId_moduleId: {
+            userId,
+            moduleId: _module.moduleId, // Ensure you're using the correct module id field
+          },
+        },
+      });
+
+      if (!userModule) {
+        throw new Error(
+          `UserModule for moduleId ${_module.moduleId} not found.`,
+        );
+      }
+
+      // Calculate the number of courses that include the module
+      const totalCoursesForModule = await db.course.findMany({
+        where: {
+          modules: {
+            some: {
+              moduleId: _module.moduleId, // Assuming you're querying by module ID
+            },
+          },
+        },
+      });
+
+      const totalCompletedCoursesForModule = await db.userCourse.count({
+        where: {
+          userId,
+          Course: {
+            modules: {
+              some: {
+                moduleId: _module.moduleId,
+              },
+            },
+          },
+          isCompleted: true,
+        },
+      });
+
+      const moduleIsCompleted =
+        totalCompletedCoursesForModule === totalCoursesForModule.length;
+
+      // Update UserModule
+      await db.userModule.update({
+        where: {
+          userId_moduleId: {
+            userId,
+            moduleId: _module.moduleId,
+          },
+        },
+        data: {
+          totalCoursesCompleted: totalCompletedCoursesForModule,
+          isCompleted: moduleIsCompleted,
+          completedAt: moduleIsCompleted ? new Date() : null,
+        },
+      });
+    }
+
+    // Revalidate pages
+    revalidatePath("/course/[id]", "page");
+    revalidatePath("/track/[id]", "page");
+    return true;
+  } catch (e) {
+    console.error("Failed to compute progress:", e);
+    return null;
+  }
+}
+
+export async function completeUserTrack(
+  userTrack: UserTrack,
+  totalCompleted: number,
+) {
+  if (!userTrack) return null;
+  try {
+    const res = await db.userTrack.update({
+      where: {
+        userId_trackId: {
+          userId: userTrack.userId,
+          trackId: userTrack.trackId,
+        },
+      },
+      data: {
+        totalCompleted,
+        isCompleted: true,
+        completedAt: new Date(),
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
+    return await getUserTrackWithUserModulesAndUserCourses(userTrack.trackId);
+  } catch (e) {
+    console.error("Failed to complete user track:", e);
     return null;
   }
 }

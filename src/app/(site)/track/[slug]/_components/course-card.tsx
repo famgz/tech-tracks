@@ -1,6 +1,7 @@
 "use client";
 
 import { getFirstVideoContentInCourse } from "@/actions/content";
+import { enrollCourse, enrollModule } from "@/actions/user-content";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -8,15 +9,16 @@ import { translate } from "@/lib/translate";
 import { cn } from "@/lib/utils";
 import { useTrackStore } from "@/store/track";
 import useStore from "@/store/use-store";
-import { Course, Track } from "@prisma/client";
-import { ArrowRightIcon, ClockIcon } from "lucide-react";
+import { Course, Track, UserCourse } from "@prisma/client";
+import { ArrowRightIcon, CheckIcon, ClockIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface Props {
   course: Course;
   track: Track;
-  isLoggedIn: boolean;
+  moduleId: string;
+  userCourse: UserCourse | null;
   isEnrolled: boolean;
   openEnrollTrackDialog: () => void;
 }
@@ -24,7 +26,8 @@ interface Props {
 export default function CourseCard({
   course,
   track,
-  isLoggedIn,
+  moduleId,
+  userCourse,
   isEnrolled,
   openEnrollTrackDialog,
 }: Props) {
@@ -38,6 +41,8 @@ export default function CourseCard({
       ? `&content=${firstVideoContent.id}`
       : "";
     trackStore?.setCurrentTrack(track);
+    await enrollCourse(course.id);
+    enrollModule(moduleId);
     router.push(`/course/${course.id}?track=${track.slug}${contentParam}`);
   }
 
@@ -111,16 +116,25 @@ export default function CourseCard({
         </div>
 
         {course.type === "course" && (
-          <div className="flex-center">
-            <Button
-              onClick={handleClick}
-              disabled={course.type !== "course"}
-              className="gap-1 px-3"
-            >
-              <span className="max-sm:hidden">Iniciar</span>
-              <ArrowRightIcon className="size-5" />
-            </Button>
-          </div>
+          <Button
+            onClick={handleClick}
+            disabled={course.type !== "course"}
+            className="gap-1 px-3 font-semibold sm:min-w-32"
+          >
+            {userCourse?.isCompleted ? (
+              <>
+                <span className="max-sm:hidden">Finalizado</span>
+                <CheckIcon className="size-5" strokeWidth={2.5} />
+              </>
+            ) : (
+              <>
+                <span className="max-sm:hidden">
+                  {userCourse ? "Continuar" : "Iniciar"}
+                </span>
+                <ArrowRightIcon className="size-5" strokeWidth={2.5} />
+              </>
+            )}
+          </Button>
         )}
       </CardHeader>
     </Card>

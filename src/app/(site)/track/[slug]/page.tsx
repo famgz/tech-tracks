@@ -1,28 +1,36 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
 import { getTrackWithModulesAndCourses } from "@/actions/content";
 import {
+  completeUserTrack,
   getAllUserTracksInTrack,
-  getUserTrack,
+  getUserTrackWithUserModulesAndUserCourses,
   isUserAllowedToEnroll,
 } from "@/actions/user-content";
 import BookmarkTrackButton from "@/app/(site)/track/[slug]/_components/bookmark-track-button";
 import EnrollTrackButton from "@/app/(site)/track/[slug]/_components/enroll-track-button";
 import EnrollTrackDialog from "@/app/(site)/track/[slug]/_components/enroll-track-dialog";
-import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
 import FeedbackButton from "@/app/(site)/track/[slug]/_components/feedback-button";
+import ModulesAccordion from "@/app/(site)/track/[slug]/_components/modules-accordion";
+import TrackProgress from "@/app/(site)/track/[slug]/_components/track-progress";
 import ChartFilledIcon from "@/components/icons/chart-filed";
 import StarRating from "@/components/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { baseAssetsUrl } from "@/constants/api";
 import { translate } from "@/lib/translate";
+import {
+  cn,
+  getCompletedCoursesInTrack,
+  getTrackCourseQuantity,
+} from "@/lib/utils";
+import { TrackWithModulesCoursesAndExtras } from "@/types/content";
+import { UserTrack } from "@prisma/client";
 import { ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 interface Props {
   params: {
@@ -31,7 +39,7 @@ interface Props {
 }
 
 export default async function TrackPage({ params }: Props) {
-  const user = await getSessionUserElseRedirectToLogin();
+  await getSessionUserElseRedirectToLogin();
   const { slug } = params;
 
   const [track, allUserTracksInTrack] = await Promise.all([
@@ -47,11 +55,26 @@ export default async function TrackPage({ params }: Props) {
     (x) => x.rating || x.comment,
   );
 
-  const userTrack = await getUserTrack(track.id);
-  const isEnrolled = !!userTrack?.isEnrolled;
-  const isBookmarked = !!userTrack?.isBookmarked;
+  let userTrackComplete = await getUserTrackWithUserModulesAndUserCourses(
+    track.id,
+  );
 
-  const canEnroll = await isUserAllowedToEnroll();
+  const totalCourses = getTrackCourseQuantity(
+    userTrackComplete?.Track as unknown as TrackWithModulesCoursesAndExtras,
+  );
+  const completedCourses = getCompletedCoursesInTrack(userTrackComplete);
+
+  if (!userTrackComplete?.isCompleted && totalCourses === completedCourses) {
+    userTrackComplete = await completeUserTrack(
+      userTrackComplete as UserTrack,
+      completedCourses,
+    );
+  }
+
+  let isEnrolled = !!userTrackComplete?.isEnrolled;
+  let isBookmarked = !!userTrackComplete?.isBookmarked;
+  let isCompleted = !!userTrackComplete?.isCompleted;
+  let canEnroll = await isUserAllowedToEnroll();
 
   return (
     <div className="_container flex flex-col gap-12 py-10">
@@ -160,17 +183,26 @@ export default async function TrackPage({ params }: Props) {
         {/* left column (desktop) */}
         <div className="space-y-12">
           {/* buttons */}
-          <div className="flex flex-col items-center gap-4 gap-y-6 sm:flex-row sm:items-end sm:justify-between">
-            <div className="mx-auto flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
+          <div className="flex flex-col flex-wrap items-center gap-4 gap-y-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-start">
               <BookmarkTrackButton
                 trackId={track.id}
                 isBookmarked={isBookmarked}
               />
-              <EnrollTrackButton isEnrolled={isEnrolled} />
+              <EnrollTrackButton
+                isEnrolled={isEnrolled}
+                isCompleted={isCompleted}
+              />
             </div>
 
             {isEnrolled && (
-              <FeedbackButton userTrack={userTrack} track={track} />
+              <div className="flex-center maxs-sm:flex-col gap-5">
+                <TrackProgress
+                  totalCourses={totalCourses}
+                  completedCourses={completedCourses}
+                />
+                <FeedbackButton userTrack={userTrackComplete!} track={track} />
+              </div>
             )}
           </div>
 
@@ -215,7 +247,7 @@ export default async function TrackPage({ params }: Props) {
                 modules={track.modules}
                 track={track}
                 isEnrolled={isEnrolled}
-                isLoggedIn={!!user}
+                userTrackComplete={userTrackComplete}
               />
             </div>
           </div>

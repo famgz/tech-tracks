@@ -7,7 +7,7 @@ import {
   CourseWithLessonsAndContents,
   SkillWithCount,
   TrackWithExtras,
-  TrackWithWithModulesCoursesAndExtras,
+  TrackWithModulesCoursesAndExtras,
 } from "@/types/content";
 import { Content } from "@prisma/client";
 
@@ -30,7 +30,7 @@ export async function getTracksWithExtras(): Promise<TrackWithExtras[] | null> {
 
 export async function getTrackWithModulesAndCourses(
   slug: string,
-): Promise<TrackWithWithModulesCoursesAndExtras | null> {
+): Promise<TrackWithModulesCoursesAndExtras | null> {
   try {
     return await db.track.findUnique({
       where: {

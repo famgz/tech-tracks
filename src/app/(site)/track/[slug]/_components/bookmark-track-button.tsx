@@ -45,8 +45,11 @@ export default function BookmarkTrackButton({ trackId, isBookmarked }: Props) {
           size={"lg"}
           disabled={isBookmarked}
         >
-          <BookmarkIcon size={20} />
           {isBookmarked ? "Salvo" : "Salvar"}
+          <BookmarkIcon
+            size={20}
+            className={cn({ "fill-foreground": isBookmarked })}
+          />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

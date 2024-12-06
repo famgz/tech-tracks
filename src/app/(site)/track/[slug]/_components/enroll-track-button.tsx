@@ -2,13 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { openEnrollTrackDialog } from "@/lib/utils";
+import { CheckIcon, PlayIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 interface Props {
   isEnrolled: boolean;
+  isCompleted: boolean;
 }
 
-export default function EnrollTrackButton({ isEnrolled }: Props) {
+export default function EnrollTrackButton({ isEnrolled, isCompleted }: Props) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -24,7 +26,16 @@ export default function EnrollTrackButton({ isEnrolled }: Props) {
       disabled={isEnrolled}
       onClick={handleClick}
     >
-      {isEnrolled ? "Matriculado" : "Matricular"}
+      {isCompleted ? (
+        <>
+          Finalizado <CheckIcon strokeWidth={3} />
+        </>
+      ) : (
+        <>
+          {isEnrolled ? "Matriculado" : "Matricular"}
+          {isEnrolled && <PlayIcon strokeWidth={3} />}
+        </>
+      )}
     </Button>
   );
 }

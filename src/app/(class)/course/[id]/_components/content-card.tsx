@@ -1,12 +1,16 @@
 "use client";
 
-import { watchUserContent } from "@/actions/user-content";
+import {
+  computeProgress2,
+  enrollLesson,
+  watchUserContent,
+} from "@/actions/user-content";
 import MarkContentWatchedButton from "@/app/(class)/course/[id]/_components/mark-content-watched-button";
 import ContentIcon from "@/components/icons/content";
 import { cn, isContentVideo } from "@/lib/utils";
 import { Content, UserContent } from "@prisma/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
@@ -38,18 +42,31 @@ export default function ContentCard({
     }
   }
 
+  function handleContentCardClick() {
+    udpateUrlContent();
+    enrollLesson(content.lessonId!);
+  }
+
   async function handleWatchClick() {
     if (userContent && userContent?.isCompleted) {
       return;
     }
-    const res = await watchUserContent(content.id);
-    if (res) {
-      setUserContent(res);
+    const newContent = await watchUserContent(content.id);
+    if (newContent) {
+      computeProgress2(content.id);
+      setUserContent(newContent);
       toast.success(`Conteúdo ${content.name} marcado como visto`);
     } else {
       toast.error("Erro ao marcar conteúdo como visto");
     }
   }
+
+  useEffect(() => {
+    if (isCurrentContent) {
+      console.log("enrolling lesson");
+      enrollLesson(content.lessonId!);
+    }
+  }, [isCurrentContent, content.lessonId]);
 
   return (
     <div
@@ -68,7 +85,7 @@ export default function ContentCard({
     >
       <div
         className="flex flex-1 cursor-pointer items-center gap-3"
-        onClick={() => udpateUrlContent()}
+        onClick={handleContentCardClick}
       >
         <ContentIcon contentType={content.type} />
         <p className="flex-1 text-left">{content.name}</p>

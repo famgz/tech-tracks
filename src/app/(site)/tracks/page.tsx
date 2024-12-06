@@ -24,8 +24,6 @@ export default async function TracksPage() {
     corporate: corporate!,
   };
 
-  console.log(filters.career);
-
   return (
     <div className="_container relative flex flex-1 flex-col pb-6 pt-2">
       <h1 className="py-3 text-center text-xl font-bold sm:text-3xl">

@@ -8,7 +8,7 @@ export type TrackWithExtras = Prisma.TrackGetPayload<{
   };
 }>;
 
-export type TrackWithWithModulesCoursesAndExtras = Prisma.TrackGetPayload<{
+export type TrackWithModulesCoursesAndExtras = Prisma.TrackGetPayload<{
   include: {
     careers: true;
     corporate: true;
