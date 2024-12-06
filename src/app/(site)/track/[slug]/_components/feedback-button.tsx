@@ -74,7 +74,7 @@ export default function FeedbackButton({ userTrack, track }: Props) {
     }
   }
 
-  if (!userTrack || !userTrack?.isEnrolled) {
+  if (!userTrack) {
     return null;
   }
 

@@ -195,7 +195,7 @@ export default async function TrackPage({ params }: Props) {
               />
             </div>
 
-            {isEnrolled && (
+            {userTrackComplete && (
               <div className="flex-center maxs-sm:flex-col gap-5">
                 <TrackProgress
                   totalCourses={totalCourses}
