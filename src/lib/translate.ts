@@ -16,9 +16,9 @@ const translations: Translations = {
   project: "desafio de projeto",
 
   // course types
-  challenge: "desafio de projeto",
-  course: "curso",
-  live: "live",
+  challenge: "Desafio de projeto",
+  course: "Curso",
+  live: "Live",
 
   // user role
   student: "Estudante",
