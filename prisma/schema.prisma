@@ -283,9 +283,10 @@ model UserTrack {
   isBookmarked          Boolean   @default(false)
   bookmarkedAt          DateTime?
 
-  rating  Int?
-  liked   Boolean @default(false)
-  comment String? @db.VarChar(255)
+  rating       Int?
+  liked        Boolean   @default(false)
+  comment      String?   @db.VarChar(255)
+  feedbackedAt DateTime?
 
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   Track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
@@ -322,9 +323,11 @@ model UserCourse {
   isCompleted           Boolean   @default(false)
   completedAt           DateTime?
   totalLessonsCompleted Int       @default(0)
-  rating                Int?
-  liked                 Boolean   @default(false)
-  comment               String?   @db.VarChar(255)
+
+  rating       Int?
+  liked        Boolean   @default(false)
+  comment      String?   @db.VarChar(255)
+  feedbackedAt DateTime?
 
   User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   Course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
