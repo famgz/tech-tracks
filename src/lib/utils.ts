@@ -69,13 +69,19 @@ export function getFirstVideoContentFromCourse(
 }
 
 export function getTrackCourseQuantity(
-  track: TrackWithModulesCoursesAndExtras,
+  track: TrackWithModulesCoursesAndExtras | null,
 ) {
-  let courses = 0;
-  for (const _module of track.modules) {
-    courses += _module.courses.length;
+  let totalCourses = 0;
+  if (!track) {
+    return totalCourses;
   }
-  return courses;
+  for (const _module of track.modules) {
+    const videoCourses = _module.courses.filter((x) =>
+      isCourseOfTypeCourse(x.Course),
+    );
+    totalCourses += videoCourses.length;
+  }
+  return totalCourses;
 }
 
 export function getModuleInUserTrack(

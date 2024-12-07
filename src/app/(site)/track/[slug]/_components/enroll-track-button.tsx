@@ -33,7 +33,7 @@ export default function EnrollTrackButton({ isEnrolled, isCompleted }: Props) {
       ) : (
         <>
           {isEnrolled ? "Matriculado" : "Matricular"}
-          {isEnrolled && <PlayIcon strokeWidth={3} />}
+          {isEnrolled && <PlayIcon strokeWidth={2.5} />}
         </>
       )}
     </Button>

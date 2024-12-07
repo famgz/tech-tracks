@@ -589,7 +589,7 @@ export async function computeProgress2(
               include: {
                 Course: {
                   include: {
-                    modules: true, // Include related modules
+                    modules: true,
                   },
                 },
               },
@@ -641,14 +641,21 @@ export async function computeProgress2(
       }));
 
     // Update UserLesson
-    await db.userLesson.update({
+    await db.userLesson.upsert({
       where: {
         userId_lessonId: {
           userId,
           lessonId: Lesson!.id,
         },
       },
-      data: {
+      update: {
+        totalContentsCompleted,
+        isCompleted: lessonIsCompleted,
+        completedAt: lessonIsCompleted ? new Date() : null,
+      },
+      create: {
+        userId,
+        lessonId: Lesson!.id,
         totalContentsCompleted,
         isCompleted: lessonIsCompleted,
         completedAt: lessonIsCompleted ? new Date() : null,
