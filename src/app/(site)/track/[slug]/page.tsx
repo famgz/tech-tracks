@@ -64,7 +64,7 @@ export default async function TrackPage({ params }: Props) {
   );
   const completedCourses = getCompletedCoursesInTrack(userTrackComplete);
 
-  if (!userTrackComplete?.isCompleted && totalCourses === completedCourses) {
+  if (!userTrackComplete?.isCompleted && completedCourses >= totalCourses) {
     userTrackComplete = await completeUserTrack(
       userTrackComplete as UserTrack,
       completedCourses,

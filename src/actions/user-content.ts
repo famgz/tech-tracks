@@ -4,7 +4,7 @@ import { getSessionUserIdElseThrow } from "@/actions/auth";
 import { USER_MAX_TRACK_SLOTS } from "@/constants/user";
 import { db } from "@/lib/prisma";
 import { UserTrackWithUserModulesAndUserCourses } from "@/types/user-content";
-import { UserTrack } from "@prisma/client";
+import { Content, UserTrack } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 export async function isUserAllowedToEnroll(): Promise<boolean> {
@@ -367,7 +367,7 @@ export async function unwatchUserContent(contentId: string) {
 }
 
 export async function computeProgress(
-  contentId: string,
+  content: Content,
 ): Promise<boolean | null> {
   try {
     const userId = await getSessionUserIdElseThrow();
@@ -377,209 +377,7 @@ export async function computeProgress(
       where: {
         userId_contentId: {
           userId,
-          contentId,
-        },
-      },
-      include: {
-        Content: {
-          include: {
-            Lesson: {
-              include: {
-                Course: {
-                  include: {
-                    modules: {
-                      include: {
-                        Module: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!userContent || !userContent.Content?.Lesson?.Course) {
-      throw new Error("Content, Lesson, or Course not found.");
-    }
-
-    const { Content } = userContent;
-    const { Lesson } = Content;
-    const { Course } = Lesson!;
-    const { modules } = Course!;
-
-    // Step 2: Compute UserLesson progress
-    const userLesson = await db.userLesson.findUnique({
-      where: {
-        userId_lessonId: {
-          userId,
-          lessonId: Lesson!.id,
-        },
-      },
-    });
-
-    if (!userLesson) {
-      throw new Error("UserLesson not found.");
-    }
-
-    const totalContentsCompleted = await db.userContent.count({
-      where: {
-        userId,
-        Content: {
-          lessonId: Lesson!.id,
-        },
-        isCompleted: true,
-      },
-    });
-
-    const lessonIsCompleted =
-      totalContentsCompleted ===
-      (await db.content.count({
-        where: {
-          lessonId: Lesson!.id,
-        },
-      }));
-
-    // Update UserLesson
-    await db.userLesson.update({
-      where: {
-        userId_lessonId: {
-          userId,
-          lessonId: Lesson!.id,
-        },
-      },
-      data: {
-        totalContentsCompleted,
-        isCompleted: lessonIsCompleted,
-        completedAt: lessonIsCompleted ? new Date() : null,
-      },
-    });
-
-    // Step 3: Compute UserCourse progress
-    const userCourse = await db.userCourse.findUnique({
-      where: {
-        userId_courseId: {
-          userId,
-          courseId: Course!.id,
-        },
-      },
-    });
-
-    if (!userCourse) {
-      throw new Error("UserCourse not found.");
-    }
-
-    const totalLessonsCompleted = await db.userLesson.count({
-      where: {
-        userId,
-        lesson: {
-          courseId: Course!.id,
-        },
-        isCompleted: true,
-      },
-    });
-
-    const courseIsCompleted =
-      totalLessonsCompleted ===
-      (await db.lesson.count({
-        where: {
-          courseId: Course!.id,
-        },
-      }));
-
-    // Update UserCourse
-    await db.userCourse.update({
-      where: {
-        userId_courseId: {
-          userId,
-          courseId: Course!.id,
-        },
-      },
-      data: {
-        totalLessonsCompleted,
-        isCompleted: courseIsCompleted,
-        completedAt: courseIsCompleted ? new Date() : null,
-      },
-    });
-
-    // Step 4: Compute UserModule progress
-    for (const _module of modules) {
-      const userModule = await db.userModule.findUnique({
-        where: {
-          userId_moduleId: {
-            userId,
-            moduleId: _module.moduleId,
-          },
-        },
-      });
-
-      if (!userModule) {
-        throw new Error(
-          `UserModule for moduleId ${_module.moduleId} not found.`,
-        );
-      }
-
-      const totalCoursesCompleted = await db.userCourse.count({
-        where: {
-          userId,
-          Course: {
-            modules: {
-              some: {
-                moduleId: _module.moduleId,
-              },
-            },
-          },
-          isCompleted: true,
-        },
-      });
-
-      const moduleIsCompleted =
-        totalCoursesCompleted ===
-        (await db.moduleCourse.count({
-          where: {
-            moduleId: _module.moduleId,
-          },
-        }));
-
-      // Update UserModule
-      await db.userModule.update({
-        where: {
-          userId_moduleId: {
-            userId,
-            moduleId: _module.moduleId,
-          },
-        },
-        data: {
-          totalCoursesCompleted,
-          isCompleted: moduleIsCompleted,
-          completedAt: moduleIsCompleted ? new Date() : null,
-        },
-      });
-    }
-
-    revalidatePath("/course/[id]", "page");
-    revalidatePath("/track/[id]", "page");
-    return true;
-  } catch (e) {
-    console.error("Failed to compute progress:", e);
-    return null;
-  }
-}
-
-export async function computeProgress2(
-  contentId: string,
-): Promise<boolean | null> {
-  try {
-    const userId = await getSessionUserIdElseThrow();
-
-    // Step 1: Find the UserContent record for the given contentId
-    const userContent = await db.userContent.findUnique({
-      where: {
-        userId_contentId: {
-          userId,
-          contentId,
+          contentId: content.id,
         },
       },
       include: {
@@ -609,12 +407,17 @@ export async function computeProgress2(
     const { modules } = Course!;
 
     // Step 2: Compute UserLesson progress
-    const userLesson = await db.userLesson.findUnique({
+    const userLesson = await db.userLesson.upsert({
       where: {
         userId_lessonId: {
           userId,
           lessonId: Lesson!.id,
         },
+      },
+      update: {},
+      create: {
+        userId,
+        lessonId: Lesson!.id,
       },
     });
 
@@ -633,10 +436,15 @@ export async function computeProgress2(
     });
 
     const lessonIsCompleted =
-      totalContentsCompleted ===
+      totalContentsCompleted >=
       (await db.content.count({
         where: {
-          lessonId: Lesson!.id,
+          AND: [
+            {
+              lessonId: Lesson!.id,
+            },
+            { type: "video" },
+          ],
         },
       }));
 
@@ -687,22 +495,32 @@ export async function computeProgress2(
     });
 
     const courseIsCompleted =
-      totalLessonsCompleted ===
+      totalLessonsCompleted >=
       (await db.lesson.count({
         where: {
-          courseId: Course!.id,
+          AND: [
+            { courseId: Course!.id },
+            { contents: { some: { type: "video" } } },
+          ],
         },
       }));
 
     // Update UserCourse
-    await db.userCourse.update({
+    await db.userCourse.upsert({
       where: {
         userId_courseId: {
           userId,
           courseId: Course!.id,
         },
       },
-      data: {
+      update: {
+        totalLessonsCompleted,
+        isCompleted: courseIsCompleted,
+        completedAt: courseIsCompleted ? new Date() : null,
+      },
+      create: {
+        userId,
+        courseId: Course!.id,
         totalLessonsCompleted,
         isCompleted: courseIsCompleted,
         completedAt: courseIsCompleted ? new Date() : null,
@@ -715,7 +533,7 @@ export async function computeProgress2(
         where: {
           userId_moduleId: {
             userId,
-            moduleId: _module.moduleId, // Ensure you're using the correct module id field
+            moduleId: _module.moduleId,
           },
         },
       });
@@ -727,13 +545,20 @@ export async function computeProgress2(
       }
 
       // Calculate the number of courses that include the module
-      const totalCoursesForModule = await db.course.findMany({
+      const totalCoursesForModule = await db.course.count({
         where: {
-          modules: {
-            some: {
-              moduleId: _module.moduleId, // Assuming you're querying by module ID
+          AND: [
+            {
+              modules: {
+                some: {
+                  moduleId: _module.moduleId,
+                },
+              },
             },
-          },
+            {
+              type: "course",
+            },
+          ],
         },
       });
 
@@ -752,17 +577,24 @@ export async function computeProgress2(
       });
 
       const moduleIsCompleted =
-        totalCompletedCoursesForModule === totalCoursesForModule.length;
+        totalCompletedCoursesForModule >= totalCoursesForModule;
 
       // Update UserModule
-      await db.userModule.update({
+      await db.userModule.upsert({
         where: {
           userId_moduleId: {
             userId,
             moduleId: _module.moduleId,
           },
         },
-        data: {
+        update: {
+          totalCoursesCompleted: totalCompletedCoursesForModule,
+          isCompleted: moduleIsCompleted,
+          completedAt: moduleIsCompleted ? new Date() : null,
+        },
+        create: {
+          userId,
+          moduleId: _module!.moduleId,
           totalCoursesCompleted: totalCompletedCoursesForModule,
           isCompleted: moduleIsCompleted,
           completedAt: moduleIsCompleted ? new Date() : null,
@@ -770,7 +602,6 @@ export async function computeProgress2(
       });
     }
 
-    // Revalidate pages
     revalidatePath("/course/[id]", "page");
     revalidatePath("/track/[id]", "page");
     return true;

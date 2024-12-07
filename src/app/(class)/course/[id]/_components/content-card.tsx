@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  computeProgress2,
+  computeProgress,
   enrollLesson,
   watchUserContent,
 } from "@/actions/user-content";
@@ -53,7 +53,7 @@ export default function ContentCard({
     }
     const newContent = await watchUserContent(content.id);
     if (newContent) {
-      computeProgress2(content.id);
+      computeProgress(content);
       setUserContent(newContent);
       toast.success(`Conteúdo ${content.name} marcado como visto`);
     } else {
@@ -91,15 +91,15 @@ export default function ContentCard({
         <p className="flex-1 text-left">{content.name}</p>
       </div>
 
-      {isVideo && (
-        <div className="flex items-center gap-3">
-          <MarkContentWatchedButton
-            userContent={userContent}
-            handleWatchClick={handleWatchClick}
-          />
-          <span className="w-9 text-right">{content.duration || "?"}</span>
-        </div>
-      )}
+      {/* {isVideo && ( */}
+      <div className="flex items-center gap-3">
+        <MarkContentWatchedButton
+          userContent={userContent}
+          handleWatchClick={handleWatchClick}
+        />
+        <span className="w-9 text-right">{content.duration || "?"}</span>
+      </div>
+      {/* )} */}
     </div>
   );
 }
