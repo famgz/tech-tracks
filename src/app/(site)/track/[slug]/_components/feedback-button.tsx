@@ -45,7 +45,7 @@ export default function FeedbackButton({ userTrack, track }: Props) {
   );
 
   async function handleSendFeedback() {
-    if (!(comment && rating)) {
+    if (!(comment || rating)) {
       toast.error("Comentário ou avaliação inválido");
       return;
     }
