@@ -93,9 +93,9 @@ model Track {
   allowHTMLDescription Boolean     @default(false)
   level                Level
   name                 String
-  nameAscii           String
-  sectionType         SectionType @default(bootcamp)
-  workloadHours             Int
+  nameAscii            String
+  sectionType          SectionType @default(bootcamp)
+  workloadHours        Int
   corporateId          String
   corporate            Corporate   @relation(fields: [corporateId], references: [id])
   careers              Career[]    @relation("CareerToTrack")
@@ -120,56 +120,56 @@ model Module {
 }
 
 model Course {
-  id                String         @id @default(uuid())
-  slug              String // found duplicates
-  badge             String // image badge
-  description       String
-  level             Level
-  name              String
-  type              CourseType
-  workloadHours          Int
+  id               String         @id @default(uuid())
+  slug             String // found duplicates
+  badge            String // image badge
+  description      String
+  level            Level
+  name             String
+  type             CourseType
+  workloadHours    Int
   extraInformation Json?
-  lessons           Lesson[]
-  modules           ModuleCourse[]
-  UserCourse        UserCourse[]
+  lessons          Lesson[]
+  modules          ModuleCourse[]
+  UserCourse       UserCourse[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Lesson {
-  id                   String       @id @default(uuid())
+  id                 String       @id @default(uuid())
   // author            Author  // TODO:
-  course               String
-  description          String
-  largeCover          String?
+  course             String
+  description        String
+  largeCover         String?
   largeCoverDisabled String?
-  name                 String
-  order                Int
+  name               String
+  order              Int
   // reference         Reference  // TODO: a book reference
-  workloadHours             Int
-  courseId             String?
-  contents             Content[]
-  Course               Course?      @relation(fields: [courseId], references: [id])
-  UserLesson           UserLesson[]
+  workloadHours      Int
+  courseId           String?
+  contents           Content[]
+  Course             Course?      @relation(fields: [courseId], references: [id])
+  UserLesson         UserLesson[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Content {
-  id           String        @id @default(uuid())
-  slug         String // found duplicate
-  content      Json?
-  order        Int
-  duration     String?
-  name         String
-  type         ContentType   @default(video)
+  id          String        @id @default(uuid())
+  slug        String // found duplicate
+  content     Json?
+  order       Int
+  duration    String?
+  name        String
+  type        ContentType   @default(video)
   youtubeCode String?
-  lessonId     String?
-  Lesson       Lesson?       @relation(fields: [lessonId], references: [id])
-  subtitles    Subtitle[]
-  UserContent  UserContent[]
+  lessonId    String?
+  Lesson      Lesson?       @relation(fields: [lessonId], references: [id])
+  subtitles   Subtitle[]
+  UserContent UserContent[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -198,7 +198,7 @@ model Skill {
 model Corporate {
   id          String  @id @default(uuid())
   description String
-  imageUrl   String
+  imageUrl    String
   name        String  @unique
   site        String?
   tracks      Track[]
