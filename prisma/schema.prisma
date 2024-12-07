@@ -275,12 +275,13 @@ model UserTrack {
   userId  String
   trackId String
 
-  isEnrolled     Boolean   @default(false)
-  isCompleted    Boolean   @default(false)
-  totalCompleted Int       @default(0) // nested courses completed
-  completedAt    DateTime?
-  isBookmarked   Boolean   @default(false)
-  bookmarkedAt   DateTime?
+  isEnrolled            Boolean   @default(false)
+  enrolledAt            DateTime?
+  isCompleted           Boolean   @default(false)
+  completedAt           DateTime?
+  totalCoursesCompleted Int       @default(0)
+  isBookmarked          Boolean   @default(false)
+  bookmarkedAt          DateTime?
 
   rating  Int?
   liked   Boolean @default(false)
@@ -317,9 +318,10 @@ model UserCourse {
   courseId String
 
   isEnrolled            Boolean   @default(false)
+  enrolledAt            DateTime?
   isCompleted           Boolean   @default(false)
-  totalLessonsCompleted Int       @default(0)
   completedAt           DateTime?
+  totalLessonsCompleted Int       @default(0)
   rating                Int?
   liked                 Boolean   @default(false)
   comment               String?   @db.VarChar(255)
@@ -356,7 +358,8 @@ model UserContent {
 
   isCompleted Boolean   @default(false)
   completedAt DateTime?
-  liked       Boolean   @default(false)
+
+  liked Boolean @default(false)
 
   User    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   Content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
