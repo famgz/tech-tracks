@@ -40,13 +40,13 @@ export default function FeedbackButton({ userTrack, track }: Props) {
   }
 
   const canSubmit = useMemo(
-    () => comment.trim().length >= 5 || (rating && rating > 0),
+    () => comment.trim().length >= 5 || rating,
     [comment, rating],
   );
 
   async function handleSendFeedback() {
     if (!(comment || rating)) {
-      toast.error("Comentário ou avaliação inválido");
+      toast.error("Feedback precisa ter um comentário ou avaliação");
       return;
     }
 

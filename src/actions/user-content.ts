@@ -144,7 +144,7 @@ export async function unbookmarkTrack(trackId: string) {
 
 export async function feedbackUserTrack(
   trackId: string,
-  feedback: { comment: string; rating: number; liked: boolean },
+  feedback: { comment: string; rating: number | null; liked: boolean },
 ) {
   try {
     const userId = await getSessionUserIdElseThrow();
@@ -155,8 +155,8 @@ export async function feedbackUserTrack(
       where: { userId_trackId: { userId, trackId } },
       data: {
         comment: feedback.comment.trim() || null,
-        rating: feedback.rating || null,
-        liked: feedback.liked ?? null,
+        rating: feedback.rating,
+        liked: feedback.liked,
       },
     });
     revalidatePath("/track/[slug]", "page");
