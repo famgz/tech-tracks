@@ -1,5 +1,5 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
-import { getAllUserTracks } from "@/actions/user-content";
+import { getAllUserTracksForUser } from "@/actions/user-content";
 import TrackSlot from "@/app/(site)/user/_components/track-slot";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -15,7 +15,7 @@ import { Track } from "@prisma/client";
 
 export default async function UserPage() {
   const user = await getSessionUserElseRedirectToLogin();
-  const userTracks = await getAllUserTracks();
+  const userTracks = await getAllUserTracksForUser();
 
   const enrolledTracks = userTracks?.filter((t) => t.isEnrolled);
   const completedTracks = userTracks?.filter((t) => t.isCompleted);
@@ -62,7 +62,6 @@ export default async function UserPage() {
 
               <div className="space-y-2">
                 <h2 className="text-lg">Trilhas finalizadas</h2>
-
                 {completedTracks && completedTracks.length > 0 ? (
                   <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3">
                     {completedTracks.map(({ Track }) => (

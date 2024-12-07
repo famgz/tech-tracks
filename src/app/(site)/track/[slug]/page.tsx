@@ -1,8 +1,8 @@
 import { getSessionUserElseRedirectToLogin } from "@/actions/auth";
 import { getTrackWithModulesAndCourses } from "@/actions/content";
 import {
-  completeUserTrack,
-  getAllUserTracksInTrack,
+  computeUserTrackProgress,
+  getAllUserTracksForTrack,
   getUserTrackWithUserModulesAndUserCourses,
   isUserAllowedToEnroll,
 } from "@/actions/user-content";
@@ -19,13 +19,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { baseAssetsUrl } from "@/constants/api";
 import { translate } from "@/lib/translate";
-import {
-  cn,
-  getCompletedCoursesInTrack,
-  getTrackCourseQuantity,
-} from "@/lib/utils";
+import { cn, getTrackCourseQuantity } from "@/lib/utils";
 import { TrackWithModulesCoursesAndExtras } from "@/types/content";
-import { UserTrack } from "@prisma/client";
 import { ClockIcon, DotIcon, LandmarkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,16 +39,18 @@ export default async function TrackPage({ params }: Props) {
 
   const [track, allUserTracksInTrack] = await Promise.all([
     getTrackWithModulesAndCourses(slug),
-    getAllUserTracksInTrack(slug),
+    getAllUserTracksForTrack(slug),
   ]);
 
   if (!(track && allUserTracksInTrack)) {
     return notFound();
   }
 
-  const allUserTracksInTrackFeedback = allUserTracksInTrack.filter(
+  const allUserTracksWithFeedback = allUserTracksInTrack.filter(
     (x) => x.rating || x.comment,
   );
+
+  await computeUserTrackProgress(track.id);
 
   let userTrackComplete = await getUserTrackWithUserModulesAndUserCourses(
     track.id,
@@ -62,19 +59,12 @@ export default async function TrackPage({ params }: Props) {
   const totalCourses = getTrackCourseQuantity(
     userTrackComplete?.Track as unknown as TrackWithModulesCoursesAndExtras,
   );
-  const completedCourses = getCompletedCoursesInTrack(userTrackComplete);
+  const completedCourses = userTrackComplete?.totalCoursesCompleted || 0;
 
-  if (!userTrackComplete?.isCompleted && completedCourses >= totalCourses) {
-    userTrackComplete = await completeUserTrack(
-      userTrackComplete as UserTrack,
-      completedCourses,
-    );
-  }
-
-  let isEnrolled = !!userTrackComplete?.isEnrolled;
-  let isBookmarked = !!userTrackComplete?.isBookmarked;
-  let isCompleted = !!userTrackComplete?.isCompleted;
-  let canEnroll = await isUserAllowedToEnroll();
+  const isEnrolled = !!userTrackComplete?.isEnrolled;
+  const isBookmarked = !!userTrackComplete?.isBookmarked;
+  const isCompleted = !!userTrackComplete?.isCompleted;
+  const canEnroll = await isUserAllowedToEnroll();
 
   return (
     <div className="_container flex flex-col gap-12 py-10">
@@ -196,7 +186,7 @@ export default async function TrackPage({ params }: Props) {
             </div>
 
             {userTrackComplete && (
-              <div className="flex-center maxs-sm:flex-col gap-5">
+              <div className="flex-center gap-5 max-sm:flex-col">
                 <TrackProgress
                   totalCourses={totalCourses}
                   completedCourses={completedCourses}
@@ -219,28 +209,7 @@ export default async function TrackPage({ params }: Props) {
 
           {/* track content */}
           <div className="space-y-3">
-            <div>
-              <h2 className="text-xl font-medium">Módulos</h2>
-              {/* track data */}
-              {/* <div className="flex items-center text-sm text-slate-400 max-sm:justify-center">
-                {track?.track_activities &&
-                  Object.entries(track.track_activities).map(([k, v], i, a) => {
-                    if (i === a.length - 1) return;
-                    if (!v) return;
-                    return (
-                      <Fragment key={k}>
-                        <p>
-                          {v} {translate(k)}
-                        </p>
-                        {i < a.length - 2 && (
-                          <DotIcon className="text-muted-foreground" />
-                        )}
-                      </Fragment>
-                    );
-                  })}
-              </div> */}
-            </div>
-
+            <h2 className="text-xl font-medium">Módulos</h2>
             {/* modules */}
             <div className="max-w-[1000px]">
               <ModulesAccordion
@@ -296,10 +265,10 @@ export default async function TrackPage({ params }: Props) {
           {allUserTracksInTrack.length > 0 && (
             <div className="flex flex-1 flex-col gap-3">
               <h3 className="text-xl font-medium">Feedback Alunos</h3>
-              {allUserTracksInTrackFeedback.length > 0 ? (
+              {allUserTracksWithFeedback.length > 0 ? (
                 <ScrollArea className="h-[min(fit,400px)] flex-auto">
                   <div className="space-y-6">
-                    {allUserTracksInTrackFeedback.map((t) => (
+                    {allUserTracksWithFeedback.map((t) => (
                       <div key={t.trackId + t.userId} className="space-y-3">
                         <div className="flex items-center gap-2">
                           <Avatar

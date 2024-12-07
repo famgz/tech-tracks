@@ -86,7 +86,7 @@ export default function FeedbackButton({ userTrack, track }: Props) {
           <StarRating
             rating={userTrack.rating}
             fillStars={false}
-            starClassName="size-8"
+            starClassName="size-7"
           />
         </div>
       </AlertDialogTrigger>

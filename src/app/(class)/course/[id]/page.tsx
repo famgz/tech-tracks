@@ -29,8 +29,8 @@ interface Props {
 
 export default async function CoursePage({ params, searchParams }: Props) {
   await getSessionUserElseRedirectToLogin();
-  const { id } = params;
 
+  const { id } = params;
   const [track, course] = await Promise.all([
     getTrackWithModulesAndCourses(searchParams.track),
     getCourseWithLessonsAndContents(id),

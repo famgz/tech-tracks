@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  computeProgress,
-  enrollLesson,
+  computeCascadeProgressFromContent,
+  touchUserLesson,
   watchUserContent,
 } from "@/actions/user-content";
 import MarkContentWatchedButton from "@/app/(class)/course/[id]/_components/mark-content-watched-button";
@@ -44,7 +44,7 @@ export default function ContentCard({
 
   function handleContentCardClick() {
     udpateUrlContent();
-    enrollLesson(content.lessonId!);
+    touchUserLesson(content.lessonId!);
   }
 
   async function handleWatchClick() {
@@ -53,7 +53,7 @@ export default function ContentCard({
     }
     const newContent = await watchUserContent(content.id);
     if (newContent) {
-      computeProgress(content);
+      computeCascadeProgressFromContent(content);
       setUserContent(newContent);
       toast.success(`Conteúdo ${content.name} marcado como visto`);
     } else {
@@ -64,7 +64,7 @@ export default function ContentCard({
   useEffect(() => {
     if (isCurrentContent) {
       console.log("enrolling lesson");
-      enrollLesson(content.lessonId!);
+      touchUserLesson(content.lessonId!);
     }
   }, [isCurrentContent, content.lessonId]);
 

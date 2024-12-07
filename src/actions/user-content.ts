@@ -4,11 +4,11 @@ import { getSessionUserIdElseThrow } from "@/actions/auth";
 import { USER_MAX_TRACK_SLOTS } from "@/constants/user";
 import { db } from "@/lib/prisma";
 import { UserTrackWithUserModulesAndUserCourses } from "@/types/user-content";
-import { Content, UserTrack } from "@prisma/client";
+import { Content } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 export async function isUserAllowedToEnroll(): Promise<boolean> {
-  const userTracks = (await getAllUserTracks()) || [];
+  const userTracks = (await getAllUserTracksForUser()) || [];
   const enrolledUserTracks = userTracks.filter((t) => t.isEnrolled);
   return enrolledUserTracks.length < USER_MAX_TRACK_SLOTS;
 }
@@ -26,7 +26,7 @@ export async function getUserTrack(trackId: string) {
   }
 }
 
-export async function getAllUserTracks() {
+export async function getAllUserTracksForUser() {
   try {
     const userId = await getSessionUserIdElseThrow();
     const res = await db.userTrack.findMany({
@@ -40,7 +40,7 @@ export async function getAllUserTracks() {
   }
 }
 
-export async function getAllUserTracksInTrack(trackSlug: string) {
+export async function getAllUserTracksForTrack(trackSlug: string) {
   try {
     const res = await db.userTrack.findMany({
       where: { Track: { slug: trackSlug } },
@@ -52,117 +52,6 @@ export async function getAllUserTracksInTrack(trackSlug: string) {
       `Failed to get all user tracks for trackSlug ${trackSlug}:`,
       e,
     );
-    return null;
-  }
-}
-
-export async function enrollTrack(trackId: string) {
-  try {
-    if (!isUserAllowedToEnroll()) {
-      throw new Error("User has reached enrollment limit");
-    }
-    const userId = await getSessionUserIdElseThrow();
-    const res = await db.userTrack.upsert({
-      where: { userId_trackId: { userId, trackId } },
-      update: {
-        isEnrolled: true,
-      },
-      create: {
-        userId,
-        trackId,
-        isEnrolled: true,
-        isBookmarked: false,
-      },
-    });
-    revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user");
-    return res;
-  } catch (e) {
-    console.error("Failed to enroll track:", e);
-    return null;
-  }
-}
-
-export async function unenrollTrack(trackId: string) {
-  try {
-    const userId = await getSessionUserIdElseThrow();
-    const res = await db.userTrack.update({
-      where: { userId_trackId: { userId, trackId } },
-      data: {
-        isEnrolled: false,
-      },
-    });
-    revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user");
-    return res;
-  } catch (e) {
-    console.error("Failed to unenroll track:", e);
-    return null;
-  }
-}
-
-export async function bookmarkTrack(trackId: string) {
-  try {
-    const userId = await getSessionUserIdElseThrow();
-    const res = await db.userTrack.upsert({
-      where: { userId_trackId: { userId, trackId } },
-      update: {
-        isBookmarked: true,
-      },
-      create: {
-        userId,
-        trackId,
-        isBookmarked: true,
-      },
-    });
-    revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user");
-    return res;
-  } catch (e) {
-    console.error("Failed to bookmark track:", e);
-    return null;
-  }
-}
-
-export async function unbookmarkTrack(trackId: string) {
-  try {
-    const userId = await getSessionUserIdElseThrow();
-    const res = await db.userTrack.update({
-      where: { userId_trackId: { userId, trackId } },
-      data: {
-        isBookmarked: false,
-      },
-    });
-    revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user");
-    return res;
-  } catch (e) {
-    console.error("Failed to unbookmark track:", e);
-    return null;
-  }
-}
-
-export async function feedbackUserTrack(
-  trackId: string,
-  feedback: { comment: string; rating: number | null; liked: boolean },
-) {
-  try {
-    const userId = await getSessionUserIdElseThrow();
-    if (feedback.comment && feedback.comment?.length < 5) {
-      throw new Error("Comment is too short");
-    }
-    const res = await db.userTrack.update({
-      where: { userId_trackId: { userId, trackId } },
-      data: {
-        comment: feedback.comment.trim() || null,
-        rating: feedback.rating,
-        liked: feedback.liked,
-      },
-    });
-    revalidatePath("/track/[slug]", "page");
-    return res;
-  } catch (e) {
-    console.error("Failed to send user track feedback:", e);
     return null;
   }
 }
@@ -209,13 +98,197 @@ export async function getUserTrackWithUserModulesAndUserCourses(
         },
       },
     });
-
     return res;
-  } catch (error) {
+  } catch (e) {
     console.error(
       "Error fetching user track with user modules and user courses:",
-      error,
+      e,
     );
+    return null;
+  }
+}
+
+export async function enrollTrack(trackId: string) {
+  try {
+    if (!isUserAllowedToEnroll()) {
+      throw new Error("User has reached enrollment limit");
+    }
+    const userId = await getSessionUserIdElseThrow();
+    const userId_trackId = { userId, trackId };
+    const current = await db.userTrack.findUnique({
+      where: { userId_trackId },
+    });
+    // prevent bookmarkedAt overwriting
+    if (current?.isEnrolled) {
+      return;
+    }
+    const res = await db.userTrack.upsert({
+      where: { userId_trackId },
+      update: {
+        isEnrolled: true,
+        enrolledAt: new Date(),
+      },
+      create: {
+        userId,
+        trackId,
+        isEnrolled: true,
+        enrolledAt: new Date(),
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
+    return res;
+  } catch (e) {
+    console.error("Failed to enroll track:", e);
+    return null;
+  }
+}
+
+export async function unenrollTrack(trackId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const res = await db.userTrack.upsert({
+      where: { userId_trackId: { userId, trackId } },
+      update: {
+        isEnrolled: false,
+      },
+      create: {
+        userId,
+        trackId,
+        isEnrolled: false,
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
+    return res;
+  } catch (e) {
+    console.error("Failed to unenroll track:", e);
+    return null;
+  }
+}
+
+export async function bookmarkTrack(trackId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const userId_trackId = { userId, trackId };
+    const current = await db.userTrack.findUnique({
+      where: { userId_trackId },
+    });
+    // prevent bookmarkedAt overwriting
+    if (current?.isBookmarked) {
+      return;
+    }
+    const res = await db.userTrack.upsert({
+      where: { userId_trackId },
+      update: {
+        isBookmarked: true,
+        bookmarkedAt: new Date(),
+      },
+      create: {
+        userId,
+        trackId,
+        isBookmarked: true,
+        bookmarkedAt: new Date(),
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
+    return res;
+  } catch (e) {
+    console.error("Failed to bookmark track:", e);
+    return null;
+  }
+}
+
+export async function unbookmarkTrack(trackId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const res = await db.userTrack.upsert({
+      where: { userId_trackId: { userId, trackId } },
+      update: {
+        isBookmarked: false,
+      },
+      create: {
+        userId,
+        trackId,
+        isBookmarked: false,
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    revalidatePath("/user");
+    return res;
+  } catch (e) {
+    console.error("Failed to unbookmark track:", e);
+    return null;
+  }
+}
+
+export async function feedbackUserTrack(
+  trackId: string,
+  feedback: { comment: string; rating: number | null; liked: boolean },
+) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const userId_trackId = { userId, trackId };
+    if (feedback.comment && feedback.comment?.length < 5) {
+      throw new Error("Comment is too short");
+    }
+    const res = await db.userTrack.upsert({
+      where: { userId_trackId },
+      update: {
+        comment: feedback.comment.trim() || null,
+        rating: feedback.rating,
+        liked: feedback.liked,
+        feedbackedAt: new Date(),
+      },
+      create: {
+        userId,
+        trackId,
+        comment: feedback.comment.trim() || null,
+        rating: feedback.rating,
+        liked: feedback.liked,
+        feedbackedAt: new Date(),
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    return res;
+  } catch (e) {
+    console.error("Failed to send user track feedback:", e);
+    return null;
+  }
+}
+
+export async function feedbackUserCourse(
+  courseId: string,
+  feedback: { comment: string; rating: number | null; liked: boolean },
+) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const userId_courseId = { userId, courseId };
+    if (feedback.comment && feedback.comment?.length < 5) {
+      throw new Error("Comment is too short");
+    }
+    const res = await db.userCourse.upsert({
+      where: { userId_courseId },
+      update: {
+        comment: feedback.comment.trim() || null,
+        rating: feedback.rating,
+        liked: feedback.liked,
+        feedbackedAt: new Date(),
+      },
+      create: {
+        userId,
+        courseId,
+        comment: feedback.comment.trim() || null,
+        rating: feedback.rating,
+        liked: feedback.liked,
+        feedbackedAt: new Date(),
+      },
+    });
+    revalidatePath("/track/[slug]", "page");
+    return res;
+  } catch (e) {
+    console.error("Failed to send user course feedback:", e);
     return null;
   }
 }
@@ -256,13 +329,25 @@ export async function getUserCourse(courseId: string) {
 export async function enrollCourse(courseId: string) {
   try {
     const userId = await getSessionUserIdElseThrow();
+    const userId_courseId = { userId, courseId };
+    const current = await db.userCourse.findUnique({
+      where: { userId_courseId },
+    });
+    // prevent enrolledAt overwriting
+    if (current?.isEnrolled) {
+      return;
+    }
     const res = await db.userCourse.upsert({
-      where: { userId_courseId: { userId, courseId } },
-      update: {},
+      where: { userId_courseId },
+      update: {
+        isEnrolled: true,
+        enrolledAt: new Date(),
+      },
       create: {
         userId,
         courseId,
         isEnrolled: true,
+        enrolledAt: new Date(),
       },
     });
     revalidatePath("/track/[slug]", "page");
@@ -274,7 +359,7 @@ export async function enrollCourse(courseId: string) {
   }
 }
 
-export async function enrollLesson(lessonId: string) {
+export async function touchUserLesson(lessonId: string) {
   try {
     const userId = await getSessionUserIdElseThrow();
     const res = await db.userLesson.upsert({
@@ -322,8 +407,15 @@ export async function getAllUserContentsInCourse(courseId: string) {
 export async function watchUserContent(contentId: string) {
   try {
     const userId = await getSessionUserIdElseThrow();
+    const userId_contentId = { userId, contentId };
+    const current = await db.userContent.findUnique({
+      where: { userId_contentId },
+    });
+    if (current?.isCompleted) {
+      return;
+    }
     const res = await db.userContent.upsert({
-      where: { userId_contentId: { userId, contentId } },
+      where: { userId_contentId },
       update: {
         isCompleted: true,
         completedAt: new Date(),
@@ -343,36 +435,249 @@ export async function watchUserContent(contentId: string) {
   }
 }
 
-export async function unwatchUserContent(contentId: string) {
+// TODO: option to mark all lesson's content as watched
+
+export async function computeUserLessonProgress(lessonId: string) {
   try {
     const userId = await getSessionUserIdElseThrow();
-    const res = await db.userContent.upsert({
-      where: { userId_contentId: { userId, contentId } },
+    const userId_lessonId = { userId, lessonId };
+    const current = await db.userLesson.findUnique({
+      where: { userId_lessonId },
+    });
+
+    if (current?.isCompleted) {
+      return;
+    }
+
+    const [totalContentsCompleted, totalContentsForLesson] =
+      await db.$transaction([
+        db.userContent.count({
+          where: {
+            userId,
+            Content: {
+              lessonId,
+            },
+            isCompleted: true,
+          },
+        }),
+        db.content.count({
+          where: {
+            lessonId,
+            type: "video",
+          },
+        }),
+      ]);
+
+    const lessonIsCompleted = totalContentsCompleted >= totalContentsForLesson;
+
+    await db.userLesson.upsert({
+      where: { userId_lessonId },
       update: {
-        isCompleted: false,
-        completedAt: null,
+        totalContentsCompleted,
+        isCompleted: lessonIsCompleted,
+        completedAt: lessonIsCompleted ? new Date() : null,
       },
       create: {
         userId,
-        contentId,
-        isCompleted: false,
+        lessonId,
+        totalContentsCompleted,
+        isCompleted: lessonIsCompleted,
+        completedAt: lessonIsCompleted ? new Date() : null,
       },
     });
-    revalidatePath("/course/[id]", "page");
-    return res;
   } catch (e) {
-    console.error("Failed to mark user content as unwatched:", e);
-    return null;
+    console.log("Error computing user lesson progress:", e);
   }
 }
 
-export async function computeProgress(
+export async function computeUserCourseProgress(courseId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const userId_courseId = { userId, courseId };
+    const current = await db.userCourse.findUnique({
+      where: { userId_courseId },
+    });
+
+    if (current?.isCompleted) {
+      return;
+    }
+
+    const [totalLessonsCompleted, totalLessonsForCourse] =
+      await db.$transaction([
+        db.userLesson.count({
+          where: {
+            userId,
+            lesson: {
+              courseId,
+            },
+            isCompleted: true,
+          },
+        }),
+        db.lesson.count({
+          where: {
+            courseId,
+            contents: { some: { type: "video" } },
+          },
+        }),
+      ]);
+
+    const courseIsCompleted = totalLessonsCompleted >= totalLessonsForCourse;
+
+    await db.userCourse.upsert({
+      where: {
+        userId_courseId,
+      },
+      update: {
+        totalLessonsCompleted,
+        isCompleted: courseIsCompleted,
+        completedAt: courseIsCompleted ? new Date() : null,
+      },
+      create: {
+        userId,
+        courseId,
+        totalLessonsCompleted,
+        isCompleted: courseIsCompleted,
+        completedAt: courseIsCompleted ? new Date() : null,
+      },
+    });
+  } catch (e) {
+    console.log("Error computing user course progress:", e);
+  }
+}
+
+export async function computeUserModuleProgress(moduleId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const userId_moduleId = { userId, moduleId };
+    const current = await db.userModule.findUnique({
+      where: {
+        userId_moduleId,
+      },
+    });
+
+    if (current?.isCompleted) {
+      return;
+    }
+
+    const [totalCoursesCompleted, totalCoursesForModule] =
+      await db.$transaction([
+        db.userCourse.count({
+          where: {
+            userId,
+            Course: {
+              modules: {
+                some: {
+                  moduleId,
+                },
+              },
+            },
+            isCompleted: true,
+          },
+        }),
+        db.course.count({
+          where: {
+            modules: {
+              some: {
+                moduleId,
+              },
+            },
+            type: "course",
+          },
+        }),
+      ]);
+
+    const moduleIsCompleted = totalCoursesCompleted >= totalCoursesForModule;
+
+    await db.userModule.upsert({
+      where: {
+        userId_moduleId,
+      },
+      update: {
+        totalCoursesCompleted,
+        isCompleted: moduleIsCompleted,
+        completedAt: moduleIsCompleted ? new Date() : null,
+      },
+      create: {
+        userId,
+        moduleId,
+        totalCoursesCompleted,
+        isCompleted: moduleIsCompleted,
+        completedAt: moduleIsCompleted ? new Date() : null,
+      },
+    });
+  } catch (e) {
+    console.log("Error computing user module progress:", e);
+  }
+}
+
+export async function computeUserTrackProgress(trackId: string) {
+  try {
+    const userId = await getSessionUserIdElseThrow();
+    const userId_trackId = { userId, trackId };
+    const current = await db.userTrack.findUnique({
+      where: { userId_trackId },
+    });
+
+    if (current?.isCompleted) {
+      return;
+    }
+
+    const [totalCoursesCompleted, totalCoursesForTrack] = await db.$transaction(
+      [
+        db.userCourse.count({
+          where: {
+            userId,
+            Course: {
+              modules: {
+                some: {
+                  Module: { trackId },
+                },
+              },
+            },
+            isCompleted: true,
+          },
+        }),
+        db.course.count({
+          where: {
+            modules: {
+              some: {
+                Module: { trackId },
+              },
+            },
+            type: "course",
+          },
+        }),
+      ],
+    );
+
+    const trackIsCompleted = totalCoursesCompleted >= totalCoursesForTrack;
+
+    await db.userTrack.upsert({
+      where: { userId_trackId },
+      update: {
+        totalCoursesCompleted,
+        isCompleted: trackIsCompleted,
+        completedAt: trackIsCompleted ? new Date() : null,
+      },
+      create: {
+        userId,
+        trackId,
+        totalCoursesCompleted,
+        isCompleted: trackIsCompleted,
+        completedAt: trackIsCompleted ? new Date() : null,
+      },
+    });
+  } catch (e) {
+    console.log("Error computing user track progress:", e);
+  }
+}
+
+export async function computeCascadeProgressFromContent(
   content: Content,
 ): Promise<boolean | null> {
   try {
     const userId = await getSessionUserIdElseThrow();
 
-    // Step 1: Find the UserContent record for the given contentId
     const userContent = await db.userContent.findUnique({
       where: {
         userId_contentId: {
@@ -387,7 +692,11 @@ export async function computeProgress(
               include: {
                 Course: {
                   include: {
-                    modules: true,
+                    modules: {
+                      include: {
+                        Module: true,
+                      },
+                    },
                   },
                 },
               },
@@ -397,7 +706,7 @@ export async function computeProgress(
       },
     });
 
-    if (!userContent || !userContent.Content?.Lesson?.Course) {
+    if (!userContent?.Content?.Lesson?.Course) {
       throw new Error("Content, Lesson, or Course not found.");
     }
 
@@ -406,235 +715,19 @@ export async function computeProgress(
     const { Course } = Lesson!;
     const { modules } = Course!;
 
-    // Step 2: Compute UserLesson progress
-    const userLesson = await db.userLesson.upsert({
-      where: {
-        userId_lessonId: {
-          userId,
-          lessonId: Lesson!.id,
-        },
-      },
-      update: {},
-      create: {
-        userId,
-        lessonId: Lesson!.id,
-      },
-    });
+    await computeUserLessonProgress(Lesson!.id);
+    await computeUserCourseProgress(Course!.id);
 
-    if (!userLesson) {
-      throw new Error("UserLesson not found.");
-    }
+    await Promise.all(
+      modules.map(async (_module) => {
+        await computeUserModuleProgress(_module.moduleId);
+        await computeUserTrackProgress(_module.Module.trackId!);
+      }),
+    );
 
-    const totalContentsCompleted = await db.userContent.count({
-      where: {
-        userId,
-        Content: {
-          lessonId: Lesson!.id,
-        },
-        isCompleted: true,
-      },
-    });
-
-    const lessonIsCompleted =
-      totalContentsCompleted >=
-      (await db.content.count({
-        where: {
-          AND: [
-            {
-              lessonId: Lesson!.id,
-            },
-            { type: "video" },
-          ],
-        },
-      }));
-
-    // Update UserLesson
-    await db.userLesson.upsert({
-      where: {
-        userId_lessonId: {
-          userId,
-          lessonId: Lesson!.id,
-        },
-      },
-      update: {
-        totalContentsCompleted,
-        isCompleted: lessonIsCompleted,
-        completedAt: lessonIsCompleted ? new Date() : null,
-      },
-      create: {
-        userId,
-        lessonId: Lesson!.id,
-        totalContentsCompleted,
-        isCompleted: lessonIsCompleted,
-        completedAt: lessonIsCompleted ? new Date() : null,
-      },
-    });
-
-    // Step 3: Compute UserCourse progress
-    const userCourse = await db.userCourse.findUnique({
-      where: {
-        userId_courseId: {
-          userId,
-          courseId: Course!.id,
-        },
-      },
-    });
-
-    if (!userCourse) {
-      throw new Error("UserCourse not found.");
-    }
-
-    const totalLessonsCompleted = await db.userLesson.count({
-      where: {
-        userId,
-        lesson: {
-          courseId: Course!.id,
-        },
-        isCompleted: true,
-      },
-    });
-
-    const courseIsCompleted =
-      totalLessonsCompleted >=
-      (await db.lesson.count({
-        where: {
-          AND: [
-            { courseId: Course!.id },
-            { contents: { some: { type: "video" } } },
-          ],
-        },
-      }));
-
-    // Update UserCourse
-    await db.userCourse.upsert({
-      where: {
-        userId_courseId: {
-          userId,
-          courseId: Course!.id,
-        },
-      },
-      update: {
-        totalLessonsCompleted,
-        isCompleted: courseIsCompleted,
-        completedAt: courseIsCompleted ? new Date() : null,
-      },
-      create: {
-        userId,
-        courseId: Course!.id,
-        totalLessonsCompleted,
-        isCompleted: courseIsCompleted,
-        completedAt: courseIsCompleted ? new Date() : null,
-      },
-    });
-
-    // Step 4: Compute UserModule progress
-    for (const _module of modules) {
-      const userModule = await db.userModule.findUnique({
-        where: {
-          userId_moduleId: {
-            userId,
-            moduleId: _module.moduleId,
-          },
-        },
-      });
-
-      if (!userModule) {
-        throw new Error(
-          `UserModule for moduleId ${_module.moduleId} not found.`,
-        );
-      }
-
-      // Calculate the number of courses that include the module
-      const totalCoursesForModule = await db.course.count({
-        where: {
-          AND: [
-            {
-              modules: {
-                some: {
-                  moduleId: _module.moduleId,
-                },
-              },
-            },
-            {
-              type: "course",
-            },
-          ],
-        },
-      });
-
-      const totalCompletedCoursesForModule = await db.userCourse.count({
-        where: {
-          userId,
-          Course: {
-            modules: {
-              some: {
-                moduleId: _module.moduleId,
-              },
-            },
-          },
-          isCompleted: true,
-        },
-      });
-
-      const moduleIsCompleted =
-        totalCompletedCoursesForModule >= totalCoursesForModule;
-
-      // Update UserModule
-      await db.userModule.upsert({
-        where: {
-          userId_moduleId: {
-            userId,
-            moduleId: _module.moduleId,
-          },
-        },
-        update: {
-          totalCoursesCompleted: totalCompletedCoursesForModule,
-          isCompleted: moduleIsCompleted,
-          completedAt: moduleIsCompleted ? new Date() : null,
-        },
-        create: {
-          userId,
-          moduleId: _module!.moduleId,
-          totalCoursesCompleted: totalCompletedCoursesForModule,
-          isCompleted: moduleIsCompleted,
-          completedAt: moduleIsCompleted ? new Date() : null,
-        },
-      });
-    }
-
-    revalidatePath("/course/[id]", "page");
-    revalidatePath("/track/[id]", "page");
     return true;
   } catch (e) {
     console.error("Failed to compute progress:", e);
-    return null;
-  }
-}
-
-export async function completeUserTrack(
-  userTrack: UserTrack,
-  totalCompleted: number,
-) {
-  if (!userTrack) return null;
-  try {
-    const res = await db.userTrack.update({
-      where: {
-        userId_trackId: {
-          userId: userTrack.userId,
-          trackId: userTrack.trackId,
-        },
-      },
-      data: {
-        totalCompleted,
-        isCompleted: true,
-        completedAt: new Date(),
-      },
-    });
-    revalidatePath("/track/[slug]", "page");
-    revalidatePath("/user");
-    return await getUserTrackWithUserModulesAndUserCourses(userTrack.trackId);
-  } catch (e) {
-    console.error("Failed to complete user track:", e);
     return null;
   }
 }
