@@ -44,7 +44,6 @@ export default function ContentCard({
 
   function handleContentCardClick() {
     udpateUrlContent();
-    touchUserLesson(content.lessonId!);
   }
 
   async function handleWatchClick() {
@@ -71,7 +70,7 @@ export default function ContentCard({
   return (
     <div
       className={cn(
-        "flex items-center gap-5 border-b bg-background p-4 text-xs font-light hover:bg-background/60",
+        "flex items-center border-b bg-background text-xs font-light hover:bg-background/60",
         {
           "border border-primary/60 font-semibold": isCurrentContent,
           "cursor-not-allowed text-muted-foreground": !isVideo,
@@ -84,7 +83,7 @@ export default function ContentCard({
       }
     >
       <div
-        className="flex flex-1 cursor-pointer items-center gap-3"
+        className="flex flex-1 cursor-pointer items-center gap-3 p-4 pr-0"
         onClick={handleContentCardClick}
       >
         <ContentIcon contentType={content.type} />
@@ -92,7 +91,7 @@ export default function ContentCard({
       </div>
 
       {/* {isVideo && ( */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 p-4">
         <MarkContentWatchedButton
           userContent={userContent}
           handleWatchClick={handleWatchClick}
